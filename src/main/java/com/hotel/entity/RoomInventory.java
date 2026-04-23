@@ -1,6 +1,8 @@
 package com.hotel.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -9,6 +11,8 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "room_inventory")
+@Getter
+@Setter
 public class RoomInventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,60 +41,5 @@ public class RoomInventory {
     @Column(name = "maintenance_rooms")
     private Integer maintenanceRooms;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public RoomType getRoomType() {
-        return roomType;
-    }
-
-    public void setRoomType(RoomType roomType) {
-        this.roomType = roomType;
-    }
-
-    public LocalDate getInventoryDate() {
-        return inventoryDate;
-    }
-
-    public void setInventoryDate(LocalDate inventoryDate) {
-        this.inventoryDate = inventoryDate;
-    }
-
-    public Integer getTotalRooms() {
-        return totalRooms;
-    }
-
-    public void setTotalRooms(Integer totalRooms) {
-        this.totalRooms = totalRooms;
-    }
-
-    public Integer getAvailableRooms() {
-        return availableRooms;
-    }
-
-    public void setAvailableRooms(Integer availableRooms) {
-        this.availableRooms = availableRooms;
-    }
-
-    public Integer getReservedRooms() {
-        return reservedRooms;
-    }
-
-    public void setReservedRooms(Integer reservedRooms) {
-        this.reservedRooms = reservedRooms;
-    }
-
-    public Integer getMaintenanceRooms() {
-        return maintenanceRooms;
-    }
-
-    public void setMaintenanceRooms(Integer maintenanceRooms) {
-        this.maintenanceRooms = maintenanceRooms;
-    }
 
 }

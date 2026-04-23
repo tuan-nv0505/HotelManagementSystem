@@ -1,12 +1,17 @@
 package com.hotel.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "room_type")
+@Getter
+@Setter
 public class RoomType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,60 +39,9 @@ public class RoomType {
     @Column(name = "active")
     private Boolean active;
 
-    public Integer getId() {
-        return id;
-    }
+    @OneToMany(mappedBy = "roomType", fetch = FetchType.LAZY)
+    private List<RoomInventory> roomInventories;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getBasePrice() {
-        return basePrice;
-    }
-
-    public void setBasePrice(BigDecimal basePrice) {
-        this.basePrice = basePrice;
-    }
-
-    public Integer getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
+    @OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
+    private List<Room> rooms;
 }

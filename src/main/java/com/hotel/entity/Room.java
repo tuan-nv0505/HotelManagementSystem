@@ -43,4 +43,6 @@ public class Room {
 
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     private Set<BookingRoom> bookingRooms;
+
+
 }
