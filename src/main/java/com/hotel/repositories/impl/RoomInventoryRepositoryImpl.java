@@ -1,16 +1,21 @@
-package com.hotel.repository.impl;
+package com.hotel.repositories.impl;
 
 import com.hotel.entity.*;
-import com.hotel.repository.RoomInventoryRepository;
+import com.hotel.repositories.RoomInventoryRepository;
+import jakarta.persistence.Query;
 import jakarta.persistence.criteria.*;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
+@Transactional
 public class RoomInventoryRepositoryImpl implements RoomInventoryRepository {
     @Autowired
     private LocalSessionFactoryBean factory;
@@ -79,5 +84,29 @@ public class RoomInventoryRepositoryImpl implements RoomInventoryRepository {
         inventory.setAvailableRooms(availableRooms);
 
         session.saveOrUpdate(inventory);
+    }
+
+    @Override
+    public List<RoomInventory> getListRoomInventory(Integer roomTypeId, LocalDate inventoryDate) {
+        Session session = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<RoomInventory> criteriaQuery = builder.createQuery(RoomInventory.class);
+        Root<RoomInventory> root = criteriaQuery.from(RoomInventory.class);
+
+        root.fetch("roomType");
+        criteriaQuery.select(root);
+
+        List<Predicate> predicates = new ArrayList<>();
+        if (roomTypeId != null) {
+            predicates.add(builder.equal(root.get("roomType").get("id"), roomTypeId));
+        }
+        if (inventoryDate != null) {
+            predicates.add(builder.equal(root.get("inventoryDate"), inventoryDate));
+        }
+        System.out.println(inventoryDate);
+
+        criteriaQuery.where(predicates.toArray(Predicate[]::new));
+
+        return session.createQuery(criteriaQuery).getResultList();
     }
 }

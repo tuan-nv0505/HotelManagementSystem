@@ -1,4 +1,4 @@
-package com.hotel.repository;
+package com.hotel.repositories;
 
 import com.hotel.entity.Room;
 

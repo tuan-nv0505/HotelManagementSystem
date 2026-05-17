@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head}"><title></title></head>
+<body th:replace="~{layout/base :: main('Quản lý tồn phòng', 'room_inventory', ~{:: #room-content})}">
+
+<div id="room-content">
+
+    <div class="card mb-3 rounded-0 shadow-sm border">
+        <div class="card-body">
+            <form th:action="@{/admin/roominventory}" method="get">
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-md-4">
+                        <label for="roomTypeId" class="form-label fw-bold text-secondary">Loại phòng</label>
+                        <select id="roomTypeId" name="roomTypeId" class="form-select rounded-0">
+                            <option value="">Tất cả loại phòng</option>
+                            <option th:each="type : ${listRoomType}"
+                                    th:value="${type.id}"
+                                    th:text="${type.name}"
+                                    th:selected="${param.roomTypeId != null and param.roomTypeId[0] == type.id.toString()}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="date" class="form-label fw-bold text-secondary">Ngày tồn phòng</label>
+                        <input type="date" id="date" name="inventoryDate" class="form-control rounded-0" th:value="${param.inventoryDate}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary rounded-0 px-4">
+                            <i class="fa fa-search"></i> Tìm kiếm
+                        </button>
+                        <a th:href="@{/admin/roominventory}" class="btn btn-secondary rounded-0 px-4 ms-2">Bỏ lọc</a>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive border shadow-sm">
+        <table class="table table-striped table-hover mb-0 align-middle">
+            <thead class="table-dark">
+            <tr>
+                <th>Loại phòng</th>
+                <th>Ngày</th>
+                <th>Tổng số phòng</th>
+                <th>Số phòng sẵn sàng hoạt động</th>
+                <th>Số phòng đang được sử dụng</th>
+                <th>Số phòng bảo trì</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="roomInventory : ${listRoomInventory}">
+                <td class="fw-bold text-primary" th:text="${roomInventory.roomType.name}"></td>
+                <td th:text="${roomInventory.inventoryDate}"></td>
+                <td th:text="${roomInventory.totalRooms}"></td>
+                <td th:text="${roomInventory.availableRooms}"></td>
+                <td th:text="${roomInventory.reservedRooms}"></td>
+                <td th:text="${roomInventory.maintenanceRooms}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

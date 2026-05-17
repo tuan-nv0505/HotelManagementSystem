@@ -1,11 +1,7 @@
-package com.hotel.repository.impl;
+package com.hotel.repositories.impl;
 
 import com.hotel.entity.Room;
-import com.hotel.repository.RoomRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
-import org.hibernate.Session;
+import com.hotel.repositories.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
