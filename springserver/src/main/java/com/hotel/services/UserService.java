@@ -1,7 +1,10 @@
 package com.hotel.services;
 
+import com.hotel.entity.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface UserService extends UserDetailsService {
+import java.util.List;
 
+public interface UserService extends UserDetailsService {
+    public List<User> getAllUsers();
 }
