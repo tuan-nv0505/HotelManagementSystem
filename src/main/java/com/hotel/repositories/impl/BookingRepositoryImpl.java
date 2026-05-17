@@ -1,6 +1,6 @@
-package com.hotel.repository.impl;
+package com.hotel.repositories.impl;
 
-import com.hotel.repository.BookingRepository;
+import com.hotel.repositories.BookingRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository

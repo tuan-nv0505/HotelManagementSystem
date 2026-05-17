@@ -39,24 +39,26 @@ public class SpringSecurityConfigs {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(c -> c.disable()).authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/", "/admin").hasRole("ADMIN")
+                .requestMatchers("/admin").hasRole("ADMIN")
                 .requestMatchers("/api/**").permitAll()
                 .anyRequest().authenticated()
         ).formLogin(form -> form.loginPage("/admin/login")
-                .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/", true)
+                .loginProcessingUrl("/admin/login")
+                .defaultSuccessUrl("/admin/", true)
                 .failureUrl("/admin/login?error=true")
                 .permitAll()
         ).logout((logout) -> logout.logoutSuccessUrl("/admin/login").permitAll());
+
         return http.build();
     }
 
     @Bean
     public Cloudinary cloudinary() {
-        Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", "dokjzty69",
-                "api_key", "283182293216446",
-                "api_secret", "u0B3MQtHRwSrTuLmTM30qyiUxMQ",
+        Cloudinary cloudinary
+                = new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", "dt1pa28g2",
+                "api_key", "824465552867193",
+                "api_secret", "A9MAKfzfQok2sZCjtIuhsDBTzis",
                 "secure", true));
         return cloudinary;
     }
