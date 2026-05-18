@@ -4,12 +4,28 @@
     <title>Quản lý dịch vụ</title>
 </head>
 <body th:replace="~{layout/base :: main('service', ~{:: #service-content})}">
+
 <div id="service-content">
     <div class="table-responsive border shadow-sm">
         <table class="table table-striped table-hover mb-0 align-middle text-center">
             <thead class="table-dark">
             <tr>
-                <th style="width: 40px; vertical-align: middle;"><input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-service')" id="selectAllService"></th>
+                <th colspan="5">
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
+                                data-bs-toggle="modal" data-bs-target="#addServiceModal">
+                            Thêm
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold" onclick="deleteSelectedServices()">
+                            Xoá
+                        </button>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th style="width: 40px; vertical-align: middle;">
+                    <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-service')" id="selectAllService">
+                </th>
                 <th class="text-start">Tên dịch vụ</th>
                 <th>Giá tiêu chuẩn</th>
                 <th>Trạng thái</th>
@@ -18,7 +34,9 @@
             </thead>
             <tbody>
             <tr th:each="service : ${listService}">
-                <td style="vertical-align: middle;"><input type="checkbox" class="action-select-service" onclick="resetSelectAllCheckBox('selectAllService', 'action-select-service')"></td>
+                <td style="vertical-align: middle;">
+                    <input type="checkbox" class="action-select-service" th:value="${service.id}" onclick="resetSelectAllCheckBox('selectAllService', 'action-select-service')">
+                </td>
                 <td class="text-start fw-bold" th:text="${service.name}"></td>
                 <td th:text="${#numbers.formatDecimal(service.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
                 <td>
@@ -31,23 +49,17 @@
                             th:data-bs-target="'#editServiceModal-' + ${service.id}">
                         Sửa
                     </button>
-                    <button type="button" class="btn btn-sm btn-outline-danger rounded-0 fw-bold">Xoá</button>
-
-                    <div th:replace="~{modals/base :: genericModal(
-                            'editServiceModal-' + ${service.id},
-                            'Sửa dịch vụ: ',
-                            ~{modals/service_fields :: serviceBody(${service})},
-                            ~{modals/service_fields :: serviceFooter},
-                            '/admin/services/update'
-                        )}"></div>
+                    <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold" th:onclick="'deleteService(' + ${service.id} + ')'">Xoá</button>
                 </td>
             </tr>
+
             <tr th:if="${#lists.isEmpty(listService)}">
-                <td colspan="4" class="text-muted py-4">Chưa có dịch vụ nào trong hệ thống.</td>
+                <td colspan="5" class="text-muted py-4">Chưa có dịch vụ nào trong hệ thống.</td>
             </tr>
             </tbody>
         </table>
     </div>
+
     <div th:replace="~{modals/base :: genericModal(
         'addServiceModal',
         'Thêm mới dịch vụ',
@@ -55,6 +67,17 @@
         ~{modals/service_fields :: serviceFooter},
         '/admin/service/save'
     )}"></div>
+
+    <th:block th:each="service : ${listService}">
+        <div th:replace="~{modals/base :: genericModal(
+                'editServiceModal-' + ${service.id},
+                'Sửa dịch vụ: ',
+                ~{modals/service_fields :: serviceBody(${service})},
+                ~{modals/service_fields :: serviceFooter},
+                '/admin/services/update'
+            )}"></div>
+    </th:block>
+
 </div>
 </body>
 </html>
