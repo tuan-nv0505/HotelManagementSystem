@@ -1,6 +1,6 @@
 package com.hotel.controllers.admin;
 
-import com.hotel.services.UserService;
+import com.hotel.services.BookingRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,19 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/admin")
-public class UserController {
+public class BookingRoomController {
     @Autowired
-    private UserService userService;
+    private BookingRoomService bookingRoomService;
 
-    @GetMapping("/login")
-    public String loginView() {
-        return "login";
-    }
-
-    @GetMapping("/users")
-    public String userView(Model model) {
-        model.addAttribute("users", userService.getAllUsers());
-
-        return "user";
+    @GetMapping("/booking_rooms")
+    public String bookingRoomView(Model model) {
+        model.addAttribute("bookingRooms", bookingRoomService.getAllBookingRooms());
+        return "booking_room";
     }
 }

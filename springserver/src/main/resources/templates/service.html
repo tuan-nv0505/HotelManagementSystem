@@ -37,7 +37,7 @@
             <tbody>
             <tr th:each="s : ${listService}">
                 <td style="vertical-align: middle;">
-                    <input type="checkbox" class="action-select-service" th:value="${s.id}"
+                    <input type="checkbox" class="action-select-service" th:value="${service.id}"
                            onclick="resetSelectAllCheckBox('selectAllService', 'action-select-service')">
                 </td>
                 <td hidden th:text="${s.id}"></td>
@@ -57,7 +57,11 @@
                         Sửa
                     </button>
 
-                    <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold">Xoá</button>
+                    <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
+                            th:onclick="'deleteService(' + ${service.id} + ')'">Xoá
+                    </button>
+
+
                 </td>
             </tr>
 

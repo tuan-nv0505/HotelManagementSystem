@@ -1,6 +1,8 @@
 package com.hotel.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
@@ -8,6 +10,8 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "booking_service")
+@Setter
+@Getter
 public class BookingService {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,60 +41,5 @@ public class BookingService {
     @Column(name = "created_at")
     private Instant createdAt;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Booking getBooking() {
-        return booking;
-    }
-
-    public void setBooking(Booking booking) {
-        this.booking = booking;
-    }
-
-    public Service getService() {
-        return service;
-    }
-
-    public void setService(Service service) {
-        this.service = service;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public BigDecimal getPriceAtUsage() {
-        return priceAtUsage;
-    }
-
-    public void setPriceAtUsage(BigDecimal priceAtUsage) {
-        this.priceAtUsage = priceAtUsage;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
+    
 }

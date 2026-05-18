@@ -3,64 +3,82 @@
 <head th:replace="~{layout/base :: head}">
     <title>Quản lý khách hàng</title>
 </head>
-<body th:replace="~{layout/base :: main('customer', ~{:: #service-content})}">
-<div id="service-content">
+<body th:replace="~{layout/base :: main('customer', ~{:: #customer-content})}">
+
+<div id="customer-content">
     <div class="table-responsive border shadow-sm">
         <table class="table table-striped table-hover mb-0 align-middle text-center">
             <thead class="table-dark">
             <tr>
-                <th style="width: 40px; vertical-align: middle;"><input type="checkbox"
-                                                                        onclick="selectAllCheckbox(this.id, 'action-select-service')"
-                                                                        id="selectAllCustomer"></th>
+                <th colspan="5">
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
+                                data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+                            Thêm
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold">
+                            Xoá
+                        </button>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th style="width: 40px; vertical-align: middle;">
+                    <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-customer')"
+                           id="selectAllCustomer">
+                </th>
                 <th class="text-start">Tên khách hàng</th>
-                <th>Email</th>
-                <th>Số điện thoại</th>
-                <th>Địa chỉ</th>
                 <th>Trạng thái</th>
                 <th>Thao tác</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="customer : ${listCustomers}">
-                <td style="vertical-align: middle;"><input type="checkbox" class="action-select-service"
-                                                           onclick="resetSelectAllCheckBox('selectAllCustomer', 'action-select-service')">
+            <tr th:each="c: ${listCustomers}">
+                <td style="vertical-align: middle;">
+                    <input type="checkbox" class="action-select-customer" th:value="${customer.id}"
+                           onclick="resetSelectAllCheckBox('selectAllCustomer', 'action-select-customer')">
                 </td>
-                <td class="text-start fw-bold" th:text="${customer.name}"></td>
-
+                <td hidden th:text="${c.id}"></td>
+                <td class="text-start fw-bold" th:text="${c.name}"></td>
                 <td>
-                    <span th:if="${service.active}">Còn sử dụng</span>
-                    <span th:unless="${service.active}">Không sử dụng</span>
+                    <span th:if="${c.active}">Còn hoạt động</span>
+                    <span th:unless="${c.active}">Không hoạt động</span>
                 </td>
                 <td>
                     <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
-                            data-bs-toggle="modal"
-                            th:data-bs-target="'#editServiceModal-' + ${service.id}">
+                            th:data-id="${c.id}"
+                            th:data-name="${c.name}"
+                            th:data-active="${c.active}"
+                            onclick="openEditCustomerModal(this)">
                         Sửa
                     </button>
-                    <button type="button" class="btn btn-sm btn-outline-danger rounded-0 fw-bold">Xoá</button>
 
-                    <div th:replace="~{modals/base :: genericModal(
-                            'editServiceModal-' + ${service.id},
-                            'Sửa dịch vụ: ',
-                            ~{modals/service_fields :: serviceBody(${service})},
-                            ~{modals/service_fields :: serviceFooter},
-                            '/admin/services/update'
-                        )}"></div>
+                    <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold">Xoá
+                    </button>
+
+
                 </td>
             </tr>
-            <tr th:if="${#lists.isEmpty(listService)}">
-                <td colspan="4" class="text-muted py-4">Chưa có dịch vụ nào trong hệ thống.</td>
+
+            <tr th:if="${#lists.isEmpty(listCustomers)}">
+                <td colspan="5" class="text-muted py-4">Chưa có khách hàng nào trong hệ thống.</td>
             </tr>
             </tbody>
         </table>
     </div>
+
     <div th:replace="~{modals/base :: genericModal(
-        'addServiceModal',
-        'Thêm mới dịch vụ',
-        ~{modals/service_fields :: serviceBody(null)},
-        ~{modals/service_fields :: serviceFooter},
-        '/admin/service/save'
+        'addCustomerModal',
+        'Thêm mới khách hàng',
+        ~{modals/customer_form :: customerForm('add')}
     )}"></div>
+
+    <div th:replace="~{modals/base :: genericModal(
+        'editCustomerModal',
+        'Sửa thông tin khách hàng',
+        ~{modals/customer_form :: customerForm('edit')}
+    )}"></div>
+
 </div>
 </body>
 </html>

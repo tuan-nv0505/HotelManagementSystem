@@ -5,5 +5,5 @@ import com.hotel.entity.Customer;
 import java.util.List;
 
 public interface CustomerRepository {
-    List<Customer> getAllCustomers();
+    List<Object[]> getAllCustomers();
 }

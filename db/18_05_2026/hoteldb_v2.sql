@@ -141,7 +141,7 @@ CREATE TABLE `customer` (
 
 LOCK TABLES `customer` WRITE;
 /*!40000 ALTER TABLE `customer` DISABLE KEYS */;
-INSERT INTO `customer` VALUES (1,'Nguyễn Đinh Nhật Trường','nhattruong@gmail.com','0901234567','Quận 3, TP. Hồ Chí Minh',NULL,1),(2,'Nguyễn Văn Tuấn','tuan557552@gmail.com','0334903055','Quận 2, TP. Hồ Chí Minh',1,1),(3,'Phạm Hoàng Long','longpham99@gmail.com','0987654321','Hải Châu, Đà Nẵng',NULL,1),(4,'Lê Minh Thành','thanh.le@yahoo.com','0934567890','Hoàn Kiếm, Hà Nội',NULL,1),(5,'Vũ Thị Hồng Nhung','nhungvu.pink@gmail.com','0945678901','Ninh Kiều, Cần Thơ',NULL,1),(6,'Đặng Hoàng Nam','namdang.dh@gmail.com','0961234567','Thành phố Quảng Ngãi',NULL,1),(7,'Bùi Minh Tuấn','tuanbui.dev@gmail.com','0972345678','Quận 7, TP. Hồ Chí Minh',NULL,1),(8,'Đỗ Thùy Dương','duongdo.95@gmail.com','0953456789','Vũng Tàu, Bà Rịa - Vũng Tàu',NULL,1),(9,'Ngô Gia Bảo','baongo.gia@gmail.com','0924567890','Biên Hòa, Đồng Nai',NULL,1),(10,'Hoàng Ngọc Mai','maihoang.ngoc@gmail.com','0909876543','Quận Tân Bình, TP. Hồ Chí Minh',NULL,1),(11,'Lý Văn Thắng','thangly.92@outlook.com','0919765432','Nha Trang, Khánh Hòa',NULL,1),(12,'Đinh Thị Thu Thảo','thaodinh.thuthu@gmail.com','0989123456','Đà Lạt, Lâm Đồng',NULL,1),(13,'Tạ Minh Triết','trietta.minh@gmail.com','0939234567','Thủ Dầu Một, Bình Dương',NULL,1),(14,'Phan Thanh Bình','binhphan.thanh@gmail.com','0949345678','Vinh, Nghệ An',NULL,1),(15,'Trịnh Công Sơn','sontrinh.music@gmail.com','0969456789','Huế, Thừa Thiên Huế',NULL,1),(16,'Vương Gia Hân','hanvuong.gia@gmail.com','0979567890','Quận 1, TP. Hồ Chí Minh',NULL,1),(17,'Mai Đức Chung','chungmai.duc@gmail.com','0988678901','Hạ Long, Quảng Ninh',NULL,1),(18,'Cao Minh Khang','khangcao.minh@gmail.com','0911234567','Buôn Ma Thuột, Đắk Lắk',NULL,1),(19,'Đoàn Văn Hậu','haudoan.van@gmail.com','0933456789','Thái Bình',NULL,1),(20,'Nguyễn Thị Kim Oanh','oanhnguyen.kim@gmail.com','0944567890','Phan Thiết, Bình Thuận',NULL,1);
+INSERT INTO `customer` VALUES (1,'Nguyễn Đinh Nhật Trường','tn696199@gmail.com','0967294349','Hóc Môn, TP. Hồ Chí Minh',NULL,1),(2,'Nguyễn Văn Tuấn','tuan557552@gmail.com','0334903055','Quận 2, TP. Hồ Chí Minh',1,1),(3,'Phạm Hoàng Long','longpham99@gmail.com','0987654321','Hải Châu, Đà Nẵng',4,1),(4,'Lê Minh Thành','thanh.le@yahoo.com','0934567890','Hoàn Kiếm, Hà Nội',5,1),(5,'Vũ Thị Hồng Nhung','nhungvu.pink@gmail.com','0945678901','Ninh Kiều, Cần Thơ',2,1),(6,'Đặng Hoàng Nam','namdang.dh@gmail.com','0961234567','Thành phố Quảng Ngãi',NULL,1),(7,'Bùi Minh Tuấn','tuanbui.dev@gmail.com','0972345678','Quận 7, TP. Hồ Chí Minh',NULL,1),(8,'Đỗ Thùy Dương','duongdo.95@gmail.com','0953456789','Vũng Tàu, Bà Rịa - Vũng Tàu',NULL,1),(9,'Ngô Gia Bảo','baongo.gia@gmail.com','0924567890','Biên Hòa, Đồng Nai',NULL,1),(10,'Hoàng Ngọc Mai','maihoang.ngoc@gmail.com','0909876543','Quận Tân Bình, TP. Hồ Chí Minh',NULL,1),(11,'Lý Văn Thắng','thangly.92@outlook.com','0919765432','Nha Trang, Khánh Hòa',NULL,1),(12,'Đinh Thị Thu Thảo','thaodinh.thuthu@gmail.com','0989123456','Đà Lạt, Lâm Đồng',NULL,1),(13,'Tạ Minh Triết','trietta.minh@gmail.com','0939234567','Thủ Dầu Một, Bình Dương',NULL,1),(14,'Phan Thanh Bình','binhphan.thanh@gmail.com','0949345678','Vinh, Nghệ An',NULL,1),(15,'Trịnh Công Sơn','sontrinh.music@gmail.com','0969456789','Huế, Thừa Thiên Huế',NULL,1),(16,'Vương Gia Hân','hanvuong.gia@gmail.com','0979567890','Quận 1, TP. Hồ Chí Minh',NULL,1),(17,'Mai Đức Chung','chungmai.duc@gmail.com','0988678901','Hạ Long, Quảng Ninh',NULL,1),(18,'Cao Minh Khang','khangcao.minh@gmail.com','0911234567','Buôn Ma Thuột, Đắk Lắk',NULL,1),(19,'Đoàn Văn Hậu','haudoan.van@gmail.com','0933456789','Thái Bình',NULL,1),(20,'Nguyễn Thị Kim Oanh','oanhnguyen.kim@gmail.com','0944567890','Phan Thiết, Bình Thuận',NULL,1);
 /*!40000 ALTER TABLE `customer` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -178,7 +178,7 @@ CREATE TABLE `payment` (
 
 LOCK TABLES `payment` WRITE;
 /*!40000 ALTER TABLE `payment` DISABLE KEYS */;
-INSERT INTO `payment` VALUES (1,1,1,2000000.00,'VNPAY','PAYMENT','COMPLETED','TXN20260515001','Khách đã cọc trước 50% qua VNPay','2026-05-18 02:25:10'),(2,2,NULL,2000000.00,'MOMO','PAYMENT','COMPLETED','MOMO2026051799X','Thanh toán hoàn tất qua Ví MoMo','2026-05-18 02:25:10');
+INSERT INTO `payment` VALUES (1,1,2,2000000.00,'VNPAY','PAYMENT','COMPLETED','TXN20260515001','Khách đã cọc trước 50% qua VNPay','2026-05-18 02:25:10'),(2,2,2,2000000.00,'MOMO','PAYMENT','COMPLETED','MOMO2026051799X','Thanh toán hoàn tất qua Ví MoMo','2026-05-18 02:25:10');
 /*!40000 ALTER TABLE `payment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -323,7 +323,7 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -332,7 +332,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'admin','$2a$12$wV/sS6FXhLkHizb9eE53XOd78yFywL8hwO.LhuMPylOFn69RZ/NdK','tuan557552@gmail.com','0334903055','ROLE_ADMIN','https://res.cloudinary.com/dt1pa28g2/image/upload/v1766659167/dhtavt_r2rxdm.jpg',1,'2026-05-16 23:13:48');
+INSERT INTO `user` VALUES (1,'admin','$2a$12$wV/sS6FXhLkHizb9eE53XOd78yFywL8hwO.LhuMPylOFn69RZ/NdK','tuan557552@gmail.com','0334903055','ROLE_ADMIN','https://res.cloudinary.com/dt1pa28g2/image/upload/v1766659167/dhtavt_r2rxdm.jpg',1,'2026-05-16 23:13:48'),(2,'staff_le','$2a$12$UBLh2VKTDE412Hv6GMu3cesB2Q7y6/WlnfZc0D70MipiIx/vJASJ.','staff.le@gmail.com','0911111111','ROLE_STAFF','https://res.cloudinary.com/dt1pa28g2/image/upload/v1766659167/dhtavt_r2rxdm.jpg',1,'2026-05-18 07:06:25'),(3,'maid_hoa','$2a$12$UBLh2VKTDE412Hv6GMu3cesB2Q7y6/WlnfZc0D70MipiIx/vJASJ.','maid.hoa@gmail.com','0922222222','ROLE_HOUSEKEEPING','https://res.cloudinary.com/dt1pa28g2/image/upload/v1766659167/dhtavt_r2rxdm.jpg',1,'2026-05-18 07:06:25'),(4,'cus_long','$2a$12$UBLh2VKTDE412Hv6GMu3cesB2Q7y6/WlnfZc0D70MipiIx/vJASJ.','longpham99@gmail.com','0987654321','ROLE_CUSTOMER','https://res.cloudinary.com/dt1pa28g2/image/upload/v1766659167/dhtavt_r2rxdm.jpg',1,'2026-05-18 07:06:25'),(5,'cus_thanh','$2a$12$UBLh2VKTDE412Hv6GMu3cesB2Q7y6/WlnfZc0D70MipiIx/vJASJ.','thanh.le@yahoo.com','0934567890','ROLE_CUSTOMER','https://res.cloudinary.com/dt1pa28g2/image/upload/v1766659167/dhtavt_r2rxdm.jpg',1,'2026-05-18 07:06:25');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -345,4 +345,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-18  9:56:33
+-- Dump completed on 2026-05-18 18:37:42

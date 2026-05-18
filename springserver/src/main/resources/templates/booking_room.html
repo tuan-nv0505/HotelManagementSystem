@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head}">
+    <title>Quản lý chi tiết phòng đặt</title>
+</head>
+<body th:replace="~{layout/base :: main('booking_room', ~{:: #booking-room-content})}">
+
+<div id="booking-room-content">
+    <div class="table-responsive border shadow-sm">
+        <table class="table table-striped table-hover mb-0 align-middle text-center">
+            <thead class="table-dark">
+            <tr>
+                <th colspan="5">
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
+                                data-bs-toggle="modal" data-bs-target="#addBookingRoomModal">
+                            Thêm phòng vào đơn
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
+                                onclick="deleteSelectedBookingRooms()">
+                            Xoá
+                        </button>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th style="width: 40px; vertical-align: middle;">
+                    <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-booking-room')"
+                           id="selectAllBookingRoom">
+                </th>
+                <th>Khách hàng đặt phòng</th>
+                <th>Số phòng</th>
+                <th>Giá lúc đặt</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="br : ${bookingRooms}">
+                <td style="vertical-align: middle;">
+                    <input type="checkbox" class="action-select-booking-room" th:value="${br.id}"
+                           onclick="resetSelectAllCheckBox('selectAllBookingRoom', 'action-select-booking-room')">
+                </td>
+                <td class="fw-bold text-secondary" th:text="'#' + ${br.bookingCustomerName}"></td>
+
+                <td class="fw-bold text-dark" th:text="'Phòng ' + ${br.roomName}"></td>
+
+                <td class="fw-bold text-danger"
+                    th:text="${#numbers.formatDecimal(br.priceAtBooking, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
+                            data-bs-toggle="modal"
+                            th:data-bs-target="|#editBookingRoomModal-${br.id}|">
+                        Sửa
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger rounded-0 fw-bold"
+                            th:onclick="|deleteBookingRoom(${br.id})|">Xoá
+                    </button>
+                </td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(bookingRooms)}">
+                <td colspan="5" class="text-muted py-4">Chưa có phòng nào được gán vào đơn đặt trong hệ thống.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <th:block th:each="br : ${bookingRooms}">
+        <div th:replace="~{modals/base :: genericModal(
+                |editBookingRoomModal-${br.id}|,
+                'Cập nhật thông tin phòng đặt',
+                ~{modals/booking_room_fields :: bookingRoomBody(${br})},
+                ~{modals/booking_room_fields :: bookingRoomFooter},
+                '/admin/booking_rooms/update'
+            )}"></div>
+    </th:block>
+
+    <div th:replace="~{modals/base :: genericModal(
+        'addBookingRoomModal',
+        'Gán thêm phòng vào đơn đặt',
+        ~{modals/booking_room_fields :: bookingRoomBody(null)},
+        ~{modals/booking_room_fields :: bookingRoomFooter},
+        '/admin/booking_rooms/save'
+    )}"></div>
+
+</div>
+</body>
+</html>
