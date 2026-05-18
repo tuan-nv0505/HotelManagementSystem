@@ -16,7 +16,8 @@
                                 data-bs-toggle="modal" data-bs-target="#addServiceModal">
                             Thêm
                         </button>
-                        <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold" onclick="deleteSelectedServices()">
+                        <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
+                                onclick="deleteSelectedServices()">
                             Xoá
                         </button>
                     </div>
@@ -24,7 +25,8 @@
             </tr>
             <tr>
                 <th style="width: 40px; vertical-align: middle;">
-                    <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-service')" id="selectAllService">
+                    <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-service')"
+                           id="selectAllService">
                 </th>
                 <th class="text-start">Tên dịch vụ</th>
                 <th>Giá tiêu chuẩn</th>
@@ -33,23 +35,29 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="service : ${listService}">
+            <tr th:each="s : ${listService}">
                 <td style="vertical-align: middle;">
-                    <input type="checkbox" class="action-select-service" th:value="${service.id}" onclick="resetSelectAllCheckBox('selectAllService', 'action-select-service')">
+                    <input type="checkbox" class="action-select-service" th:value="${s.id}"
+                           onclick="resetSelectAllCheckBox('selectAllService', 'action-select-service')">
                 </td>
-                <td class="text-start fw-bold" th:text="${service.name}"></td>
-                <td th:text="${#numbers.formatDecimal(service.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                <td hidden th:text="${s.id}"></td>
+                <td class="text-start fw-bold" th:text="${s.name}"></td>
+                <td th:text="${#numbers.formatDecimal(s.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
                 <td>
-                    <span th:if="${service.active}">Còn sử dụng</span>
-                    <span th:unless="${service.active}">Không sử dụng</span>
+                    <span th:if="${s.active}">Còn sử dụng</span>
+                    <span th:unless="${s.active}">Không sử dụng</span>
                 </td>
                 <td>
                     <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
-                            data-bs-toggle="modal"
-                            th:data-bs-target="'#editServiceModal-' + ${service.id}">
+                            th:data-id="${s.id}"
+                            th:data-name="${s.name}"
+                            th:data-price="${s.price}"
+                            th:data-active="${s.active}"
+                            onclick="openEditServiceModal(this)">
                         Sửa
                     </button>
-                    <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold" th:onclick="'deleteService(' + ${service.id} + ')'">Xoá</button>
+
+                    <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold">Xoá</button>
                 </td>
             </tr>
 
@@ -63,20 +71,14 @@
     <div th:replace="~{modals/base :: genericModal(
         'addServiceModal',
         'Thêm mới dịch vụ',
-        ~{modals/service_fields :: serviceBody(null)},
-        ~{modals/service_fields :: serviceFooter},
-        '/admin/service/save'
+        ~{modals/service_form :: serviceForm('add')}
     )}"></div>
 
-    <th:block th:each="service : ${listService}">
-        <div th:replace="~{modals/base :: genericModal(
-                'editServiceModal-' + ${service.id},
-                'Sửa dịch vụ: ',
-                ~{modals/service_fields :: serviceBody(${service})},
-                ~{modals/service_fields :: serviceFooter},
-                '/admin/services/update'
-            )}"></div>
-    </th:block>
+    <div th:replace="~{modals/base :: genericModal(
+        'editServiceModal',
+        'Sửa dịch vụ',
+        ~{modals/service_form :: serviceForm('edit')}
+    )}"></div>
 
 </div>
 </body>

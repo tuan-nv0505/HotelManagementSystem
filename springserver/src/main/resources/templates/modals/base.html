@@ -1,4 +1,4 @@
-<div th:fragment="genericModal(modalId, modalTitle, bodyFragment, footerFragment, actionUrl)"
+<div th:fragment="genericModal(modalId, modalTitle, form)"
      th:id="${modalId}" class="modal fade" tabindex="-1" aria-hidden="true">
 
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -8,14 +8,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form method="POST" th:action="@{${actionUrl}}">
-                <div class="modal-body p-4">
-                    <div th:replace="${bodyFragment}"></div>
-                </div>
-                <div class="modal-footer bg-light py-2 border-top-0">
-                    <div th:replace="${footerFragment}"></div>
-                </div>
-            </form>
+            <div th:replace="${form}"></div>
         </div>
     </div>
 </div>
