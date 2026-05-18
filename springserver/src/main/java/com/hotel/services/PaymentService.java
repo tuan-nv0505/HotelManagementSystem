@@ -1,9 +1,9 @@
 package com.hotel.services;
 
-import com.hotel.entity.Payment;
+import com.hotel.dto.PaymentDTO;
 
 import java.util.List;
 
 public interface PaymentService {
-    List<Payment> getAllPayments();
+    List<PaymentDTO> getAllPayments();
 }

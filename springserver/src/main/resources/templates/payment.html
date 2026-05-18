@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head}">
+    <title>Quản lý thanh toán</title>
+</head>
+<body th:replace="~{layout/base :: main('payment', ~{:: #payment-content})}">
+
+<div id="payment-content">
+    <div class="table-responsive border shadow-sm">
+        <table class="table table-striped table-hover mb-0 align-middle text-center">
+            <thead class="table-dark">
+            <tr>
+                <th colspan="9">
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
+                                data-bs-toggle="modal" data-bs-target="#addPaymentModal">
+                            Thêm hóa đơn
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
+                                onclick="deleteSelectedPayments()">
+                            Xoá
+                        </button>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th style="width: 40px; vertical-align: middle;">
+                    <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-payment')"
+                           id="selectAllPayment">
+                </th>
+                <th>Khách hàng thanh toán</th>
+                <th>Nhân viên phụ trách</th>
+                <th class="text-start">Mã giao dịch</th>
+                <th>Phương thức</th>
+                <th>Loại giao dịch</th>
+                <th>Số tiền</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="payment : ${payments}">
+                <td style="vertical-align: middle;">
+                    <input type="checkbox" class="action-select-payment" th:value="${payment.id}"
+                           onclick="resetSelectAllCheckBox('selectAllPayment', 'action-select-payment')">
+                </td>
+                <td class="fw-bold text-secondary" th:text="'#' + ${payment.bookingCustomerName}"></td>
+                <td th:text="${payment.staffUsername}"></td>
+                <td class="text-start font-monospace small"
+                    th:text="${payment.transactionCode != null ? payment.transactionCode : 'N/A'}"></td>
+
+                <td th:text="${payment.paymentMethod}"></td>
+
+                <td>
+                    <span th:if="${payment.paymentContext == 'PAYMENT'}"
+                          class="badge bg-info text-dark">Thanh toán</span>
+                    <span th:unless="${payment.paymentContext == 'PAYMENT'}" class="badge bg-secondary">Hoàn tiền</span>
+                </td>
+
+                <td class="fw-bold text-dark"
+                    th:text="${#numbers.formatDecimal(payment.amount, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+
+                <td>
+                    <span th:if="${payment.status == 'COMPLETED'}" class="badge bg-success">Thành công</span>
+                    <span th:if="${payment.status == 'PENDING'}" class="badge bg-warning text-dark">Chờ duyệt</span>
+                    <span th:if="${payment.status == 'FAILED'}" class="badge bg-danger">Thất bại</span>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
+                            data-bs-toggle="modal"
+                            th:data-bs-target="|#editPaymentModal-${payment.id}|">
+                        Sửa
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger rounded-0 fw-bold"
+                            th:onclick="|deletePayment(${payment.id})|">Xoá
+                    </button>
+                </td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(payments)}">
+                <td colspan="8" class="text-muted py-4">Chưa có dữ liệu giao dịch nào trong hệ thống.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <th:block th:each="payment : ${payments}">
+        <div th:replace="~{modals/base :: genericModal(
+                |editPaymentModal-${payment.id}|,
+                'Cập nhật thông tin giao dịch',
+                ~{modals/payment_fields :: paymentBody(${payment})},
+                ~{modals/payment_fields :: paymentFooter},
+                '/admin/payments/update'
+            )}"></div>
+    </th:block>
+
+    <div th:replace="~{modals/base :: genericModal(
+        'addPaymentModal',
+        'Tạo mới hóa đơn thanh toán',
+        ~{modals/payment_fields :: paymentBody(null)},
+        ~{modals/payment_fields :: paymentFooter},
+        '/admin/payments/save'
+    )}"></div>
+
+</div>
+</body>
+</html>

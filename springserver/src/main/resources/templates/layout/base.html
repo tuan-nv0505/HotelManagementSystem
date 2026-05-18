@@ -58,14 +58,36 @@
                        th:classappend="${activeMenu == 'customer' ? 'text-white' : 'text-dark'}">
                         Khách hàng
                     </a>
-                    <button type="button"
-                            class="btn btn-sm px-2 py-1 lh-1"
-                            th:classappend="${activeMenu == 'customer' ? 'btn-outline-light' : 'btn-outline-dark'}"
-                            data-bs-toggle="modal"
-                            data-bs-target="#addCustomerModal">
-                        <i class="bi bi-plus"></i>
-                    </button>
+                </div>
+            </div>
 
+            <div class="list-group rounded-0 border">
+                <div class="list-group-item border-0 border-bottom d-flex justify-content-between align-items-center py-2"
+                     th:classappend="${activeMenu == 'user' ? 'active bg-dark text-white' : 'text-dark bg-light'}">
+                    <a th:href="@{/admin/users}" class="text-decoration-none flex-grow-1"
+                       th:classappend="${activeMenu == 'user' ? 'text-white' : 'text-dark'}">
+                        Người dùng
+                    </a>
+                </div>
+            </div>
+
+            <div class="list-group rounded-0 border">
+                <div class="list-group-item border-0 border-bottom d-flex justify-content-between align-items-center py-2"
+                     th:classappend="${activeMenu == 'payment' ? 'active bg-dark text-white' : 'text-dark bg-light'}">
+                    <a th:href="@{/admin/payments}" class="text-decoration-none flex-grow-1"
+                       th:classappend="${activeMenu == 'payment' ? 'text-white' : 'text-dark'}">
+                        Thanh toán
+                    </a>
+                </div>
+            </div>
+
+            <div class="list-group rounded-0 border">
+                <div class="list-group-item border-0 border-bottom d-flex justify-content-between align-items-center py-2"
+                     th:classappend="${activeMenu == 'booking_room' ? 'active bg-dark text-white' : 'text-dark bg-light'}">
+                    <a th:href="@{/admin/booking_rooms}" class="text-decoration-none flex-grow-1"
+                       th:classappend="${activeMenu == 'booking_room' ? 'text-white' : 'text-dark'}">
+                        Đơn đặt - Phòng
+                    </a>
                 </div>
             </div>
         </nav>

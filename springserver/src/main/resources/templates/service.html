@@ -16,7 +16,8 @@
                                 data-bs-toggle="modal" data-bs-target="#addServiceModal">
                             Thêm
                         </button>
-                        <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold" onclick="deleteSelectedServices()">
+                        <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
+                                onclick="deleteSelectedServices()">
                             Xoá
                         </button>
                     </div>
@@ -24,7 +25,8 @@
             </tr>
             <tr>
                 <th style="width: 40px; vertical-align: middle;">
-                    <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-service')" id="selectAllService">
+                    <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-service')"
+                           id="selectAllService">
                 </th>
                 <th class="text-start">Tên dịch vụ</th>
                 <th>Giá tiêu chuẩn</th>
@@ -35,7 +37,8 @@
             <tbody>
             <tr th:each="service : ${listService}">
                 <td style="vertical-align: middle;">
-                    <input type="checkbox" class="action-select-service" th:value="${service.id}" onclick="resetSelectAllCheckBox('selectAllService', 'action-select-service')">
+                    <input type="checkbox" class="action-select-service" th:value="${service.id}"
+                           onclick="resetSelectAllCheckBox('selectAllService', 'action-select-service')">
                 </td>
                 <td class="text-start fw-bold" th:text="${service.name}"></td>
                 <td th:text="${#numbers.formatDecimal(service.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
@@ -49,7 +52,9 @@
                             th:data-bs-target="'#editServiceModal-' + ${service.id}">
                         Sửa
                     </button>
-                    <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold" th:onclick="'deleteService(' + ${service.id} + ')'">Xoá</button>
+                    <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
+                            th:onclick="'deleteService(' + ${service.id} + ')'">Xoá
+                    </button>
                 </td>
             </tr>
 

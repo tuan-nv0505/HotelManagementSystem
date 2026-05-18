@@ -30,7 +30,8 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         query.multiselect(root.get("id"), root.get("name"),
                 root.get("email"), root.get("phone"),
                 root.get("address"), root.get("active"));
-        query.where(builder.or(builder.notEqual(join.get("role"), RoleUser.ROLE_ADMIN.name()),
+
+        query.where(builder.or(builder.equal(join.get("role"), RoleUser.ROLE_CUSTOMER.name()),
                 builder.isNull(root.get("user"))));
 
         return session.createQuery(query).getResultList();

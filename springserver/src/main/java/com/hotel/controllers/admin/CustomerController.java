@@ -14,7 +14,7 @@ public class CustomerController {
     private CustomerService customerService;
 
     @GetMapping("/customers")
-    public String CustomerView(Model model) {
+    public String customerView(Model model) {
         model.addAttribute("listCustomers", customerService.getAllCustomers());
         return "customer";
     }

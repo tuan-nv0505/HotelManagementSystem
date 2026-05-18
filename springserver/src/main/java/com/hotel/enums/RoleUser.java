@@ -14,4 +14,14 @@ public enum RoleUser {
     RoleUser(String role) {
         this.role = role;
     }
+
+    public static String getValue(String roleUser) {
+        for (RoleUser role : RoleUser.values()) {
+            if (role.toString().equals(roleUser)) {
+                return role.getRole();
+            }
+        }
+
+        return null;
+    }
 }

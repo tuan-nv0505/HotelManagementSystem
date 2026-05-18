@@ -39,5 +39,4 @@ public class Customer {
     @Column(name = "active")
     private Boolean active;
 
-
 }

@@ -1,6 +1,7 @@
 package com.hotel.services.impl;
 
 import com.hotel.entity.User;
+import com.hotel.enums.RoleUser;
 import com.hotel.repositories.UserRepository;
 import com.hotel.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsers() {
-        return userRepository.getAllUsers();
+        List<User> users = this.userRepository.getAllUsers();
+
+        for (User u : users) {
+            u.setRole(RoleUser.getValue(u.getRole()));
+        }
+
+        return users;
     }
 }
