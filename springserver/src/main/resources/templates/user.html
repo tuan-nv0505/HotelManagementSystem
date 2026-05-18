@@ -16,8 +16,7 @@
                                 data-bs-toggle="modal" data-bs-target="#addUserModal">
                             Thêm
                         </button>
-                        <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
-                                onclick="deleteSelectedUsers()">
+                        <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold">
                             Xoá
                         </button>
                     </div>
@@ -38,7 +37,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="user : ${users}">
+            <tr th:each="user : ${listUsers}">
                 <td style="vertical-align: middle;">
                     <input type="checkbox" class="action-select-user" th:value="${user.id}"
                            onclick="resetSelectAllCheckBox('selectAllUser', 'action-select-user')">
@@ -58,39 +57,38 @@
                 </td>
                 <td>
                     <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
-                            data-bs-toggle="modal"
-                            th:data-bs-target="|#editUserModal-${user.id}|">
+                            th:data-id="${user.id}"
+                            th:data-avatar="${user.avatar}"
+                            th:data-username="${user.username}"
+                            th:data-email="${user.email}"
+                            th:data-phone="${user.phone}"
+                            th:data-role="${user.role}"
+                            th:data-active="${user.active}"
+                            onclick="openEditUserModal(this)">
                         Sửa
                     </button>
-                    <button type="button" class="btn btn-sm btn-outline-danger rounded-0 fw-bold"
-                            th:onclick="|deleteUser(${user.id})|">Xoá
+                    <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold">Xoá
                     </button>
                 </td>
             </tr>
 
-            <tr th:if="${#lists.isEmpty(users)}">
+            <tr th:if="${#lists.isEmpty(listUsers)}">
                 <td colspan="8" class="text-muted py-4">Chưa có người dùng nào trong hệ thống.</td>
             </tr>
             </tbody>
         </table>
     </div>
 
-    <th:block th:each="user : ${users}">
-        <div th:replace="~{modals/base :: genericModal(
-                |editUserModal-${user.id}|,
-                'Sửa thông tin người dùng',
-                ~{modals/user_fields :: userBody(${user})},
-                ~{modals/user_fields :: userFooter},
-                '/admin/users/update'
-            )}"></div>
-    </th:block>
-
     <div th:replace="~{modals/base :: genericModal(
         'addUserModal',
         'Thêm mới người dùng',
-        ~{modals/user_fields :: userBody(null)},
-        ~{modals/user_fields :: userFooter},
-        '/admin/users/save'
+        ~{modals/user_form :: userForm('add')}
+    )}"></div>
+
+    <div th:replace="~{modals/base :: genericModal(
+        'editUserModal',
+        'Sửa thông tin người dùng',
+        ~{modals/user_form :: userForm('edit')}
     )}"></div>
 
 </div>

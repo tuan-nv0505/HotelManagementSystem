@@ -1,14 +1,14 @@
-<div th:fragment="customerForm(type)">
-    <form method="POST" th:action="@{/admin/customers}" th:object="${customer}">
+<div th:fragment="userForm(type)">
+    <form method="POST" th:action="@{/admin/users}" th:object="${user}">
         <div class="modal-body p-4">
-            <input type="hidden" name="id" th:id="${type + 'CustomerId'}">
+            <input type="hidden" name="id" th:id="${type + 'UserId'}">
 
             <div class="row mb-3 align-items-center">
-                <label class="col-sm-3 col-form-label text-end fw-bold small">Tên khách hàng:</label>
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Tên đăng nhập:</label>
                 <div class="col-sm-9">
-                    <input type="text" name="name"
-                           th:id="${type + 'CustomerName'}"
-                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="Nhập tên khách hàng"
+                    <input type="text" name="username"
+                           th:id="${type + 'UserName'}"
+                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="Nhập tên đăng nhập"
                            required>
                 </div>
             </div>
@@ -17,9 +17,9 @@
                 <label class="col-sm-3 col-form-label text-end fw-bold small">Email:</label>
                 <div class="col-sm-9">
                     <input type="text" name="email"
-                           th:id="${type + 'CustomerEmail'}"
+                           th:id="${type + 'UserEmail'}"
                            class="form-control form-control-sm rounded-0 shadow-none"
-                           placeholder="Nhập email khách hàng"
+                           placeholder="Nhập email người dùng"
                            required>
                 </div>
             </div>
@@ -28,21 +28,27 @@
                 <label class="col-sm-3 col-form-label text-end fw-bold small">Số điện thoại:</label>
                 <div class="col-sm-9">
                     <input type="text" name="phone"
-                           th:id="${type + 'CustomerPhone'}"
+                           th:id="${type + 'UserPhone'}"
                            class="form-control form-control-sm rounded-0 shadow-none"
-                           placeholder="Nhập số điện thoại khách hàng"
+                           placeholder="Nhập số điện thoại người dùng"
                            required>
                 </div>
             </div>
 
             <div class="row mb-3 align-items-center">
-                <label class="col-sm-3 col-form-label text-end fw-bold small">Địa chỉ:</label>
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Vai trò:</label>
                 <div class="col-sm-9">
-                    <input type="text" name="address"
-                           th:id="${type + 'CustomerAddress'}"
-                           class="form-control form-control-sm rounded-0 shadow-none"
-                           placeholder="Nhập địa chỉ khách hàng"
-                           required>
+                    <select name="role"
+                            th:id="${type + 'UserRole'}"
+                            class="form-select form-select-sm rounded-0 shadow-none"
+                            required>
+                        <option value="" disabled selected>-- Chọn vai trò --</option>
+
+                        <option th:each="role : ${roleUsers}"
+                                th:value="${role.name()}"
+                                th:text="${role.name()}">
+                        </option>
+                    </select>
                 </div>
             </div>
 
