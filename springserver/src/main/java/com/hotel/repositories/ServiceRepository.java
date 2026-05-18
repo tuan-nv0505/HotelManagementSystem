@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ServiceRepository {
     List<Service> listService();
+    void addOrUpdateService(Service service);
 }

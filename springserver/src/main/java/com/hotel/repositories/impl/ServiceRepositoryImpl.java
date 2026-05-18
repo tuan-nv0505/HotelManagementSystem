@@ -21,4 +21,14 @@ public class ServiceRepositoryImpl implements ServiceRepository {
         Session session = factory.getObject().getCurrentSession();
         return session.createQuery("FROM Service").getResultList();
     }
+
+    @Override
+    public void addOrUpdateService(Service service) {
+        Session session = this.factory.getObject().getCurrentSession();
+        if (service.getId() == null) {
+            session.persist(service);
+        } else {
+            session.merge(service);
+        }
+    }
 }
