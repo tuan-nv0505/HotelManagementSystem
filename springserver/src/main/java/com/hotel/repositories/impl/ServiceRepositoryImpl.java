@@ -2,24 +2,89 @@ package com.hotel.repositories.impl;
 
 import com.hotel.entity.Service;
 import com.hotel.repositories.ServiceRepository;
+import jakarta.persistence.Query;
+import jakarta.persistence.criteria.*;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @Transactional
+@PropertySource("classpath:configs.properties")
 public class ServiceRepositoryImpl implements ServiceRepository {
+    @Autowired
+    private Environment env;
     @Autowired
     private LocalSessionFactoryBean factory;
 
     @Override
-    public List<Service> listService() {
+    public List<Service> listService(Map<String, String> params) {
         Session session = factory.getObject().getCurrentSession();
-        return session.createQuery("FROM Service").getResultList();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Service> criteriaQuery = builder.createQuery(Service.class);
+        Root<Service> root = criteriaQuery.from(Service.class);
+
+        List<Predicate> predicates = getPredicates(params, builder, root);
+        criteriaQuery.where(predicates.toArray(Predicate[]::new));
+        criteriaQuery.orderBy(builder.desc(root.get("id")));
+
+        Query query = session.createQuery(criteriaQuery);
+
+        if (params != null) {
+            int pageSize = this.env.getProperty("services.page_size", Integer.class);
+            int page = Integer.parseInt(params.getOrDefault("page", "0"));
+            int start = page * pageSize;
+
+            query.setMaxResults(pageSize);
+            query.setFirstResult(start);
+        }
+
+        return query.getResultList();
+    }
+
+    @Override
+    public long countService(Map<String, String> params) {
+        Session session = factory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+        Root<Service> root = criteriaQuery.from(Service.class);
+
+        criteriaQuery.select(builder.count(root));
+
+        List<Predicate> predicates = getPredicates(params, builder, root);
+        criteriaQuery.where(predicates.toArray(Predicate[]::new));
+
+        Query query = session.createQuery(criteriaQuery);
+        return (Long) query.getSingleResult();
+    }
+
+    private List<Predicate> getPredicates(Map<String, String> params, CriteriaBuilder builder, Root<Service> root) {
+        List<Predicate> predicates = new ArrayList<>();
+        if (params != null) {
+            String kw = params.get("kw");
+            if (kw != null && !kw.isEmpty()) {
+                predicates.add(builder.like(root.get("name"), String.format("%%%s%%", kw)));
+            }
+
+            String fromPrice = params.get("fromPrice");
+            if (fromPrice != null && !fromPrice.isEmpty()) {
+                predicates.add(builder.greaterThanOrEqualTo(root.get("price"), Double.parseDouble(fromPrice)));
+            }
+
+            String toPrice = params.get("toPrice");
+            if (toPrice != null && !toPrice.isEmpty()) {
+                predicates.add(builder.lessThanOrEqualTo(root.get("price"), Double.parseDouble(toPrice)));
+            }
+        }
+        return predicates;
     }
 
     @Override
@@ -30,5 +95,25 @@ public class ServiceRepositoryImpl implements ServiceRepository {
         } else {
             session.merge(service);
         }
+    }
+
+    @Override
+    public void deleteService(int id) {
+        Session session = this.factory.getObject().getCurrentSession();
+        Service service = session.get(Service.class, id);
+        session.remove(service);
+    }
+
+    @Override
+    public void deleteService(List<Integer> ids) {
+        Session session = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaDelete<Service> criteriaDelete = builder.createCriteriaDelete(Service.class);
+        Root<Service> root = criteriaDelete.from(Service.class);
+
+        criteriaDelete.where(root.get("id").in(ids));
+
+        session.createMutationQuery(criteriaDelete).executeUpdate();
+        System.out.println("OK");
     }
 }
