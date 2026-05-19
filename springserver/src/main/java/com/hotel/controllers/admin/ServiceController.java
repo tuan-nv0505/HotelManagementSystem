@@ -3,32 +3,49 @@ package com.hotel.controllers.admin;
 import com.hotel.entity.Service;
 import com.hotel.services.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/admin")
+@PropertySource("classpath:configs.properties")
 public class ServiceController {
     @Autowired
     private ServiceService serviceService;
+    @Autowired
+    private Environment env;
 
     @GetMapping("/services")
-    public String ServiceView(Model model) {
+    public String serviceView(Model model, @RequestParam Map<String, String> params) {
+
         model.addAttribute("service", new Service());
-        model.addAttribute("listService", this.serviceService.listService());
+        model.addAttribute("listService", this.serviceService.listService(params));
+
+        model.addAttribute("kw", params.get("kw"));
+        model.addAttribute("fromPrice", params.get("fromPrice"));
+        model.addAttribute("toPrice", params.get("toPrice"));
+
+        int pageSize = this.env.getProperty("services.page_size", Integer.class, 5);
+        long totalServices = this.serviceService.countService(params);
+        int totalPages = (int) Math.ceil((double) totalServices / pageSize);
+        List<Integer> listPage = IntStream.range(0, totalPages).boxed().toList();
+        model.addAttribute("listPage", listPage);
+        model.addAttribute("currentPage", params.getOrDefault("key", "0"));
+
         return "service";
     }
 
     @PostMapping("/services")
     public String processService(@ModelAttribute(name = "service") Service service) {
         System.out.println(service.getId());
-        System.out.println(service.getName());
-        System.out.println(service.getActive());
-        System.out.println(service.getPrice());
-        return "service";
+        this.serviceService.addOrUpdateService(service);
+        return "redirect:/admin/services";
     }
 }

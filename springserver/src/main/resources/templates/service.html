@@ -6,83 +6,100 @@
 <body th:replace="~{layout/base :: main('service', ~{:: #service-content})}">
 
 <div id="service-content">
-    <div class="table-responsive border shadow-sm">
-        <table class="table table-striped table-hover mb-0 align-middle text-center">
-            <thead class="table-dark">
-            <tr>
-                <th colspan="5">
-                    <div class="d-flex align-items-center gap-2">
+    <div id="tableContainer" th:fragment="service-table-fragment">
+        <div class="table-responsive border shadow-sm bg-white">
+            <table class="table table-striped table-hover mb-0 align-middle text-center">
+                <thead class="table-dark">
+                <tr>
+                    <th colspan="5">
+                        <div class="d-flex align-items-center gap-3 w-100 py-1">
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-sm btn-dark rounded-0 fw-bold" data-bs-toggle="modal" data-bs-target="#addServiceModal">
+                                    Thêm
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
+                                        th:onclick="|deleteMulti('@{/api/services}', 'service')|">
+                                    Xoá
+                                </button>
+                            </div>
+
+                            <div class="mx-auto" style="min-width: 250px; max-width: 600px;">
+                                <form id="searchForm" class="d-flex gap-2" onsubmit="loadTableData(0); return false;">
+                                    <input type="text" name="kw" th:value="${kw}" class="form-control form-control-sm rounded-0 shadow-none" placeholder="Tên dịch vụ...">
+                                    <input type="number" name="fromPrice" th:value="${fromPrice}" class="form-control form-control-sm rounded-0 shadow-none" placeholder="Từ giá" min="0">
+                                    <input type="number" name="toPrice" th:value="${toPrice}" class="form-control form-control-sm rounded-0 shadow-none" placeholder="Đến giá" min="0">
+                                    <button type="submit" class="btn btn-dark btn-sm rounded-0">Tìm</button>
+                                </form>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+                <tr>
+                    <th style="width: 40px; vertical-align: middle;">
+                        <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-service')"
+                               id="selectAllService">
+                    </th>
+                    <th class="text-start">Tên dịch vụ</th>
+                    <th>Giá tiêu chuẩn</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="s : ${listService}">
+                    <td style="vertical-align: middle;">
+                        <input type="checkbox" class="action-select-service"
+                               th:value="${s.id}"
+                               th:data-id="${s.id}"
+                               th:data-name="${s.name}"
+                               th:data-price="${s.price}"
+                               th:data-active="${s.active}"
+                               onclick="resetSelectAllCheckBox('selectAllService', 'action-select-service')">
+                    </td>
+                    <td hidden th:text="${s.id}"></td>
+                    <td class="text-start fw-bold" th:text="${s.name}"></td>
+                    <td th:text="${#numbers.formatDecimal(s.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                    <td>
+                        <span th:if="${s.active}">Còn sử dụng</span>
+                        <span th:unless="${s.active}">Không sử dụng</span>
+                    </td>
+                    <td>
                         <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
-                                data-bs-toggle="modal" data-bs-target="#addServiceModal">
-                            Thêm
+                                th:data-id="${s.id}"
+                                th:data-name="${s.name}"
+                                th:data-price="${s.price}"
+                                th:data-active="${s.active}"
+                                onclick="openEditModal(this, 'Service')">
+                            Sửa
                         </button>
-                        <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
-                                onclick="deleteSelectedServices()">
-                            Xoá
-                        </button>
-                    </div>
-                </th>
-            </tr>
-            <tr>
-                <th style="width: 40px; vertical-align: middle;">
-                    <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-service')"
-                           id="selectAllService">
-                </th>
-                <th class="text-start">Tên dịch vụ</th>
-                <th>Giá tiêu chuẩn</th>
-                <th>Trạng thái</th>
-                <th>Thao tác</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="s : ${listService}">
-                <td style="vertical-align: middle;">
-                    <input type="checkbox" class="action-select-service" th:value="${service.id}"
-                           onclick="resetSelectAllCheckBox('selectAllService', 'action-select-service')">
-                </td>
-                <td hidden th:text="${s.id}"></td>
-                <td class="text-start fw-bold" th:text="${s.name}"></td>
-                <td th:text="${#numbers.formatDecimal(s.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
-                <td>
-                    <span th:if="${s.active}">Còn sử dụng</span>
-                    <span th:unless="${s.active}">Không sử dụng</span>
-                </td>
-                <td>
-                    <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
-                            th:data-id="${s.id}"
-                            th:data-name="${s.name}"
-                            th:data-price="${s.price}"
-                            th:data-active="${s.active}"
-                            onclick="openEditServiceModal(this)">
-                        Sửa
-                    </button>
 
-                    <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
-                            th:onclick="'deleteService(' + ${service.id} + ')'">Xoá
-                    </button>
+                        <button th:id="|deleteService-${s.id}|" th:onclick="|deleteDetail('@{/api/services/{id}(id=${s.id})}')|" type="button" class="btn btn-sm btn-danger rounded-0 fw-bold">Xoá</button>
+                    </td>
+                </tr>
 
+                <tr th:if="${#lists.isEmpty(listService)}">
+                    <td colspan="5" class="text-muted py-4">Chưa có dịch vụ nào trong hệ thống.</td>
+                </tr>
+                </tbody>
+            </table>
 
-                </td>
-            </tr>
+            <div class="d-flex justify-content-center p-2 border-top bg-light"
+                 th:if="${not #lists.isEmpty(listPage)}">
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item" th:each="page : ${listPage}">
+                        <a class="page-link py-1 shadow-none"
+                           th:href="@{/admin/services(page=${page},kw=${kw},fromPrice=${fromPrice},toPrice=${toPrice})}"
+                           th:text="${page}">
+                        </a>
+                    </li>
+                </ul>
+            </div>
 
-            <tr th:if="${#lists.isEmpty(listService)}">
-                <td colspan="5" class="text-muted py-4">Chưa có dịch vụ nào trong hệ thống.</td>
-            </tr>
-            </tbody>
-        </table>
+        </div>
     </div>
 
-    <div th:replace="~{modals/base :: genericModal(
-        'addServiceModal',
-        'Thêm mới dịch vụ',
-        ~{modals/service_form :: serviceForm('add')}
-    )}"></div>
-
-    <div th:replace="~{modals/base :: genericModal(
-        'editServiceModal',
-        'Sửa dịch vụ',
-        ~{modals/service_form :: serviceForm('edit')}
-    )}"></div>
+    <div th:replace="~{modals/base :: genericModal('addServiceModal', 'Thêm mới dịch vụ', ~{modals/service_form :: serviceForm('add')})}"></div>
+    <div th:replace="~{modals/base :: genericModal('editServiceModal', 'Sửa dịch vụ', ~{modals/service_form :: serviceForm('edit')})}"></div>
 
 </div>
 </body>
