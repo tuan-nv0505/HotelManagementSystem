@@ -101,4 +101,9 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     public void delete(List<Integer> ids) {
 
     }
+
+    @Override
+    public Payment get(int id) {
+        return null;
+    }
 }

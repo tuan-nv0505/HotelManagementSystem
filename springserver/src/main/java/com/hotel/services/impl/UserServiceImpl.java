@@ -100,4 +100,9 @@ public class UserServiceImpl implements UserService {
         this.userRepository.delete(ids);
     }
 
+    @Override
+    public UserDTO get(int id) {
+        return null;
+    }
+
 }

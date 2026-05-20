@@ -13,5 +13,4 @@ public class BookingRoomDTO extends BaseDTO {
     private String roomName;
     private Integer roomId;
     private BigDecimal priceAtBooking;
-
 }

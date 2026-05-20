@@ -26,21 +26,38 @@
             <thead class="table-dark">
             <tr>
                 <th colspan="5">
-                    <div class="d-flex align-items-center gap-2 py-1">
-                        <button type="button" class="btn btn-sm btn-dark rounded-0 fw-bold"
-                                data-bs-toggle="modal" data-bs-target="#addBookingRoomModal">
-                            Thêm phòng vào đơn
-                        </button>
-                        <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
-                                th:onclick="|deleteMulti('@{/api/booking_rooms}', 'booking-room')|">
-                            Xoá
-                        </button>
+                    <div class="d-flex align-items-center gap-3 w-100 py-1">
+
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-dark rounded-0 fw-bold"
+                                    data-bs-toggle="modal" data-bs-target="#addBookingRoomModal">
+                                Thêm phòng
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
+                                    th:onclick="|deleteMulti('@{/api/booking_rooms}', 'booking-room')|">
+                                Xoá
+                            </button>
+                        </div>
+
+                        <div class="mx-auto" style="min-width: 250px; max-width: 400px;">
+                            <form id="searchForm" class="d-flex gap-2" onsubmit="loadTableData(0); return false;">
+                                <input type="text" name="customerName" th:value="${customerName}"
+                                       class="form-control form-control-sm rounded-0 shadow-none"
+                                       placeholder="Tên khách hàng...">
+
+                                <input type="text" name="roomName" th:value="${roomName}"
+                                       class="form-control form-control-sm rounded-0 shadow-none"
+                                       placeholder="Số phòng...">
+                                <button type="submit" class="btn btn-dark btn-sm rounded-0">Tìm</button>
+                            </form>
+                        </div>
+
                     </div>
                 </th>
             </tr>
             <tr>
                 <th style="width: 40px; vertical-align: middle;">
-                    <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-booking-room')"
+                    <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-booking_room')"
                            id="selectAllBookingRoom">
                 </th>
                 <th>Khách hàng đặt phòng</th>
@@ -52,10 +69,13 @@
             <tbody>
             <tr th:each="br : ${bookingRooms}">
                 <td style="vertical-align: middle;">
-                    <input type="checkbox" class="action-select-booking-room"
+                    <input type="checkbox" class="action-select-booking_room"
                            th:value="${br.id}"
                            th:data-id="${br.id}"
-                           onclick="resetSelectAllCheckBox('selectAllBookingRoom', 'action-select-booking-room')">
+                           th:data-bookingid="${br.bookingId}"
+                           th:data-roomid="${br.roomId}"
+                           th:data-priceatbooking="${br.priceAtBooking}"
+                           onclick="resetSelectAllCheckBox('selectAllBookingRoom', 'action-select-booking_room')">
                 </td>
                 <td class="fw-bold text-secondary" th:text="'#' + ${br.bookingCustomerName}"></td>
 
@@ -85,70 +105,32 @@
             </tr>
             </tbody>
         </table>
+
+        <div class="d-flex justify-content-center p-2 border-top bg-light"
+             th:if="${not #lists.isEmpty(listPage)}">
+            <ul class="pagination pagination-sm mb-0">
+                <li class="page-item" th:each="page : ${listPage}">
+                    <a class="page-link py-1 shadow-none"
+                       th:href="@{/admin/booking_rooms(page=${page},customerName=${customerName} ,roomName=${roomName})}"
+                       th:text="${page}">
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <div th:replace="~{modals/base :: genericModal(
         'addBookingRoomModal',
         'Gán thêm phòng vào đơn đặt',
-        ~{:: bookingRoomForm('add')}
+        ~{modals/booking_room_form :: bookingRoomForm('add')}
     )}"></div>
 
     <div th:replace="~{modals/base :: genericModal(
         'editBookingRoomModal',
         'Sửa thông tin phòng đặt',
-        ~{:: bookingRoomForm('edit')}
+        ~{modals/booking_room_form :: bookingRoomForm('edit')}
     )}"></div>
 
 </div>
 </body>
 </html>
-
-<div th:fragment="bookingRoomForm(type)">
-    <form method="POST" th:action="@{/admin/booking_rooms}" th:object="${bookingRoom}">
-        <div class="modal-body p-4">
-            <input type="hidden" name="id" th:id="${type + 'BookingRoomId'}">
-
-            <div class="row mb-3 align-items-center">
-                <label class="col-sm-3 col-form-label text-end fw-bold small">Đơn đặt (Khách):</label>
-                <div class="col-sm-9">
-                    <select name="bookingId" th:id="${type + 'BookingRoomBookingid'}"
-                            class="form-select form-select-sm rounded-0 shadow-none" required>
-                        <option value="" disabled selected>-- Chọn đơn đặt phòng --</option>
-                        <option th:each="b : ${allBookings}"
-                                th:value="${b.id}"
-                                th:text="'#' + ${b.id} + ' - ' + ${b.customerName}">
-                        </option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="row mb-3 align-items-center">
-                <label class="col-sm-3 col-form-label text-end fw-bold small">Chọn phòng:</label>
-                <div class="col-sm-9">
-                    <select name="roomId" th:id="${type + 'BookingRoomRoomid'}"
-                            class="form-select form-select-sm rounded-0 shadow-none" required>
-                        <option value="" disabled selected>-- Chọn phòng --</option>
-                        <option th:each="r : ${allRooms}"
-                                th:value="${r.id}"
-                                th:text="'Phòng ' + ${r.name}">
-                        </option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="row mb-3 align-items-center">
-                <label class="col-sm-3 col-form-label text-end fw-bold small">Giá lúc đặt:</label>
-                <div class="col-sm-9">
-                    <input type="number" name="priceAtBooking" th:id="${type + 'BookingRoomPriceatbooking'}"
-                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="0" required>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal-footer bg-light py-2 border-top-0 d-flex justify-content-end gap-2">
-            <button type="button" class="btn btn-outline-secondary btn-sm px-4 rounded-0" data-bs-dismiss="modal">Hủy
-            </button>
-            <button type="submit" class="btn btn-dark btn-sm px-4 rounded-0 fw-bold">Lưu thay đổi</button>
-        </div>
-    </form>
-</div>

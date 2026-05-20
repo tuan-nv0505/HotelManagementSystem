@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface RoomRepository extends BaseRepository<Room>{
-    Room get(int id);
+
 }

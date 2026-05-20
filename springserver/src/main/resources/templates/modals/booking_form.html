@@ -14,7 +14,10 @@
                            required>
 
                     <datalist id="customerSuggestions">
-                        <option th:each="c : ${allCustomers}" th:value="${c.name}"></option>
+                        <option th:each="c : ${allCustomers}"
+                                th:value="${c.name}"
+                                th:label="${c.email + ' - SĐT: ' + c.phone}">
+                        </option>
                     </datalist>
                 </div>
             </div>

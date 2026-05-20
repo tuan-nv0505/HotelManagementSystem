@@ -14,4 +14,8 @@ public class BookingRoomConverter {
     public BookingRoomDTO toBookingRoomDTO(BookingRoom bookingRoom) {
         return modelMapper.map(bookingRoom, BookingRoomDTO.class);
     }
+
+    public BookingRoom toBookingRoom(BookingRoomDTO bookingRoomDTO) {
+        return modelMapper.map(bookingRoomDTO, BookingRoom.class);
+    }
 }

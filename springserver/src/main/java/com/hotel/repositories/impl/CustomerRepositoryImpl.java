@@ -113,6 +113,11 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     }
 
     @Override
+    public Customer get(int id) {
+        return null;
+    }
+
+    @Override
     public Customer getCustomerByName(String name) {
         Session session = this.factory.getObject().getCurrentSession();
         Query query = session.createQuery("from Customer where name=:name");

@@ -126,4 +126,9 @@ public class UserRepositoryImpl implements UserRepository {
 
         session.createMutationQuery(criteriaDelete).executeUpdate();
     }
+
+    @Override
+    public User get(int id) {
+        return null;
+    }
 }

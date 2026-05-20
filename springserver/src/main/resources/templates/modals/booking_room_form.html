@@ -1,0 +1,55 @@
+<div th:fragment="bookingRoomForm(type)">
+    <form method="POST" th:action="@{/admin/booking_rooms}" th:object="${BookingRoomDTO}">
+        <div class="modal-body p-4">
+            <input type="hidden" name="id" th:id="${type + 'BookingRoomId'}">
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Đơn đặt (Khách):</label>
+                <div class="col-sm-9">
+                    <input type="text" name="bookingId" th:id="${type + 'BookingRoomBookingid'}"
+                           class="form-control form-control-sm rounded-0 shadow-none"
+                           placeholder="Gõ ID hoặc tên khách để tìm..."
+                           list="bookingSuggestions" required autocomplete="off">
+
+                    <datalist id="bookingSuggestions">
+                        <option th:each="b : ${allBookings}"
+                                th:value="${b.id}"
+                                th:label="${'#' + b.id + ' - Khách: ' + b.customerName}">
+                        </option>
+                    </datalist>
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Chọn phòng:</label>
+                <div class="col-sm-9">
+                    <input type="text" name="roomId" th:id="${type + 'BookingRoomRoomid'}"
+                           class="form-control form-control-sm rounded-0 shadow-none"
+                           placeholder="Gõ ID hoặc số phòng để tìm..."
+                           list="roomSuggestions" required autocomplete="off">
+
+                    <datalist id="roomSuggestions">
+                        <option th:each="r : ${allRooms}"
+                                th:value="${r.id}"
+                                th:label="${'Phòng ' + r.roomNumber}">
+                        </option>
+                    </datalist>
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Giá lúc đặt:</label>
+                <div class="col-sm-9">
+                    <input type="number" name="priceAtBooking" th:id="${type + 'BookingRoomPriceatbooking'}"
+                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="0" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer bg-light py-2 border-top-0 d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm px-4 rounded-0" data-bs-dismiss="modal">Hủy
+            </button>
+            <button type="submit" class="btn btn-dark btn-sm px-4 rounded-0 fw-bold">Lưu thay đổi</button>
+        </div>
+    </form>
+</div>
