@@ -8,14 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Map;
 
-public interface UserService extends UserDetailsService {
-    List<UserDTO> listUser(Map<String, String> params);
+public interface UserService extends UserDetailsService, BaseService<UserDTO> {
 
-    long countUser(Map<String, String> params);
-
-    void addOrUpdateUser(UserDTO UserDTO);
-
-    void deleteUser(int id);
-
-    void deleteUser(List<Integer> ids);
 }

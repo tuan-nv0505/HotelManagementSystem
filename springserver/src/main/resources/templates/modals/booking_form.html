@@ -1,0 +1,105 @@
+<div th:fragment="bookingForm(type)">
+    <form method="POST" th:action="@{/admin/bookings}" th:object="${booking}">
+        <div class="modal-body p-4">
+            <input type="hidden" name="id" th:id="${type + 'BookingId'}">
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Tên khách hàng:</label>
+                <div class="col-sm-9">
+                    <input type="text" name="customerName"
+                           th:id="${type + 'BookingCustomername'}"
+                           class="form-control form-control-sm rounded-0 shadow-none"
+                           placeholder="Gõ hoặc chọn tên khách hàng..."
+                           list="customerSuggestions"
+                           required>
+
+                    <datalist id="customerSuggestions">
+                        <option th:each="c : ${allCustomers}" th:value="${c.name}"></option>
+                    </datalist>
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Dự kiến nhận:</label>
+                <div class="col-sm-9">
+                    <input type="date" name="expectedCheckIn"
+                           th:id="${type + 'BookingExpectedcheckin'}"
+                           class="form-control form-control-sm rounded-0 shadow-none"
+                           required>
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Dự kiến trả:</label>
+                <div class="col-sm-9">
+                    <input type="date" name="expectedCheckOut"
+                           th:id="${type + 'BookingExpectedcheckout'}"
+                           class="form-control form-control-sm rounded-0 shadow-none"
+                           required>
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Thực tế nhận:</label>
+                <div class="col-sm-9">
+                    <input type="datetime-local" name="actualCheckIn"
+                           th:id="${type + 'BookingActualcheckin'}"
+                           class="form-control form-control-sm rounded-0 shadow-none">
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Thực tế trả:</label>
+                <div class="col-sm-9">
+                    <input type="datetime-local" name="actualCheckOut"
+                           th:id="${type + 'BookingActualcheckout'}"
+                           class="form-control form-control-sm rounded-0 shadow-none">
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Tổng tiền (VNĐ):</label>
+                <div class="col-sm-9">
+                    <input type="number" name="totalAmount"
+                           th:id="${type + 'BookingTotalamount'}"
+                           class="form-control form-control-sm rounded-0 shadow-none"
+                           placeholder="0">
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Yêu cầu thêm:</label>
+                <div class="col-sm-9">
+                    <textarea name="specialRequest"
+                              th:id="${type + 'BookingSpecialrequest'}"
+                              class="form-control form-control-sm rounded-0 shadow-none"
+                              placeholder="Ghi chú yêu cầu của khách hàng..."
+                              rows="2"></textarea>
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Trạng thái:</label>
+                <div class="col-sm-9">
+                    <select name="status"
+                            th:id="${type + 'BookingStatus'}"
+                            class="form-select form-select-sm rounded-0 shadow-none"
+                            required>
+                        <option value="" disabled selected>-- Chọn trạng thái --</option>
+                        <option th:each="status : ${statusBookings}"
+                                th:value="${status.name()}"
+                                th:text="${status.getStatusBooking()}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="modal-footer bg-light py-2 border-top-0 d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm px-4 rounded-0" data-bs-dismiss="modal">Hủy
+            </button>
+            <button type="submit" class="btn btn-dark btn-sm px-4 rounded-0 fw-bold">Lưu thay đổi</button>
+        </div>
+    </form>
+</div>

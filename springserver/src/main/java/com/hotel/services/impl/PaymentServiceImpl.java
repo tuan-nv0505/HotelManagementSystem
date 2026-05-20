@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -22,8 +23,8 @@ public class PaymentServiceImpl implements PaymentService {
     private PaymentConverter paymentConverter;
 
     @Override
-    public List<PaymentDTO> getAllPayments() {
-        List<Payment> payments = paymentRepository.getAllPayments();
+    public List<PaymentDTO> list(Map<String, String> params) {
+        List<Payment> payments = paymentRepository.list(params);
 
         List<PaymentDTO> paymentResponses = new ArrayList<>();
         for (Payment payment : payments) {
@@ -35,5 +36,25 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         return paymentResponses;
+    }
+
+    @Override
+    public long count(Map<String, String> params) {
+        return paymentRepository.count(params);
+    }
+
+    @Override
+    public void addOrUpdate(PaymentDTO dto) {
+
+    }
+
+    @Override
+    public void delete(int id) {
+
+    }
+
+    @Override
+    public void delete(List<Integer> ids) {
+
     }
 }

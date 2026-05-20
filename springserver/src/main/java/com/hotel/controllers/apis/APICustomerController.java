@@ -18,7 +18,7 @@ public class APICustomerController {
     @DeleteMapping("/customers/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteService(@PathVariable(value = "id") int id) {
-        this.customerService.deleteCustomer(id);
+        this.customerService.delete(id);
     }
 
     @DeleteMapping("/customers")
@@ -32,6 +32,6 @@ public class APICustomerController {
         if (ids.isEmpty())
             return;
 
-        this.customerService.deleteCustomer(ids);
+        this.customerService.delete(ids);
     }
 }

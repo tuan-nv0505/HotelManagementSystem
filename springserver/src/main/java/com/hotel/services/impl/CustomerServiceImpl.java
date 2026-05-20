@@ -28,8 +28,8 @@ public class CustomerServiceImpl implements CustomerService {
     private UserRepository userRepository;
 
     @Override
-    public List<CustomerDTO> listCustomer(Map<String, String> params) {
-        List<Customer> customerList = customerRepository.listCustomer(params);
+    public List<CustomerDTO> list(Map<String, String> params) {
+        List<Customer> customerList = customerRepository.list(params);
         List<CustomerDTO> listCustomer = new ArrayList<>();
         for (Customer c : customerList) {
             CustomerDTO customerDTO = customerConverter.toCustomerDTO(c);
@@ -39,12 +39,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public long countCustomer(Map<String, String> params) {
-        return customerRepository.countCustomer(params);
+    public long count(Map<String, String> params) {
+        return customerRepository.count(params);
     }
 
     @Override
-    public void addOrUpdateCustomer(CustomerDTO customerDTO) {
+    public void addOrUpdate(CustomerDTO customerDTO) {
         Customer customer = customerConverter.toCustomer(customerDTO);
 
         if (customerDTO.getUserId() != null) {
@@ -53,16 +53,17 @@ public class CustomerServiceImpl implements CustomerService {
         } else {
             customer.setUser(null);
         }
-        this.customerRepository.addOrUpdateCustomer(customer);
+        this.customerRepository.addOrUpdate(customer);
     }
 
     @Override
-    public void deleteCustomer(int id) {
-        this.customerRepository.deleteCustomer(id);
+    public void delete(int id) {
+        this.customerRepository.delete(id);
     }
 
     @Override
-    public void deleteCustomer(List<Integer> ids) {
-        this.customerRepository.deleteCustomer(ids);
+    public void delete(List<Integer> ids) {
+        this.customerRepository.delete(ids);
     }
+
 }

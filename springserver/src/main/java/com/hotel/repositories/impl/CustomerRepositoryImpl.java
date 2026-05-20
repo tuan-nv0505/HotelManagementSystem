@@ -31,7 +31,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     private Environment env;
 
     @Override
-    public List<Customer> listCustomer(Map<String, String> params) {
+    public List<Customer> list(Map<String, String> params) {
         Session session = factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Customer> query = builder.createQuery(Customer.class);
@@ -52,7 +52,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     }
 
     @Override
-    public long countCustomer(Map<String, String> params) {
+    public long count(Map<String, String> params) {
         Session session = factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
@@ -84,7 +84,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     }
 
     @Override
-    public void addOrUpdateCustomer(Customer customer) {
+    public void addOrUpdate(Customer customer) {
         Session session = this.factory.getObject().getCurrentSession();
         if (customer.getId() == null) {
             session.persist(customer);
@@ -94,14 +94,14 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     }
 
     @Override
-    public void deleteCustomer(int id) {
+    public void delete(int id) {
         Session session = this.factory.getObject().getCurrentSession();
         Customer customer = session.get(Customer.class, id);
         session.remove(customer);
     }
 
     @Override
-    public void deleteCustomer(List<Integer> ids) {
+    public void delete(List<Integer> ids) {
         Session session = this.factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaDelete<Customer> criteriaDelete = builder.createCriteriaDelete(Customer.class);
@@ -110,5 +110,14 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         criteriaDelete.where(root.get("id").in(ids));
 
         session.createMutationQuery(criteriaDelete).executeUpdate();
+    }
+
+    @Override
+    public Customer getCustomerByName(String name) {
+        Session session = this.factory.getObject().getCurrentSession();
+        Query query = session.createQuery("from Customer where name=:name");
+        query.setParameter("name", name);
+
+        return (Customer) query.getSingleResult();
     }
 }

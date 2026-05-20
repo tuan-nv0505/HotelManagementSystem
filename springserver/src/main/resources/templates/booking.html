@@ -6,20 +6,55 @@
 <body th:replace="~{layout/base :: main('booking', ~{:: #booking-content})}">
 
 <div id="booking-content">
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show rounded-0 py-2 small mb-3"
+         role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close py-2 shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show rounded-0 py-2 small mb-3"
+         role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close py-2 shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     <div class="table-responsive border shadow-sm">
         <table class="table table-striped table-hover mb-0 align-middle text-center">
             <thead class="table-dark">
             <tr>
                 <th colspan="10">
-                    <div class="d-flex align-items-center gap-2">
-                        <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
-                                data-bs-toggle="modal" data-bs-target="#addBookingModal">
-                            Thêm Đơn Đặt
-                        </button>
-                        <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
-                                onclick="deleteSelectedBookings()">
-                            Xoá
-                        </button>
+                    <div class="d-flex align-items-center gap-3 w-100 py-1">
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-dark rounded-0 fw-bold"
+                                    data-bs-toggle="modal" data-bs-target="#addBookingModal">
+                                Thêm Đơn Đặt
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
+                                    th:onclick="|deleteMulti('@{/api/bookings}', 'booking')|">
+                                Xoá
+                            </button>
+                        </div>
+
+                        <div class="mx-auto" style="min-width: 250px; max-width: 600px;">
+                            <form id="searchForm" class="d-flex gap-2" onsubmit="loadTableData(0); return false;">
+                                <input type="text" name="customerName" th:value="${customerName}"
+                                       class="form-control form-control-sm rounded-0 shadow-none"
+                                       placeholder="Tên khách hàng...">
+                                <div class="input-group input-group-sm shadow-none" style="max-width: 180px;">
+                                    <span class="input-group-text rounded-0 bg-light text-secondary">Từ</span>
+                                    <input type="date" name="fromDate" th:value="${fromDate}"
+                                           class="form-control rounded-0 shadow-none" title="Từ ngày dự kiến nhận">
+                                </div>
+
+                                <div class="input-group input-group-sm shadow-none" style="max-width: 180px;">
+                                    <span class="input-group-text rounded-0 bg-light text-secondary">Đến</span>
+                                    <input type="date" name="toDate" th:value="${toDate}"
+                                           class="form-control rounded-0 shadow-none" title="Đến ngày dự kiến trả">
+                                </div>
+                                <button type="submit" class="btn btn-dark btn-sm rounded-0">Tìm</button>
+                            </form>
+                        </div>
                     </div>
                 </th>
             </tr>
@@ -42,19 +77,27 @@
             <tbody>
             <tr th:each="b : ${listBookings}">
                 <td style="vertical-align: middle;">
-                    <input type="checkbox" class="action-select-booking" th:value="${b.id}"
+                    <input type="checkbox" class="action-select-booking"
+                           th:value="${b.id}"
+                           th:data-id="${b.id}"
                            onclick="resetSelectAllCheckBox('selectAllBooking', 'action-select-booking')">
                 </td>
 
                 <td class="text-start fw-bold" th:text="${b.customerName}"></td>
 
-                <td class="text-secondary small font-monospace" th:text="${b.expectedCheckIn}"></td>
+                <td class="text-secondary small font-monospace"
+                    th:text="${#temporals.format(b.expectedCheckIn, 'dd/MM/yyyy')}"></td>
 
-                <td class="text-secondary small font-monospace" th:text="${b.expectedCheckOut}"></td>
+                <td class="text-secondary small font-monospace"
+                    th:text="${#temporals.format(b.expectedCheckOut, 'dd/MM/yyyy')}"></td>
 
-                <td class="text-secondary small font-monospace" th:text="${b.actualCheckIn}"></td>
+                <td class="text-secondary small font-monospace"
+                    th:text="${b.actualCheckIn != null ? #temporals.format(b.actualCheckIn, 'HH:mm - dd/MM/yyyy') : 'Chưa nhận phòng'}">
+                </td>
 
-                <td class="text-secondary small font-monospace" th:text="${b.actualCheckOut}"></td>
+                <td class="text-secondary small font-monospace"
+                    th:text="${b.actualCheckOut != null ? #temporals.format(b.actualCheckOut, 'HH:mm - dd/MM/yyyy') : 'Chưa trả phòng'}">
+                </td>
 
                 <td class="fw-bold text-danger"
                     th:text="${b.totalAmount != null ? #numbers.formatDecimal(b.totalAmount, 0, 'COMMA', 0, 'POINT') + ' đ' : '0 đ'}"></td>
@@ -75,12 +118,23 @@
 
                 <td>
                     <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
-                            data-bs-toggle="modal"
-                            th:data-bs-target="|#editBookingModal-${b.id}|">
+                            th:data-id="${b.id}"
+                            th:data-customer="${b.customerId}"
+                            th:data-customername="${b.customerName}"
+                            th:data-expectedcheckin="${b.expectedCheckIn}"
+                            th:data-expectedcheckout="${b.expectedCheckOut}"
+                            th:data-actualcheckin="${b.actualCheckIn != null ? #temporals.format(b.actualCheckIn, 'yyyy-MM-dd''T''HH:mm') : ''}"
+                            th:data-actualcheckout="${b.actualCheckOut != null ? #temporals.format(b.actualCheckOut, 'yyyy-MM-dd''T''HH:mm') : ''}"
+                            th:data-totalamount="${b.totalAmount}"
+                            th:data-specialrequest="${b.specialRequest}"
+                            th:data-status="${b.status}"
+                            onclick="openEditModal(this, 'Booking')">
                         Sửa
                     </button>
-                    <button type="button" class="btn btn-sm btn-outline-danger rounded-0 fw-bold"
-                            th:onclick="|deleteBooking(${b.id})|">Xoá
+
+                    <button th:id="|deleteBooking-${b.id}|"
+                            th:onclick="|deleteDetail('@{/api/bookings/{id}(id=${b.id})}')|" type="button"
+                            class="btn btn-sm btn-danger rounded-0 fw-bold">Xoá
                     </button>
                 </td>
             </tr>
@@ -90,25 +144,32 @@
             </tr>
             </tbody>
         </table>
-    </div>
 
-    <th:block th:each="b : ${listBookings}">
-        <div th:replace="~{modals/base :: genericModal(
-                |editBookingModal-${b.id}|,
-                'Sửa thông tin đơn đặt phòng',
-                ~{modals/booking_fields :: bookingBody(${b})},
-                ~{modals/booking_fields :: bookingFooter},
-                '/admin/bookings/update'
-            )}"></div>
-    </th:block>
+        <div class="d-flex justify-content-center p-2 border-top bg-light"
+             th:if="${not #lists.isEmpty(listPage)}">
+            <ul class="pagination pagination-sm mb-0">
+                <li class="page-item" th:each="page : ${listPage}">
+                    <a class="page-link py-1 shadow-none"
+                       th:href="@{/admin/bookings(page=${page},kw=${kw})}"
+                       th:text="${page}">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
 
     <div th:replace="~{modals/base :: genericModal(
         'addBookingModal',
         'Tạo đơn đặt phòng mới',
-        ~{modals/booking_fields :: bookingBody(null)},
-        ~{modals/booking_fields :: bookingFooter},
-        '/admin/bookings/save'
+        ~{modals/booking_form :: bookingForm('add')}
     )}"></div>
+
+    <div th:replace="~{modals/base :: genericModal(
+        'editBookingModal',
+        'Sửa thông tin đơn đặt phòng',
+        ~{modals/booking_form :: bookingForm('edit')}
+    )}"></div>
+
 
 </div>
 </body>

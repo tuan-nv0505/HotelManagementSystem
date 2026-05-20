@@ -54,8 +54,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> listUser(Map<String, String> params) {
-        List<User> userList = userRepository.listUser(params);
+    public List<UserDTO> list(Map<String, String> params) {
+        List<User> userList = userRepository.list(params);
         List<UserDTO> listUser = new ArrayList<>();
         for (User c : userList) {
             UserDTO userDTO = userConverter.toUserDTO(c);
@@ -68,12 +68,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public long countUser(Map<String, String> params) {
-        return userRepository.countUser(params);
+    public long count(Map<String, String> params) {
+        return userRepository.count(params);
     }
 
     @Override
-    public void addOrUpdateUser(UserDTO userDTO) {
+    public void addOrUpdate(UserDTO userDTO) {
         User user = userConverter.toUser(userDTO);
         user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         if (!userDTO.getFile().isEmpty()) {
@@ -87,16 +87,17 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        this.userRepository.addOrUpdateUser(user);
+        this.userRepository.addOrUpdate(user);
     }
 
     @Override
-    public void deleteUser(int id) {
-        this.userRepository.deleteUser(id);
+    public void delete(int id) {
+        this.userRepository.delete(id);
     }
 
     @Override
-    public void deleteUser(List<Integer> ids) {
-        this.userRepository.deleteUser(ids);
+    public void delete(List<Integer> ids) {
+        this.userRepository.delete(ids);
     }
+
 }

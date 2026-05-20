@@ -14,12 +14,15 @@
                     <div class="d-flex align-items-center gap-3 w-100 py-1">
                         <div class="mx-auto" style="min-width: 250px; max-width: 600px;">
                             <form id="searchForm" class="d-flex gap-2" onsubmit="loadTableData(0); return false;">
-                                <input type="text" name="kw" th:value="${kw}"
+                                <input type="text" name="transactionCode" th:value="${transactionCode}"
                                        class="form-control form-control-sm rounded-0 shadow-none"
                                        placeholder="Mã giao dịch...">
-                                <input type="text" name="staff" th:value="${staff}"
+                                <input type="text" name="staffUsername" th:value="${staffUsername}"
                                        class="form-control form-control-sm rounded-0 shadow-none"
                                        placeholder="Nhân viên phụ trách...">
+                                <input type="text" name="paymentMethod" th:value="${paymentMethod}"
+                                       class="form-control form-control-sm rounded-0 shadow-none"
+                                       placeholder="Phương thức thanh toán...">
                                 <button type="submit" class="btn btn-dark btn-sm rounded-0">Tìm</button>
                             </form>
                         </div>

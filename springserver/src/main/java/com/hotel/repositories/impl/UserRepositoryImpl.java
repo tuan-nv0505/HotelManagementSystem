@@ -46,7 +46,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<User> listUser(Map<String, String> params) {
+    public List<User> list(Map<String, String> params) {
         Session session = factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<User> query = builder.createQuery(User.class);
@@ -67,7 +67,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public long countUser(Map<String, String> params) {
+    public long count(Map<String, String> params) {
         Session session = factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
@@ -99,7 +99,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void addOrUpdateUser(User user) {
+    public void addOrUpdate(User user) {
         Session session = this.factory.getObject().getCurrentSession();
         if (user.getId() == null) {
             session.persist(user);
@@ -109,14 +109,14 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void deleteUser(int id) {
+    public void delete(int id) {
         Session session = this.factory.getObject().getCurrentSession();
         User User = session.get(User.class, id);
         session.remove(User);
     }
 
     @Override
-    public void deleteUser(List<Integer> ids) {
+    public void delete(List<Integer> ids) {
         Session session = this.factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaDelete<User> criteriaDelete = builder.createCriteriaDelete(User.class);

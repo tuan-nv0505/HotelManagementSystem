@@ -2,12 +2,10 @@ package com.hotel.repositories.impl;
 
 import com.hotel.entity.Payment;
 import com.hotel.entity.Payment;
+import com.hotel.entity.User;
 import com.hotel.repositories.PaymentRepository;
 import jakarta.persistence.Query;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -30,7 +28,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     private Environment env;
 
     @Override
-    public List<Payment> listPayment(Map<String, String> params) {
+    public List<Payment> list(Map<String, String> params) {
         Session session = factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Payment> query = builder.createQuery(Payment.class);
@@ -40,7 +38,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
         Query q = session.createQuery(query);
 
         if (params != null) {
-            int pageSize = this.env.getProperty("Payments.page_size", Integer.class);
+            int pageSize = this.env.getProperty("payments.page_size", Integer.class);
             int page = Integer.parseInt(params.getOrDefault("page", "0"));
             int start = page * pageSize;
 
@@ -51,7 +49,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     }
 
     @Override
-    public long countPayment(Map<String, String> params) {
+    public long count(Map<String, String> params) {
         Session session = factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
@@ -66,19 +64,41 @@ public class PaymentRepositoryImpl implements PaymentRepository {
         return (Long) query.getSingleResult();
     }
 
+
     private List<Predicate> getPredicates(Map<String, String> params, CriteriaBuilder builder, Root<Payment> root) {
         List<Predicate> predicates = new ArrayList<>();
         if (params != null) {
-            String kw = params.get("kw");
-            if (kw != null && !kw.isEmpty()) {
-                predicates.add(builder.like(root.get("name"), String.format("%%%s%%", kw)));
+            String transactionCode = params.get("transactionCode");
+            if (transactionCode != null && !transactionCode.isEmpty()) {
+                predicates.add(builder.like(root.get("transactionCode"), "%" + transactionCode + "%"));
             }
 
-            String staff = params.get("staff");
-            if (staff != null && !staff.isEmpty()) {
-                predicates.add(builder.like(root.get("phone"), String.format("%%%s%%", staff)));
+            String staffUsername = params.get("staffUsername");
+            if (staffUsername != null && !staffUsername.isEmpty()) {
+                Join<Payment, User> staffJoin = root.join("staff", JoinType.LEFT);
+                predicates.add(builder.like(staffJoin.get("username"), "%" + staffUsername + "%"));
+            }
+
+            String paymentMethod = params.get("paymentMethod");
+            if (paymentMethod != null && !paymentMethod.isEmpty()) {
+                predicates.add(builder.equal(root.get("paymentMethod"), paymentMethod));
             }
         }
         return predicates;
+    }
+
+    @Override
+    public void addOrUpdate(Payment dto) {
+
+    }
+
+    @Override
+    public void delete(int id) {
+
+    }
+
+    @Override
+    public void delete(List<Integer> ids) {
+
     }
 }

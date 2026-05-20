@@ -7,9 +7,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-public class PaymentDTO {
-
-    private Integer id;
+public class PaymentDTO extends BaseDTO {
     private Integer bookingId;
     private Integer staffId;
     private String bookingCustomerName;

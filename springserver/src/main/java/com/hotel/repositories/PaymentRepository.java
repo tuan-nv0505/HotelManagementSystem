@@ -6,8 +6,6 @@ import com.hotel.entity.Payment;
 import java.util.List;
 import java.util.Map;
 
-public interface PaymentRepository {
-    List<Payment> listPayment(Map<String, String> params);
+public interface PaymentRepository extends BaseRepository<Payment> {
 
-    long countPayment(Map<String, String> params);
 }
