@@ -47,12 +47,20 @@
             </div>
 
             <div class="row mb-3 align-items-center">
-                <label class="col-sm-3 col-form-label text-end fw-bold small">User:</label>
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Tài khoản User:</label>
                 <div class="col-sm-9">
-                    <input type="text" name="userId"
-                           th:id="${type + 'CustomerUser'}"
+                    <input type="text" name="userName"
+                           th:id="${type + 'CustomerUsername'}"
                            class="form-control form-control-sm rounded-0 shadow-none"
-                           placeholder="Nhập ID của User (Nếu có)">
+                           placeholder="Gõ hoặc chọn tài khoản User (Nếu có)..."
+                           list="userSuggestions">
+
+                    <datalist id="userSuggestions">
+                        <option th:each="u : ${allUsers}"
+                                th:value="${u.username}"
+                                th:label="${u.username + ' - ' + u.email}">
+                        </option>
+                    </datalist>
                 </div>
             </div>
 

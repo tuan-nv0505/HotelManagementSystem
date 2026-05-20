@@ -7,6 +7,7 @@ import com.hotel.entity.User;
 import com.hotel.repositories.CustomerRepository;
 import com.hotel.repositories.UserRepository;
 import com.hotel.services.CustomerService;
+import jakarta.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,12 @@ public class CustomerServiceImpl implements CustomerService {
         List<CustomerDTO> listCustomer = new ArrayList<>();
         for (Customer c : customerList) {
             CustomerDTO customerDTO = customerConverter.toCustomerDTO(c);
+            if (c.getUser() != null) {
+                customerDTO.setUserName(c.getUser().getUsername());
+            } else {
+                customerDTO.setUserName("");
+            }
+
             listCustomer.add(customerDTO);
         }
         return listCustomer;
@@ -47,9 +54,13 @@ public class CustomerServiceImpl implements CustomerService {
     public void addOrUpdate(CustomerDTO customerDTO) {
         Customer customer = customerConverter.toCustomer(customerDTO);
 
-        if (customerDTO.getUserId() != null) {
-            User user = userRepository.getUserById(customerDTO.getUserId());
-            customer.setUser(user);
+        if (customerDTO.getUserName() != null && !customerDTO.getUserName().trim().isEmpty()) {
+            try {
+                User user = userRepository.getUserByUsername(customerDTO.getUserName());
+                customer.setUser(user);
+            } catch (NoResultException ex) {
+                throw new RuntimeException("Tài khoản User '" + customerDTO.getUserName() + "' không tồn tại. Vui lòng kiểm tra lại!");
+            }
         } else {
             customer.setUser(null);
         }
