@@ -5,14 +5,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RoomDTO {
-
-    private Integer id;
+public class RoomDTO extends BaseDTO {
     private String roomNumber;
     private Integer floor;
-    private Integer typeId;
+    private RoomTypeDTO type;
     private String status;
     private String availabilityStatus;
-    private Boolean active;
-
 }

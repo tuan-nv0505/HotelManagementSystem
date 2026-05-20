@@ -25,7 +25,7 @@ public class RoomTypeRepositoryImpl implements RoomTypeRepository {
     private Environment env;
 
     @Override
-    public List<RoomType> listRoomType(Map<String, String> params) {
+    public List<RoomType> list(Map<String, String> params) {
         Session session = factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<RoomType> criteriaQuery = builder.createQuery(RoomType.class);
@@ -50,7 +50,7 @@ public class RoomTypeRepositoryImpl implements RoomTypeRepository {
     }
 
     @Override
-    public long countRoomType(Map<String, String> params) {
+    public long count(Map<String, String> params) {
         Session session = factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
@@ -87,7 +87,7 @@ public class RoomTypeRepositoryImpl implements RoomTypeRepository {
     }
 
     @Override
-    public void addOrUpdateRoomType(RoomType RoomType) {
+    public void addOrUpdate(RoomType RoomType) {
         Session session = this.factory.getObject().getCurrentSession();
         if (RoomType.getId() == null) {
             session.persist(RoomType);
@@ -97,14 +97,14 @@ public class RoomTypeRepositoryImpl implements RoomTypeRepository {
     }
 
     @Override
-    public void deleteRoomType(int id) {
+    public void delete(int id) {
         Session session = this.factory.getObject().getCurrentSession();
         RoomType RoomType = session.get(RoomType.class, id);
         session.remove(RoomType);
     }
 
     @Override
-    public void deleteRoomType(List<Integer> ids) {
+    public void delete(List<Integer> ids) {
         Session session = this.factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaDelete<RoomType> criteriaDelete = builder.createCriteriaDelete(RoomType.class);
