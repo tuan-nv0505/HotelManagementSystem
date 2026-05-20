@@ -21,27 +21,32 @@ public class RoomServiceImpl implements RoomService {
     private RoomConverter roomConverter;
 
     @Override
-    public List<RoomDTO> listRoom(Map<String, String> params) {
-        return this.roomConverter.toRoomDTO(this.roomRepository.listRoom(params));
+    public List<RoomDTO> list(Map<String, String> params) {
+        return this.roomConverter.toRoomDTO(this.roomRepository.list(params));
     }
 
     @Override
-    public long countRoom(Map<String, String> params) {
-        return this.roomRepository.countRoom(params);
+    public long count(Map<String, String> params) {
+        return this.roomRepository.count(params);
     }
 
     @Override
-    public void addOrUpdateRoom(RoomDTO roomDTO) {
-        this.roomRepository.addOrUpdateRoom(this.roomConverter.toRoomEntity(roomDTO));
+    public void addOrUpdate(RoomDTO roomDTO) {
+        this.roomRepository.addOrUpdate(this.roomConverter.toRoomEntity(roomDTO));
     }
 
     @Override
-    public void deleteRoom(int id) {
-        this.roomRepository.deleteRoom(id);
+    public void delete(int id) {
+        this.roomRepository.delete(id);
     }
 
     @Override
-    public void deleteRoom(List<Integer> ids) {
-        this.roomRepository.deleteRoom(ids);
+    public void delete(List<Integer> ids) {
+        this.roomRepository.delete(ids);
+    }
+
+    @Override
+    public RoomDTO get(int id) {
+        return this.roomConverter.toRoomDTO(this.roomRepository.get(id));
     }
 }

@@ -1,12 +1,13 @@
 package com.hotel.repositories.impl;
 
-import com.hotel.entity.RoomType;
-import com.hotel.entity.RoomType;
-import com.hotel.repositories.RoomTypeRepository;
+import com.hotel.entity.BookingService;
+import com.hotel.repositories.BookingServiceRepository;
+import com.hotel.repositories.BookingServiceRepository;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.*;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
@@ -18,18 +19,20 @@ import java.util.Map;
 
 @Repository
 @Transactional
-public class RoomTypeRepositoryImpl implements RoomTypeRepository {
+@PropertySource("classpath:configs.properties")
+public class BookingServiceRepositoryImpl implements BookingServiceRepository {
     @Autowired
     private LocalSessionFactoryBean factory;
     @Autowired
     private Environment env;
 
     @Override
-    public List<RoomType> list(Map<String, String> params) {
+    public List<BookingService> list(Map<String, String> params) {
         Session session = factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<RoomType> criteriaQuery = builder.createQuery(RoomType.class);
-        Root<RoomType> root = criteriaQuery.from(RoomType.class);
+        CriteriaQuery<BookingService> criteriaQuery = builder.createQuery(BookingService.class);
+        Root<BookingService> root = criteriaQuery.from(BookingService.class);
+        root.fetch("service");
         criteriaQuery.select(root);
 
         List<Predicate> predicates = getPredicates(params, builder, root);
@@ -39,7 +42,7 @@ public class RoomTypeRepositoryImpl implements RoomTypeRepository {
         Query query = session.createQuery(criteriaQuery);
 
         if (params != null) {
-            int pageSize = this.env.getProperty("room_types.page_size", Integer.class);
+            int pageSize = this.env.getProperty("booking_services.page_size", Integer.class);
             int page = Integer.parseInt(params.getOrDefault("page", "0"));
             int start = page * pageSize;
 
@@ -55,9 +58,7 @@ public class RoomTypeRepositoryImpl implements RoomTypeRepository {
         Session session = factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
-        Root<RoomType> root = criteriaQuery.from(RoomType.class);
-
-        criteriaQuery.select(builder.count(root));
+        Root<BookingService> root = criteriaQuery.from(BookingService.class);criteriaQuery.select(builder.count(root));
 
         List<Predicate> predicates = getPredicates(params, builder, root);
         criteriaQuery.where(predicates.toArray(Predicate[]::new));
@@ -66,50 +67,40 @@ public class RoomTypeRepositoryImpl implements RoomTypeRepository {
         return (Long) query.getSingleResult();
     }
 
-    private List<Predicate> getPredicates(Map<String, String> params, CriteriaBuilder builder, Root<RoomType> root) {
+    private List<Predicate> getPredicates(Map<String, String> params, CriteriaBuilder builder, Root<BookingService> root) {
         List<Predicate> predicates = new ArrayList<>();
         if (params != null) {
-            String kw = params.get("kw");
-            if (kw != null && !kw.isEmpty()) {
-                predicates.add(builder.like(root.get("name"), String.format("%%%s%%", kw)));
-            }
-
-            String fromPrice = params.get("fromPrice");
-            if (fromPrice != null && !fromPrice.isEmpty()) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get("price"), Double.parseDouble(fromPrice)));
-            }
-
-            String toPrice = params.get("toPrice");
-            if (toPrice != null && !toPrice.isEmpty()) {
-                predicates.add(builder.lessThanOrEqualTo(root.get("price"), Double.parseDouble(toPrice)));
+            String bookingId = params.get("bookingId");
+            if (bookingId != null && !bookingId.isEmpty()) {
+                predicates.add(builder.equal(root.get("booking").get("id"), bookingId));
             }
         }
         return predicates;
     }
 
     @Override
-    public void addOrUpdate(RoomType RoomType) {
+    public void addOrUpdate(BookingService BookingService) {
         Session session = this.factory.getObject().getCurrentSession();
-        if (RoomType.getId() == null) {
-            session.persist(RoomType);
+        if (BookingService.getId() == null) {
+            session.persist(BookingService);
         } else {
-            session.merge(RoomType);
+            session.merge(BookingService);
         }
     }
 
     @Override
     public void delete(int id) {
         Session session = this.factory.getObject().getCurrentSession();
-        RoomType RoomType = session.get(RoomType.class, id);
-        session.remove(RoomType);
+        BookingService bookingService = session.get(BookingService.class, id);
+        session.remove(bookingService);
     }
 
     @Override
     public void delete(List<Integer> ids) {
         Session session = this.factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaDelete<RoomType> criteriaDelete = builder.createCriteriaDelete(RoomType.class);
-        Root<RoomType> root = criteriaDelete.from(RoomType.class);
+        CriteriaDelete<BookingService> criteriaDelete = builder.createCriteriaDelete(BookingService.class);
+        Root<BookingService> root = criteriaDelete.from(BookingService.class);
 
         criteriaDelete.where(root.get("id").in(ids));
 
@@ -117,8 +108,8 @@ public class RoomTypeRepositoryImpl implements RoomTypeRepository {
     }
 
     @Override
-    public RoomType get(int id) {
+    public BookingService get(int id) {
         Session session = this.factory.getObject().getCurrentSession();
-        return session.get(RoomType.class, id);
+        return session.get(BookingService.class, id);
     }
 }

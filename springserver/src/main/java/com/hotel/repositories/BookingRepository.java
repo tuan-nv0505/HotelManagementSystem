@@ -4,7 +4,5 @@ import com.hotel.entity.Booking;
 
 import java.util.List;
 
-public interface BookingRepository {
-    List<Booking> getAllBookings();
-
+public interface BookingRepository extends BaseRepository<Booking> {
 }
