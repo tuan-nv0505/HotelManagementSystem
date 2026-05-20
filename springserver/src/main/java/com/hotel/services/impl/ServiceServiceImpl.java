@@ -18,27 +18,32 @@ public class ServiceServiceImpl implements ServiceService {
     private ServiceConverter serviceConverter;
 
     @Override
-    public List<ServiceDTO> listService(Map<String, String> params) {
-        return this.serviceConverter.toServiceDTO(this.serviceRepository.listService(params));
+    public List<ServiceDTO> list(Map<String, String> params) {
+        return this.serviceConverter.toServiceDTO(this.serviceRepository.list(params));
     }
 
     @Override
-    public long countService(Map<String, String> params) {
-        return this.serviceRepository.countService(params);
+    public long count(Map<String, String> params) {
+        return this.serviceRepository.count(params);
     }
 
     @Override
-    public void addOrUpdateService(ServiceDTO serviceDTO) {
-        this.serviceRepository.addOrUpdateService(this.serviceConverter.toServiceEntity(serviceDTO));
+    public void addOrUpdate(ServiceDTO serviceDTO) {
+        this.serviceRepository.addOrUpdate(this.serviceConverter.toServiceEntity(serviceDTO));
     }
 
     @Override
-    public void deleteService(int id) {
-        this.serviceRepository.deleteService(id);
+    public void delete(int id) {
+        this.serviceRepository.delete(id);
     }
 
     @Override
-    public void deleteService(List<Integer> ids) {
-        this.serviceRepository.deleteService(ids);
+    public void delete(List<Integer> ids) {
+        this.serviceRepository.delete(ids);
+    }
+
+    @Override
+    public ServiceDTO get(int id) {
+        return this.serviceConverter.toServiceDTO(this.serviceRepository.get(id));
     }
 }

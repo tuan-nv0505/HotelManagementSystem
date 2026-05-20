@@ -26,11 +26,12 @@ public class ServiceRepositoryImpl implements ServiceRepository {
     private LocalSessionFactoryBean factory;
 
     @Override
-    public List<Service> listService(Map<String, String> params) {
+    public List<Service> list(Map<String, String> params) {
         Session session = factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Service> criteriaQuery = builder.createQuery(Service.class);
         Root<Service> root = criteriaQuery.from(Service.class);
+        criteriaQuery.select(root);
 
         List<Predicate> predicates = getPredicates(params, builder, root);
         criteriaQuery.where(predicates.toArray(Predicate[]::new));
@@ -51,7 +52,7 @@ public class ServiceRepositoryImpl implements ServiceRepository {
     }
 
     @Override
-    public long countService(Map<String, String> params) {
+    public long count(Map<String, String> params) {
         Session session = factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
@@ -88,7 +89,7 @@ public class ServiceRepositoryImpl implements ServiceRepository {
     }
 
     @Override
-    public void addOrUpdateService(Service service) {
+    public void addOrUpdate(Service service) {
         Session session = this.factory.getObject().getCurrentSession();
         if (service.getId() == null) {
             session.persist(service);
@@ -98,14 +99,14 @@ public class ServiceRepositoryImpl implements ServiceRepository {
     }
 
     @Override
-    public void deleteService(int id) {
+    public void delete(int id) {
         Session session = this.factory.getObject().getCurrentSession();
         Service service = session.get(Service.class, id);
         session.remove(service);
     }
 
     @Override
-    public void deleteService(List<Integer> ids) {
+    public void delete(List<Integer> ids) {
         Session session = this.factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaDelete<Service> criteriaDelete = builder.createCriteriaDelete(Service.class);
@@ -115,5 +116,11 @@ public class ServiceRepositoryImpl implements ServiceRepository {
 
         session.createMutationQuery(criteriaDelete).executeUpdate();
         System.out.println("OK");
+    }
+
+    @Override
+    public Service get(int id) {
+        Session session = this.factory.getObject().getCurrentSession();
+        return session.get(Service.class, id);
     }
 }

@@ -26,7 +26,7 @@ public class PaymentController {
 
     @GetMapping("/payments")
     public String paymentView(Model model, @RequestParam Map<String, String> params) {
-        model.addAttribute("payment", new PaymentDTO());
+        model.addAttribute("paymentDTO", new PaymentDTO());
         model.addAttribute("payments", paymentService.list(params));
 
         model.addAttribute("transactionCode", params.get("transactionCode"));

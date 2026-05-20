@@ -1,5 +1,5 @@
 <div th:fragment="userForm(type)">
-    <form method="POST" th:action="@{/admin/users}" th:object="${user}" enctype="multipart/form-data">
+    <form method="POST" th:action="@{/admin/users}" th:object="${userDTO}" enctype="multipart/form-data">
         <div class="modal-body p-4">
             <input type="hidden" name="id" th:id="${type + 'UserId'}">
             <input type="hidden" name="avatar" th:id="${type + 'UserAvatar'}">
@@ -69,10 +69,9 @@
                     <div class="form-check form-switch mb-0">
                         <input class="form-check-input shadow-none" type="checkbox" name="active" value="true"
                                th:id="${type + 'UserActive'}">
-
                         <label class="form-check-label user-select-none fw-semibold small text-secondary"
                                th:for="${type + 'UserActive'}">
-                            Tích chọn để kích hoạt (Còn hoạt động)
+                            Tích chọn để kích hoạt khách hàng (Còn hoạt động)
                         </label>
                     </div>
                 </div>

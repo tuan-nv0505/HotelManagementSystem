@@ -9,4 +9,5 @@ public interface BaseRepository<T> {
     void addOrUpdate(T dto);
     void delete(int id);
     void delete(List<Integer> ids);
+    T get(int id);
 }

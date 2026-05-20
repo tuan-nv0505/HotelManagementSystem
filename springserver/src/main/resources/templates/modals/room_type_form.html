@@ -1,5 +1,5 @@
 <div th:fragment="roomTypeForm(type)">
-    <form method="POST" th:action="@{/admin/room-types}" th:object="${roomType}" enctype="multipart/form-data">
+    <form method="POST" th:action="@{/admin/room-types}" th:object="${roomTypeDTO}" enctype="multipart/form-data">
         <div class="modal-body p-4">
             <input type="hidden" name="id" th:id="${type + 'RoomTypeId'}">
 
@@ -60,7 +60,7 @@
                 <div class="col-sm-9">
                     <div class="form-check form-switch mb-0">
                         <input class="form-check-input shadow-none" type="checkbox" name="active" value="true"
-                               th:id="${type + 'ActiveCheckbox'}">
+                               th:id="${type + 'RoomTypeActive'}">
                         <label class="form-check-label user-select-none fw-semibold small text-secondary" th:for="${type + 'ActiveCheckbox'}">
                             Tích chọn để kích hoạt loại phòng (Còn sử dụng)
                         </label>

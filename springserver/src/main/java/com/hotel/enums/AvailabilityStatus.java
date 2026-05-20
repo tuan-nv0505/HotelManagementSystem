@@ -7,11 +7,9 @@ public enum AvailabilityStatus {
     READY("Sẵn sàng"),
     MAINTENANCE("Bảo trì");
 
-    private String availabilityStatus;
+    private final String value;
 
-    AvailabilityStatus(String availabilityStatus) {
-        this.availabilityStatus = availabilityStatus;
+    AvailabilityStatus(String value) {
+        this.value = value;
     }
-
-
 }

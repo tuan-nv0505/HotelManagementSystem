@@ -20,7 +20,7 @@ public class APIServiceController {
     @DeleteMapping("/services/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteService(@PathVariable(value = "id") int id) {
-        this.serviceService.deleteService(id);
+        this.serviceService.delete(id);
     }
 
     @DeleteMapping("/services")
@@ -34,6 +34,6 @@ public class APIServiceController {
         if (ids.isEmpty())
             return;
 
-        this.serviceService.deleteService(ids);
+        this.serviceService.delete(ids);
     }
 }

@@ -6,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RoomInventoryDTO {
-
     private Integer id;
     private Integer roomTypeId;
     private String inventoryDate;

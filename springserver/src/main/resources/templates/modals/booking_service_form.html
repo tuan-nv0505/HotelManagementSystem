@@ -1,0 +1,55 @@
+<div th:fragment="bookingServiceForm(type)">
+    <form method="POST" th:action="@{/admin/booking-services}" th:object="${bookingServiceDTO}">
+        <div class="modal-body p-4">
+            <input type="hidden" name="id" th:id="${type + 'BookingServiceId'}">
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Mã đặt phòng:</label>
+                <div class="col-sm-9">
+                    <input type="number" name="bookingId"
+                           th:id="${type + 'BookingServiceBookingid'}"
+                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="Nhập mã đặt phòng" min="1" required>
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">
+                    Dịch vụ:
+                </label>
+                <div class="col-sm-9">
+                    <select name="serviceId"
+                            th:id="${type + 'BookingServiceServiceid'}"
+                            class="form-select form-select-sm rounded-0 shadow-none"
+                            required>
+                        <option value="">-- Chọn dịch vụ --</option>
+                        <option th:each="s: ${listService}" th:value="${s.id}" th:text="${s.name}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Số lượng:</label>
+                <div class="col-sm-9">
+                    <input type="number" name="quantity"
+                           th:id="${type + 'BookingServiceQuantity'}"
+                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="Nhập số lượng" min="1" required>
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Ghi chú:</label>
+                <div class="col-sm-9">
+                    <input type="text" name="note"
+                           th:id="${type + 'BookingServiceNote'}"
+                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="Nhập ghi chú (nếu có)">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="modal-footer bg-light py-2 border-top-0 d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm px-4 rounded-0" data-bs-dismiss="modal">Hủy</button>
+            <button type="submit" class="btn btn-dark btn-sm px-4 rounded-0 fw-bold">Lưu thay đổi</button>
+        </div>
+    </form>
+</div>

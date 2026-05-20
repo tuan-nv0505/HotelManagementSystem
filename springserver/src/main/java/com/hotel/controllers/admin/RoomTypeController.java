@@ -25,7 +25,7 @@ public class RoomTypeController {
     @GetMapping("/room-types")
     public String RoomTypeView(Model model, @RequestParam Map<String, String> params) {
 
-        model.addAttribute("RoomType", new RoomTypeDTO());
+        model.addAttribute("roomTypeDTO", new RoomTypeDTO());
         model.addAttribute("listRoomType", this.roomTypeService.list(params));
 
         model.addAttribute("kw", params.get("kw"));
@@ -43,7 +43,7 @@ public class RoomTypeController {
     }
 
     @PostMapping("/room-types")
-    public String process(@ModelAttribute(name = "roomType") RoomTypeDTO roomTypeDTO) {
+    public String process(@ModelAttribute(name = "roomTypeDTO") RoomTypeDTO roomTypeDTO) {
         this.roomTypeService.addOrUpdate(roomTypeDTO);
         return "redirect:/admin/room-types";
     }

@@ -9,10 +9,9 @@ public enum StatusRoom {
     OCCUPIED_CLEAN("Có khách - Sạch"),
     OCCUPIED_DIRTY("Có khách - Bẩn");
 
-    private String statusRoom;
+    private final String value;
 
-    StatusRoom(String statusRoom) {
-        this.statusRoom = statusRoom;
+    StatusRoom(String value) {
+        this.value = value;
     }
-
 }
