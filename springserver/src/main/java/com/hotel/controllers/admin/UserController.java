@@ -8,9 +8,11 @@ import com.hotel.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -33,15 +35,15 @@ public class UserController {
 
     @GetMapping("/users")
     public String userView(Model model, @RequestParam Map<String, String> params) {
-        model.addAttribute("user", new UserDTO());
+        model.addAttribute("userDTO", new UserDTO());
         model.addAttribute("roleUsers", RoleUser.values());
-        model.addAttribute("listUsers", userService.listUser(params));
+        model.addAttribute("listUsers", userService.list(params));
 
         model.addAttribute("kw", params.get("kw"));
         model.addAttribute("phone", params.get("phone"));
 
         int pageSize = this.env.getProperty("users.page_size", Integer.class, 5);
-        long totalServices = this.userService.countUser(params);
+        long totalServices = this.userService.count(params);
         int totalPages = (int) Math.ceil((double) totalServices / pageSize);
         List<Integer> listPage = IntStream.range(0, totalPages).boxed().toList();
         model.addAttribute("listPage", listPage);
@@ -50,9 +52,10 @@ public class UserController {
         return "user";
     }
 
-    @PostMapping("/users")
-    public String processUser(@ModelAttribute(name = "user") UserDTO userDTO) {
-        userService.addOrUpdateUser(userDTO);
-        return "user";
+    @PostMapping(path = "/users", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public String processUser(@ModelAttribute(name = "userDTO") UserDTO userDTO) {
+        userService.addOrUpdate(userDTO);
+        return "redirect:/admin/users";
     }
 }

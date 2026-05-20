@@ -4,6 +4,6 @@ import com.hotel.dto.BookingDTO;
 
 import java.util.List;
 
-public interface BookingService {
-    public List<BookingDTO> getAllBookings();
+public interface BookingService extends BaseService<BookingDTO> {
+
 }

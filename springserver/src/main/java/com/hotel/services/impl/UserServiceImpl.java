@@ -1,5 +1,7 @@
 package com.hotel.services.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.hotel.converter.UserConverter;
 import com.hotel.dto.UserDTO;
 import com.hotel.entity.User;
@@ -15,8 +17,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service("UserDetailService")
 @Transactional
@@ -26,6 +32,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserConverter userConverter;
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private Cloudinary cloudinary;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -42,13 +54,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> listUser(Map<String, String> params) {
-        List<User> userList = userRepository.listUser(params);
+    public List<UserDTO> list(Map<String, String> params) {
+        List<User> userList = userRepository.list(params);
         List<UserDTO> listUser = new ArrayList<>();
         for (User c : userList) {
             UserDTO userDTO = userConverter.toUserDTO(c);
             String roleUser = RoleUser.getValue(c.getRole());
-            userDTO.setRole(roleUser);
+            userDTO.setRoleDisplay(roleUser);
 
             listUser.add(userDTO);
         }
@@ -56,23 +68,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public long countUser(Map<String, String> params) {
-        return userRepository.countUser(params);
+    public long count(Map<String, String> params) {
+        return userRepository.count(params);
     }
 
     @Override
-    public void addOrUpdateUser(UserDTO UserDTO) {
-        User User = userConverter.toUser(UserDTO);
-        this.userRepository.addOrUpdateUser(User);
+    public void addOrUpdate(UserDTO userDTO) {
+        User user = userConverter.toUser(userDTO);
+        user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
+        if (!userDTO.getFile().isEmpty()) {
+            try {
+                Map res = this.cloudinary.uploader().upload(userDTO.getFile().getBytes(),
+                        ObjectUtils.asMap("resource_type", "auto"));
+                user.setAvatar(res.get("secure_url").toString());
+            } catch (IOException ex) {
+                Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, "Lỗi upload avatar", ex);
+                throw new RuntimeException("Lỗi hệ thống: Không thể tải lên ảnh đại diện!", ex);
+            }
+        }
+
+        this.userRepository.addOrUpdate(user);
     }
 
     @Override
-    public void deleteUser(int id) {
-        this.userRepository.deleteUser(id);
+    public void delete(int id) {
+        this.userRepository.delete(id);
     }
 
     @Override
-    public void deleteUser(List<Integer> ids) {
-        this.userRepository.deleteUser(ids);
+    public void delete(List<Integer> ids) {
+        this.userRepository.delete(ids);
     }
+
 }

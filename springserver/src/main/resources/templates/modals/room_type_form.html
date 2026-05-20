@@ -1,5 +1,5 @@
 <div th:fragment="roomTypeForm(type)">
-    <form method="POST" th:action="@{/admin/room-types}" th:object="${roomType}" enctype="multipart/form-data">
+    <form method="POST" th:action="@{/admin/room-types}" th:object="${roomTypeDTO}" enctype="multipart/form-data">
         <div class="modal-body p-4">
             <input type="hidden" name="id" th:id="${type + 'RoomTypeId'}">
 

@@ -61,6 +61,7 @@
                            th:data-email="${c.email}"
                            th:data-phone="${c.phone}"
                            th:data-user="${c.userId != null ? c.userId : ''}"
+                           th:data-username="${c.userName}"
                            th:data-address="${c.address}"
                            th:data-active="${c.active}"
                            onclick="resetSelectAllCheckBox('selectAllCustomer', 'action-select-customer')">
@@ -86,8 +87,9 @@
                             th:data-phone="${c.phone}"
                             th:data-address="${c.address}"
                             th:data-user="${c.userId != null ? c.userId : ''}"
+                            th:data-username="${c.userName != null ? c.userName : ''}"
                             th:data-active="${c.active}"
-                            onclick="openEditModal(this,'Customer')">
+                            onclick="document.getElementById('editCustomerUsername').value=''; openEditModal(this, 'Customer')">
                         Sửa
                     </button>
 

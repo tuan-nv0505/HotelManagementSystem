@@ -7,6 +7,7 @@ import com.hotel.entity.User;
 import com.hotel.repositories.CustomerRepository;
 import com.hotel.repositories.UserRepository;
 import com.hotel.services.CustomerService;
+import jakarta.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,41 +29,52 @@ public class CustomerServiceImpl implements CustomerService {
     private UserRepository userRepository;
 
     @Override
-    public List<CustomerDTO> listCustomer(Map<String, String> params) {
-        List<Customer> customerList = customerRepository.listCustomer(params);
+    public List<CustomerDTO> list(Map<String, String> params) {
+        List<Customer> customerList = customerRepository.list(params);
         List<CustomerDTO> listCustomer = new ArrayList<>();
         for (Customer c : customerList) {
             CustomerDTO customerDTO = customerConverter.toCustomerDTO(c);
+            if (c.getUser() != null) {
+                customerDTO.setUserName(c.getUser().getUsername());
+            } else {
+                customerDTO.setUserName("");
+            }
+
             listCustomer.add(customerDTO);
         }
         return listCustomer;
     }
 
     @Override
-    public long countCustomer(Map<String, String> params) {
-        return customerRepository.countCustomer(params);
+    public long count(Map<String, String> params) {
+        return customerRepository.count(params);
     }
 
     @Override
-    public void addOrUpdateCustomer(CustomerDTO customerDTO) {
+    public void addOrUpdate(CustomerDTO customerDTO) {
         Customer customer = customerConverter.toCustomer(customerDTO);
 
-        if (customerDTO.getUserId() != null) {
-            User user = userRepository.getUserById(customerDTO.getUserId());
-            customer.setUser(user);
+        if (customerDTO.getUserName() != null && !customerDTO.getUserName().trim().isEmpty()) {
+            try {
+                User user = userRepository.getUserByUsername(customerDTO.getUserName());
+                customer.setUser(user);
+            } catch (NoResultException ex) {
+                throw new RuntimeException("Tài khoản User '" + customerDTO.getUserName() + "' không tồn tại. Vui lòng kiểm tra lại!");
+            }
         } else {
             customer.setUser(null);
         }
-        this.customerRepository.addOrUpdateCustomer(customer);
+        this.customerRepository.addOrUpdate(customer);
     }
 
     @Override
-    public void deleteCustomer(int id) {
-        this.customerRepository.deleteCustomer(id);
+    public void delete(int id) {
+        this.customerRepository.delete(id);
     }
 
     @Override
-    public void deleteCustomer(List<Integer> ids) {
-        this.customerRepository.deleteCustomer(ids);
+    public void delete(List<Integer> ids) {
+        this.customerRepository.delete(ids);
     }
+
 }

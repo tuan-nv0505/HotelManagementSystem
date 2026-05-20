@@ -1,5 +1,5 @@
 <div th:fragment="customerForm(type)">
-    <form method="POST" th:action="@{/admin/customers}" th:object="${customer}">
+    <form method="POST" th:action="@{/admin/customers}" th:object="${customerDTO}">
         <div class="modal-body p-4">
             <input type="hidden" name="id" th:id="${type + 'CustomerId'}">
 
@@ -47,13 +47,20 @@
             </div>
 
             <div class="row mb-3 align-items-center">
-                <label class="col-sm-3 col-form-label text-end fw-bold small">User:</label>
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Tài khoản User:</label>
                 <div class="col-sm-9">
-                    <input type="text" name="userId"
-                           th:id="${type + 'CustomerUser'}"
+                    <input type="text" name="userName"
+                           th:id="${type + 'CustomerUsername'}"
                            class="form-control form-control-sm rounded-0 shadow-none"
-                           placeholder="Nhập ID của User (Nếu có)"
-                           required>
+                           placeholder="Gõ hoặc chọn tài khoản User (Nếu có)..."
+                           list="userSuggestions">
+
+                    <datalist id="userSuggestions">
+                        <option th:each="u : ${allUsers}"
+                                th:value="${u.username}"
+                                th:label="${u.username + ' - ' + u.email}">
+                        </option>
+                    </datalist>
                 </div>
             </div>
 
@@ -66,6 +73,7 @@
                         <label class="form-check-label user-select-none fw-semibold small text-secondary"
                                th:for="${type + 'CustomerActive'}">
                             Tích chọn để kích hoạt khách hàng (Còn hoạt động)
+
                         </label>
                     </div>
                 </div>

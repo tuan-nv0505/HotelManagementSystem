@@ -1,6 +1,6 @@
 package com.hotel.controllers.apis;
 
-import com.hotel.services.CustomerService;
+import com.hotel.services.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -11,27 +11,27 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
-public class APICustomerController {
+public class APIBookingController {
     @Autowired
-    private CustomerService customerService;
+    private BookingService bookingService;
 
-    @DeleteMapping("/customers/{id}")
+    @DeleteMapping("/bookings/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteService(@PathVariable(value = "id") int id) {
-        this.customerService.delete(id);
+        this.bookingService.delete(id);
     }
 
-    @DeleteMapping("/customers")
+    @DeleteMapping("/bookings")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteMultiCustomer(@RequestBody List<Map<String, String>> listCustomerDelete) {
+    public void deleteMultiBooking(@RequestBody List<Map<String, String>> listBookingDelete) {
         List<Integer> ids = new ArrayList<>();
-        listCustomerDelete.forEach(item -> {
+        listBookingDelete.forEach(item -> {
             ids.add(Integer.valueOf(item.get("id")));
         });
 
         if (ids.isEmpty())
             return;
 
-        this.customerService.delete(ids);
+        this.bookingService.delete(ids);
     }
 }

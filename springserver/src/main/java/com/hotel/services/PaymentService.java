@@ -4,6 +4,6 @@ import com.hotel.dto.PaymentDTO;
 
 import java.util.List;
 
-public interface PaymentService {
-    List<PaymentDTO> getAllPayments();
+public interface PaymentService extends BaseService<PaymentDTO> {
+
 }

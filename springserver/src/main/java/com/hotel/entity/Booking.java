@@ -8,6 +8,7 @@ import org.hibernate.annotations.ColumnDefault;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -32,10 +33,10 @@ public class Booking {
     private LocalDate expectedCheckOut;
 
     @Column(name = "actual_check_in")
-    private Instant actualCheckIn;
+    private LocalDateTime actualCheckIn;
 
     @Column(name = "actual_check_out")
-    private Instant actualCheckOut;
+    private LocalDateTime actualCheckOut;
 
     @ColumnDefault("0.00")
     @Column(name = "total_amount", precision = 15, scale = 2)
