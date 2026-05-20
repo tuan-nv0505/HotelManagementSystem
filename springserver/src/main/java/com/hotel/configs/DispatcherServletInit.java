@@ -28,7 +28,7 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
 
     @Override
     protected void customizeRegistration(ServletRegistration.Dynamic registration) {
-        registration.setMultipartConfig(new MultipartConfigElement("/", 5000000, 15000000, 1));
+        registration.setMultipartConfig(new MultipartConfigElement("", 5000000, 15000000, 1));
     }
 
 }

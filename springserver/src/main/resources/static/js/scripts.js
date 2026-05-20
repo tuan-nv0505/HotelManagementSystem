@@ -27,13 +27,17 @@ function openEditModal(btnElement, prefix) {
         if (attr.name.startsWith('data-')) {
             const fieldName = attr.name.replace('data-', '');
             const formattedFieldName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
-
-            const targetInputId = `edit${prefix}${formattedFieldName}`;
-            const inputField = document.getElementById(targetInputId);
+            const inputField = document.getElementById(`edit${prefix}${formattedFieldName}`);
 
             if (inputField) {
                 if (inputField.type === 'checkbox') {
                     inputField.checked = (attr.value === 'true');
+                }
+                else if (inputField.type === 'file') {
+                    const previewImg = document.getElementById('editImagePreview');
+                    if (previewImg && attr.value) {
+                        previewImg.src = attr.value;
+                    }
                 } else {
                     inputField.value = attr.value;
                 }
@@ -101,4 +105,26 @@ function deleteMulti(url, prefix) {
         else
             alert("Xóa thất bại!");
     });
+}
+
+function previewImage(input) {
+    const type = input.getAttribute("data-prefix");
+    const preview = document.getElementById(`${type}ImagePreview`);
+
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            preview.src = e.target.result;
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function deleteImagePreview(btn) {
+    const idImage = btn.getAttribute("data-id-image");
+    const image = document.getElementById(idImage);
+    const idInput = btn.getAttribute("data-id-input");
+    const input = document.getElementById(idInput);
+    image.src = "#";
+    input.value = '';
 }

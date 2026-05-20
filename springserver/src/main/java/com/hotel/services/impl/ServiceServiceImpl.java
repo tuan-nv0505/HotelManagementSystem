@@ -1,5 +1,7 @@
 package com.hotel.services.impl;
 
+import com.hotel.converter.ServiceConverter;
+import com.hotel.dto.ServiceDTO;
 import com.hotel.entity.Service;
 import com.hotel.repositories.ServiceRepository;
 import com.hotel.services.ServiceService;
@@ -12,10 +14,12 @@ import java.util.Map;
 public class ServiceServiceImpl implements ServiceService {
     @Autowired
     private ServiceRepository serviceRepository;
+    @Autowired
+    private ServiceConverter serviceConverter;
 
     @Override
-    public List<Service> listService(Map<String, String> params) {
-        return this.serviceRepository.listService(params);
+    public List<ServiceDTO> listService(Map<String, String> params) {
+        return this.serviceConverter.toServiceDTO(this.serviceRepository.listService(params));
     }
 
     @Override
@@ -24,8 +28,8 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public void addOrUpdateService(Service service) {
-        this.serviceRepository.addOrUpdateService(service);
+    public void addOrUpdateService(ServiceDTO serviceDTO) {
+        this.serviceRepository.addOrUpdateService(this.serviceConverter.toServiceEntity(serviceDTO));
     }
 
     @Override

@@ -1,8 +1,7 @@
 package com.hotel.controllers.admin;
 
-import com.hotel.dto.ServiceDTO;
-import com.hotel.entity.Service;
-import com.hotel.services.ServiceService;
+import com.hotel.dto.RoomTypeDTO;
+import com.hotel.services.RoomTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -17,35 +16,35 @@ import java.util.stream.IntStream;
 @Controller
 @RequestMapping("/admin")
 @PropertySource("classpath:configs.properties")
-public class ServiceController {
+public class RoomTypeController {
     @Autowired
-    private ServiceService serviceService;
+    private RoomTypeService roomTypeService;
     @Autowired
     private Environment env;
 
-    @GetMapping("/services")
-    public String serviceView(Model model, @RequestParam Map<String, String> params) {
+    @GetMapping("/room-types")
+    public String RoomTypeView(Model model, @RequestParam Map<String, String> params) {
 
-        model.addAttribute("service", new ServiceDTO());
-        model.addAttribute("listService", this.serviceService.listService(params));
+        model.addAttribute("RoomType", new RoomTypeDTO());
+        model.addAttribute("listRoomType", this.roomTypeService.listRoomType(params));
 
         model.addAttribute("kw", params.get("kw"));
         model.addAttribute("fromPrice", params.get("fromPrice"));
         model.addAttribute("toPrice", params.get("toPrice"));
 
-        int pageSize = this.env.getProperty("services.page_size", Integer.class, 5);
-        long totalServices = this.serviceService.countService(params);
-        int totalPages = (int) Math.ceil((double) totalServices / pageSize);
+        int pageSize = this.env.getProperty("room_types.page_size", Integer.class, 5);
+        long totalRoomTypes = this.roomTypeService.countRoomType(params);
+        int totalPages = (int) Math.ceil((double) totalRoomTypes / pageSize);
         List<Integer> listPage = IntStream.range(0, totalPages).boxed().toList();
         model.addAttribute("listPage", listPage);
         model.addAttribute("currentPage", params.getOrDefault("key", "0"));
 
-        return "service";
+        return "room_type";
     }
 
-    @PostMapping("/services")
-    public String processService(@ModelAttribute(name = "service") ServiceDTO serviceDTO) {
-        this.serviceService.addOrUpdateService(serviceDTO);
-        return "redirect:/admin/services";
+    @PostMapping("/room-types")
+    public String processRoomType(@ModelAttribute(name = "roomType") RoomTypeDTO roomTypeDTO) {
+        this.roomTypeService.addOrUpdateRoomType(roomTypeDTO);
+        return "redirect:/admin/room-types";
     }
 }

@@ -1,0 +1,77 @@
+<div th:fragment="roomTypeForm(type)">
+    <form method="POST" th:action="@{/admin/room-types}" th:object="${roomType}" enctype="multipart/form-data">
+        <div class="modal-body p-4">
+            <input type="hidden" name="id" th:id="${type + 'RoomTypeId'}">
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Tên loại phòng:</label>
+                <div class="col-sm-9">
+                    <input type="text" name="name"
+                           th:id="${type + 'RoomTypeName'}"
+                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="Nhập tên loại phòng" required>
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Giá tiêu chuẩn:</label>
+                <div class="col-sm-9">
+                    <input type="number" name="basePrice"
+                           th:id="${type + 'RoomTypeBasePrice'}"
+                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="VD: 50000" min="0" required>
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Sức chứa:</label>
+                <div class="col-sm-9">
+                    <input type="number" name="capacity"
+                           th:id="${type + 'RoomTypeCapacity'}"
+                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="VD: 1, 2, 3" min="1" required>
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Mô tả:</label>
+                <div class="col-sm-9">
+                    <input type="text" name="description"
+                           th:id="${type + 'RoomTypeDescription'}"
+                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="Nhập mô tả loại phòng" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label text-end fw-bold small pt-2">Hình ảnh:</label>
+                <div class="col-sm-9">
+                    <input type="file" name="file"
+                           th:id="${type + 'RoomTypeFile'}"
+                           class="form-control form-control-sm rounded-0 shadow-none mb-2"
+                           accept="image/*"
+                           th:data-prefix="${type}"
+                           onchange="previewImage(this)">
+                    <button type="button" th:data-id-input="|${type}RoomTypeFile|" th:data-id-image="|${type}ImagePreview|" onclick="deleteImagePreview(this)">Xoá ảnh</button>
+                    <div class="border d-flex align-items-center justify-content-center bg-light" style="width: 150px; height: 100px; overflow: hidden;">
+                        <img th:id="|${type}ImagePreview|" src="#" alt="Xem trước ảnh" class="img-fluid" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Trạng thái:</label>
+                <div class="col-sm-9">
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input shadow-none" type="checkbox" name="active" value="true"
+                               th:id="${type + 'ActiveCheckbox'}">
+                        <label class="form-check-label user-select-none fw-semibold small text-secondary" th:for="${type + 'ActiveCheckbox'}">
+                            Tích chọn để kích hoạt loại phòng (Còn sử dụng)
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer bg-light py-2 border-top-0 d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm px-4 rounded-0" data-bs-dismiss="modal">Hủy</button>
+            <button type="submit" class="btn btn-dark btn-sm px-4 rounded-0 fw-bold">Lưu thay đổi</button>
+        </div>
+    </form>
+</div>
