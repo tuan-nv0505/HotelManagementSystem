@@ -23,10 +23,6 @@ function openEditModal(btnElement, prefix) {
         console.error(`Không tìm thấy Modal với ID: ${modalId}`);
         return;
     }
-
-    const fileInput = document.getElementById(`edit${prefix}AvatarFile`);
-    if (fileInput) fileInput.value = "";
-
     Array.from(btnElement.attributes).forEach(attr => {
         if (attr.name.startsWith('data-')) {
             const fieldName = attr.name.replace('data-', '');
@@ -44,13 +40,6 @@ function openEditModal(btnElement, prefix) {
                     }
                 } else {
                     inputField.value = attr.value;
-                }
-            }
-
-            if (fieldName === 'avatar') {
-                const previewImg = document.getElementById(`edit${prefix}AvatarPreview`);
-                if (previewImg) {
-                    previewImg.src = attr.value && attr.value.trim() !== "" ? attr.value : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
                 }
             }
         }

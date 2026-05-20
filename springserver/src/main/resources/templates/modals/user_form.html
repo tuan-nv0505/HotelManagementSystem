@@ -78,22 +78,21 @@
                 </div>
             </div>
 
-            <div class="row mb-4 align-items-center">
-                <label class="col-sm-3 col-form-label text-end fw-bold small">Ảnh đại diện:</label>
-                <div class="col-sm-9 d-flex align-items-center gap-3">
-                    <img th:id="${type + 'UserAvatarPreview'}"
-                         src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                         alt="Avatar Preview"
-                         class="rounded-circle border shadow-sm"
-                         style="width: 50px; height: 50px; object-fit: cover;">
-
-                    <div class="flex-grow-1">
-                        <input type="file" name="avatarFile"
-                               th:id="${type + 'UserAvatarFile'}"
-                               class="form-control form-control-sm rounded-0 shadow-none"
-                               accept="image/*"
-                               onchange="previewNewAvatar(this, this.id)">
-                        <small class="text-muted" style="font-size: 0.7rem;">Chấp nhận file: .jpg, .png</small>
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label text-end fw-bold small pt-2">Avatar:</label>
+                <div class="col-sm-9">
+                    <input type="file" name="file"
+                           th:id="${type + 'UserFile'}"
+                           class="form-control form-control-sm rounded-0 shadow-none mb-2"
+                           accept="image/*"
+                           th:data-prefix="${type}"
+                           onchange="previewImage(this)">
+                    <button type="button" th:data-id-input="|${type}UserFile|"
+                            th:data-id-image="|${type}ImagePreview|" onclick="deleteImagePreview(this)">Xoá ảnh
+                    </button>
+                    <div class="border d-flex align-items-center justify-content-center bg-light"
+                         style="width: 150px; height: 100px; overflow: hidden;">
+                        <img th:id="|${type}ImagePreview|" src="#" alt="Xem trước ảnh" class="img-fluid"/>
                     </div>
                 </div>
             </div>

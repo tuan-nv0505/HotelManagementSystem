@@ -10,24 +10,23 @@
         <table class="table table-striped table-hover mb-0 align-middle text-center">
             <thead class="table-dark">
             <tr>
-                <th colspan="9">
-                    <div class="d-flex align-items-center gap-2">
-                        <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
-                                data-bs-toggle="modal" data-bs-target="#addPaymentModal">
-                            Thêm hóa đơn
-                        </button>
-                        <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
-                                onclick="deleteSelectedPayments()">
-                            Xoá
-                        </button>
+                <th colspan="7">
+                    <div class="d-flex align-items-center gap-3 w-100 py-1">
+                        <div class="mx-auto" style="min-width: 250px; max-width: 600px;">
+                            <form id="searchForm" class="d-flex gap-2" onsubmit="loadTableData(0); return false;">
+                                <input type="text" name="kw" th:value="${kw}"
+                                       class="form-control form-control-sm rounded-0 shadow-none"
+                                       placeholder="Mã giao dịch...">
+                                <input type="text" name="staff" th:value="${staff}"
+                                       class="form-control form-control-sm rounded-0 shadow-none"
+                                       placeholder="Nhân viên phụ trách...">
+                                <button type="submit" class="btn btn-dark btn-sm rounded-0">Tìm</button>
+                            </form>
+                        </div>
                     </div>
                 </th>
             </tr>
             <tr>
-                <th style="width: 40px; vertical-align: middle;">
-                    <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-payment')"
-                           id="selectAllPayment">
-                </th>
                 <th>Khách hàng thanh toán</th>
                 <th>Nhân viên phụ trách</th>
                 <th class="text-start">Mã giao dịch</th>
@@ -35,15 +34,10 @@
                 <th>Loại giao dịch</th>
                 <th>Số tiền</th>
                 <th>Trạng thái</th>
-                <th>Thao tác</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="payment : ${payments}">
-                <td style="vertical-align: middle;">
-                    <input type="checkbox" class="action-select-payment" th:value="${payment.id}"
-                           onclick="resetSelectAllCheckBox('selectAllPayment', 'action-select-payment')">
-                </td>
                 <td class="fw-bold text-secondary" th:text="'#' + ${payment.bookingCustomerName}"></td>
                 <td th:text="${payment.staffUsername}"></td>
                 <td class="text-start font-monospace small"
@@ -65,16 +59,6 @@
                     <span th:if="${payment.status == 'PENDING'}" class="badge bg-warning text-dark">Chờ duyệt</span>
                     <span th:if="${payment.status == 'FAILED'}" class="badge bg-danger">Thất bại</span>
                 </td>
-                <td>
-                    <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
-                            data-bs-toggle="modal"
-                            th:data-bs-target="|#editPaymentModal-${payment.id}|">
-                        Sửa
-                    </button>
-                    <button type="button" class="btn btn-sm btn-outline-danger rounded-0 fw-bold"
-                            th:onclick="|deletePayment(${payment.id})|">Xoá
-                    </button>
-                </td>
             </tr>
 
             <tr th:if="${#lists.isEmpty(payments)}">
@@ -83,25 +67,6 @@
             </tbody>
         </table>
     </div>
-
-    <th:block th:each="payment : ${payments}">
-        <div th:replace="~{modals/base :: genericModal(
-                |editPaymentModal-${payment.id}|,
-                'Cập nhật thông tin giao dịch',
-                ~{modals/payment_fields :: paymentBody(${payment})},
-                ~{modals/payment_fields :: paymentFooter},
-                '/admin/payments/update'
-            )}"></div>
-    </th:block>
-
-    <div th:replace="~{modals/base :: genericModal(
-        'addPaymentModal',
-        'Tạo mới hóa đơn thanh toán',
-        ~{modals/payment_fields :: paymentBody(null)},
-        ~{modals/payment_fields :: paymentFooter},
-        '/admin/payments/save'
-    )}"></div>
-
 </div>
 </body>
 </html>

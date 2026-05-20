@@ -73,12 +73,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addOrUpdateUser(UserDTO UserDTO, MultipartFile avatar) {
-        User user = userConverter.toUser(UserDTO);
-        user.setPassword(bCryptPasswordEncoder.encode(UserDTO.getPassword()));
-        if (!avatar.isEmpty()) {
+    public void addOrUpdateUser(UserDTO userDTO) {
+        User user = userConverter.toUser(userDTO);
+        user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
+        if (!userDTO.getFile().isEmpty()) {
             try {
-                Map res = this.cloudinary.uploader().upload(avatar.getBytes(),
+                Map res = this.cloudinary.uploader().upload(userDTO.getFile().getBytes(),
                         ObjectUtils.asMap("resource_type", "auto"));
                 user.setAvatar(res.get("secure_url").toString());
             } catch (IOException ex) {

@@ -54,9 +54,8 @@ public class UserController {
 
     @PostMapping(path = "/users", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public String processUser(@ModelAttribute(name = "user") UserDTO userDTO,
-                              @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile) {
-        userService.addOrUpdateUser(userDTO, avatarFile);
+    public String processUser(@ModelAttribute(name = "user") UserDTO userDTO) {
+        userService.addOrUpdateUser(userDTO);
         return "redirect:/admin/users";
     }
 }

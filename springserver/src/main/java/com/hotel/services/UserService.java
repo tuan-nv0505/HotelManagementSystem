@@ -13,7 +13,7 @@ public interface UserService extends UserDetailsService {
 
     long countUser(Map<String, String> params);
 
-    void addOrUpdateUser(UserDTO UserDTO, MultipartFile avatar);
+    void addOrUpdateUser(UserDTO UserDTO);
 
     void deleteUser(int id);
 

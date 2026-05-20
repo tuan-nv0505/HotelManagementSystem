@@ -1,8 +1,6 @@
 package com.hotel.controllers.admin;
 
 import com.hotel.dto.CustomerDTO;
-import com.hotel.entity.Customer;
-import com.hotel.entity.Service;
 import com.hotel.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
