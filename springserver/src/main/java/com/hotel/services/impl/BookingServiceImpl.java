@@ -89,4 +89,9 @@ public class BookingServiceImpl implements BookingService {
     public void delete(List<Integer> ids) {
         this.bookingRepository.delete(ids);
     }
+
+    @Override
+    public BookingDTO get(int id) {
+        return null;
+    }
 }

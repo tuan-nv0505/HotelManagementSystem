@@ -57,4 +57,9 @@ public class PaymentServiceImpl implements PaymentService {
     public void delete(List<Integer> ids) {
 
     }
+
+    @Override
+    public PaymentDTO get(int id) {
+        return null;
+    }
 }

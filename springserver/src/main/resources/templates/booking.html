@@ -159,7 +159,7 @@
             <ul class="pagination pagination-sm mb-0">
                 <li class="page-item" th:each="page : ${listPage}">
                     <a class="page-link py-1 shadow-none"
-                       th:href="@{/admin/bookings(page=${page},kw=${kw})}"
+                       th:href="@{/admin/bookings(page=${page},customerName=${customerName}, fromDate=${fromDate}, toDate=${toDate})}"
                        th:text="${page}">
                     </a>
                 </li>
