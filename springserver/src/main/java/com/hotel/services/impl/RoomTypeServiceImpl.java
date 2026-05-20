@@ -4,9 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.hotel.converter.RoomTypeConverter;
 import com.hotel.dto.RoomTypeDTO;
-import com.hotel.entity.RoomType;
 import com.hotel.repositories.RoomTypeRepository;
-import com.hotel.services.RoomInventoryService;
 import com.hotel.services.RoomTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 @Service
 public class RoomTypeServiceImpl implements RoomTypeService {
@@ -26,18 +23,19 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     private Cloudinary cloudinary;
 
     @Override
-    public List<RoomTypeDTO> listRoomType(Map<String, String> params) {
-        return this.roomTypeConverter.toRoomTypeDTO(this.roomTypeRepository.listRoomType(params));
+    public List<RoomTypeDTO> list(Map<String, String> params) {
+        return this.roomTypeConverter.toRoomTypeDTO(this.roomTypeRepository.list(params));
     }
 
 
     @Override
-    public long countRoomType(Map<String, String> params) {
-        return this.roomTypeRepository.countRoomType(params);
+    public long count(Map<String, String> params) {
+        return this.roomTypeRepository.count(params);
     }
 
+
     @Override
-    public void addOrUpdateRoomType(RoomTypeDTO roomTypeDTO) {
+    public void addOrUpdate(RoomTypeDTO roomTypeDTO) {
         if (!roomTypeDTO.getFile().isEmpty()) {
             try {
                 Map res = this.cloudinary.uploader().upload(roomTypeDTO.getFile().getBytes(),
@@ -47,16 +45,16 @@ public class RoomTypeServiceImpl implements RoomTypeService {
                 throw new RuntimeException(e);
             }
         }
-        this.roomTypeRepository.addOrUpdateRoomType(this.roomTypeConverter.toRoomTypeEntity(roomTypeDTO));
+        this.roomTypeRepository.addOrUpdate(this.roomTypeConverter.toRoomTypeEntity(roomTypeDTO));
     }
 
     @Override
-    public void deleteRoomType(int id) {
-        this.roomTypeRepository.deleteRoomType(id);
+    public void delete(int id) {
+        this.roomTypeRepository.delete(id);
     }
 
     @Override
-    public void deleteRoomType(List<Integer> ids) {
-        this.roomTypeRepository.deleteRoomType(ids);
+    public void delete(List<Integer> ids) {
+        this.roomTypeRepository.delete(ids);
     }
 }

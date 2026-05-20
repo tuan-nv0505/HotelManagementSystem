@@ -32,7 +32,7 @@ public class RoomInventoryController {
             @RequestParam(name = "inventoryDate", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inventoryDate
     ) {
-        model.addAttribute("listRoomType", roomTypeService.listRoomType(null));
+        model.addAttribute("listRoomType", roomTypeService.list(null));
         if (roomTypeId != null || inventoryDate != null) {
             model.addAttribute("listRoomInventory",
                     roomInventoryService.getListRoomInventory(roomTypeId, inventoryDate));

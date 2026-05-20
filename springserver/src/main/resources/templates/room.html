@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head}">
+    <title>Quản lý phòng</title>
+</head>
+<body th:replace="~{layout/base :: main('room', ~{:: #room-content})}">
+
+<div id="room-content">
+    <div id="tableContainer" th:fragment="room-table-fragment">
+        <div class="table-responsive border shadow-sm bg-white">
+            <table class="table table-striped table-hover mb-0 align-middle text-center">
+                <thead class="table-dark">
+                <tr>
+                    <th colspan="8">
+                        <div class="d-flex align-items-center gap-3 w-100 py-1">
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-sm btn-dark rounded-0 fw-bold" data-bs-toggle="modal" data-bs-target="#addRoomModal">
+                                    Thêm
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
+                                        th:onclick="|deleteMulti('@{/api/rooms}', 'room')|">
+                                    Xoá
+                                </button>
+                            </div>
+
+                            <div class="mx-auto" style="min-width: 250px; max-width: 600px;">
+                                <form id="searchForm" class="d-flex gap-2" onsubmit="loadTableData(0); return false;">
+                                    <input type="text" name="kw" th:value="${kw}" class="form-control form-control-sm rounded-0 shadow-none" placeholder="Số phòng...">
+                                    <input type="number" name="floor" th:value="${floor}" class="form-control form-control-sm rounded-0 shadow-none" placeholder="Tầng" min="0">
+                                    <button type="submit" class="btn btn-dark btn-sm rounded-0">Tìm</button>
+                                </form>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+                <tr>
+                    <th style="width: 40px; vertical-align: middle;">
+                        <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-room')"
+                               id="selectAllRoom">
+                    </th>
+                    <th class="text-start">Số phòng</th>
+                    <th>Tầng</th>
+                    <th>Loại phòng</th>
+                    <th>Trạng thái dọn dẹp</th>
+                    <th>Tình trạng phòng</th>
+                    <th>Kích hoạt</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${listRoom}">
+                    <td style="vertical-align: middle;">
+                        <input type="checkbox" class="action-select-room"
+                               onclick="resetSelectAllCheckBox('selectAllRoom', 'action-select-room')">
+                    </td>
+                    <td hidden th:text="${r.id}"></td>
+                    <td class="text-start fw-bold" th:text="${r.roomNumber}"></td>
+                    <td th:text="${r.floor}"></td>
+                    <td th:text="${r.typeId}"></td>
+                    <td class="text-start fw-bold" th:text="${r.status}"></td>
+                    <td class="text-start fw-bold" th:text="${r.availabilityStatus}"></td>
+                    <td>
+                        <span th:if="${r.active}">Còn sử dụng</span>
+                        <span th:unless="${r.active}">Không sử dụng</span>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
+                                th:data-id="${r.id}"
+                                th:data-roomnumber="${r.roomNumber}"
+                                th:data-floor="${r.floor}"
+                                th:data-typeid="${r.type.roomType.name}"
+                                th:data-status="${r.status}"
+                                th:data-availabilitystatus="${r.availabilityStatus}"
+                                th:data-active="${r.active}"
+                                onclick="openEditModal(this, 'Room')">
+                            Sửa
+                        </button>
+
+                        <button th:id="|deleteRoom-${r.id}|" th:onclick="|deleteDetail('@{/api/rooms/{id}(id=${r.id})}')|" type="button" class="btn btn-sm btn-danger rounded-0 fw-bold">Xoá</button>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(listRoom)}">
+                    <td colspan="8" class="text-muted py-4">Chưa có phòng nào trong hệ thống.</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-center p-2 border-top bg-light"
+                 th:if="${not #lists.isEmpty(listPage)}">
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item" th:each="page : ${listPage}">
+                        <a class="page-link py-1 shadow-none"
+                           th:href="@{/admin/rooms(page=${page},kw=${kw},floor=${floor})}"
+                           th:text="${page}">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <div th:replace="~{modals/base :: genericModal('addRoomModal', 'Thêm mới phòng', ~{modals/room_form :: roomForm('add')})}"></div>
+    <div th:replace="~{modals/base :: genericModal('editRoomModal', 'Sửa phòng', ~{modals/room_form :: roomForm('edit')})}"></div>
+
+</div>
+</body>
+</html>
