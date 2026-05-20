@@ -19,7 +19,7 @@ public class APIRoomTypeController {
     @DeleteMapping("/room-types/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteRoomType(@PathVariable(value = "id") int id) {
-        this.roomTypeService.deleteRoomType(id);
+        this.roomTypeService.delete(id);
     }
 
     @DeleteMapping("/room-types")
@@ -33,6 +33,6 @@ public class APIRoomTypeController {
         if (ids.isEmpty())
             return;
 
-        this.roomTypeService.deleteRoomType(ids);
+        this.roomTypeService.delete(ids);
     }
 }
