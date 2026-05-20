@@ -8,7 +8,8 @@
                 <div class="col-sm-9">
                     <input type="text" name="name"
                            th:id="${type + 'ServiceName'}"
-                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="Nhập tên dịch vụ" required>
+                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="Nhập tên dịch vụ"
+                           required>
                 </div>
             </div>
 
@@ -17,7 +18,8 @@
                 <div class="col-sm-9">
                     <input type="number" name="price"
                            th:id="${type + 'ServicePrice'}"
-                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="VD: 50000" min="0" required>
+                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="VD: 50000" min="0"
+                           required>
                 </div>
             </div>
 
@@ -27,7 +29,8 @@
                     <div class="form-check form-switch mb-0">
                         <input class="form-check-input shadow-none" type="checkbox" name="active" value="true"
                                th:id="${type + 'ActiveCheckbox'}">
-                        <label class="form-check-label user-select-none fw-semibold small text-secondary" th:for="${type + 'ActiveCheckbox'}">
+                        <label class="form-check-label user-select-none fw-semibold small text-secondary"
+                               th:for="${type + 'ActiveCheckbox'}">
                             Tích chọn để kích hoạt dịch vụ (Còn sử dụng)
                         </label>
                     </div>
@@ -36,7 +39,8 @@
         </div>
 
         <div class="modal-footer bg-light py-2 border-top-0 d-flex justify-content-end gap-2">
-            <button type="button" class="btn btn-outline-secondary btn-sm px-4 rounded-0" data-bs-dismiss="modal">Hủy</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm px-4 rounded-0" data-bs-dismiss="modal">Hủy
+            </button>
             <button type="submit" class="btn btn-dark btn-sm px-4 rounded-0 fw-bold">Lưu thay đổi</button>
         </div>
     </form>

@@ -14,7 +14,8 @@
                     <th colspan="5">
                         <div class="d-flex align-items-center gap-3 w-100 py-1">
                             <div class="d-flex gap-2">
-                                <button type="button" class="btn btn-sm btn-dark rounded-0 fw-bold" data-bs-toggle="modal" data-bs-target="#addServiceModal">
+                                <button type="button" class="btn btn-sm btn-dark rounded-0 fw-bold"
+                                        data-bs-toggle="modal" data-bs-target="#addServiceModal">
                                     Thêm
                                 </button>
                                 <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
@@ -25,9 +26,15 @@
 
                             <div class="mx-auto" style="min-width: 250px; max-width: 600px;">
                                 <form id="searchForm" class="d-flex gap-2" onsubmit="loadTableData(0); return false;">
-                                    <input type="text" name="kw" th:value="${kw}" class="form-control form-control-sm rounded-0 shadow-none" placeholder="Tên dịch vụ...">
-                                    <input type="number" name="fromPrice" th:value="${fromPrice}" class="form-control form-control-sm rounded-0 shadow-none" placeholder="Từ giá" min="0">
-                                    <input type="number" name="toPrice" th:value="${toPrice}" class="form-control form-control-sm rounded-0 shadow-none" placeholder="Đến giá" min="0">
+                                    <input type="text" name="kw" th:value="${kw}"
+                                           class="form-control form-control-sm rounded-0 shadow-none"
+                                           placeholder="Tên dịch vụ...">
+                                    <input type="number" name="fromPrice" th:value="${fromPrice}"
+                                           class="form-control form-control-sm rounded-0 shadow-none"
+                                           placeholder="Từ giá" min="0">
+                                    <input type="number" name="toPrice" th:value="${toPrice}"
+                                           class="form-control form-control-sm rounded-0 shadow-none"
+                                           placeholder="Đến giá" min="0">
                                     <button type="submit" class="btn btn-dark btn-sm rounded-0">Tìm</button>
                                 </form>
                             </div>
@@ -73,7 +80,10 @@
                             Sửa
                         </button>
 
-                        <button th:id="|deleteService-${s.id}|" th:onclick="|deleteDetail('@{/api/services/{id}(id=${s.id})}')|" type="button" class="btn btn-sm btn-danger rounded-0 fw-bold">Xoá</button>
+                        <button th:id="|deleteService-${s.id}|"
+                                th:onclick="|deleteDetail('@{/api/services/{id}(id=${s.id})}')|" type="button"
+                                class="btn btn-sm btn-danger rounded-0 fw-bold">Xoá
+                        </button>
                     </td>
                 </tr>
 
@@ -94,7 +104,6 @@
                     </li>
                 </ul>
             </div>
-
         </div>
     </div>
 

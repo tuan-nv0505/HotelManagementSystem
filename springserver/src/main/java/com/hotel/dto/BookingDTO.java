@@ -11,6 +11,7 @@ public class BookingDTO {
 
     private Integer id;
     private Integer customerId;
+    private String customerName;
     private String expectedCheckIn;
     private String expectedCheckOut;
     private String actualCheckIn;

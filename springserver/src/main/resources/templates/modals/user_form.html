@@ -7,8 +7,19 @@
                 <label class="col-sm-3 col-form-label text-end fw-bold small">Tên đăng nhập:</label>
                 <div class="col-sm-9">
                     <input type="text" name="username"
-                           th:id="${type + 'UserName'}"
+                           th:id="${type + 'UserUsername'}"
                            class="form-control form-control-sm rounded-0 shadow-none" placeholder="Nhập tên đăng nhập"
+                           required>
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-3 col-form-label text-end fw-bold small">Mật khẩu đăng nhập:</label>
+                <div class="col-sm-9">
+                    <input type="text" name="password"
+                           th:id="${type + 'UserPassword'}"
+                           class="form-control form-control-sm rounded-0 shadow-none"
+                           placeholder="Nhập mật khẩu đăng nhập"
                            required>
                 </div>
             </div>
@@ -43,10 +54,9 @@
                             class="form-select form-select-sm rounded-0 shadow-none"
                             required>
                         <option value="" disabled selected>-- Chọn vai trò --</option>
-
                         <option th:each="role : ${roleUsers}"
                                 th:value="${role.name()}"
-                                th:text="${role.name()}">
+                                th:text="${role.getRole()}">
                         </option>
                     </select>
                 </div>

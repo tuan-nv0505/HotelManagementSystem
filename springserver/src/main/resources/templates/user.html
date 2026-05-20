@@ -11,14 +11,29 @@
             <thead class="table-dark">
             <tr>
                 <th colspan="8">
-                    <div class="d-flex align-items-center gap-2">
-                        <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
-                                data-bs-toggle="modal" data-bs-target="#addUserModal">
-                            Thêm
-                        </button>
-                        <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold">
-                            Xoá
-                        </button>
+                    <div class="d-flex align-items-center gap-3 w-100 py-1">
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-dark rounded-0 fw-bold"
+                                    data-bs-toggle="modal" data-bs-target="#addUserModal">
+                                Thêm
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
+                                    th:onclick="|deleteMulti('@{/api/users}', 'user')|">
+                                Xoá
+                            </button>
+                        </div>
+
+                        <div class="mx-auto" style="min-width: 250px; max-width: 600px;">
+                            <form id="searchForm" class="d-flex gap-2" onsubmit="loadTableData(0); return false;">
+                                <input type="text" name="kw" th:value="${kw}"
+                                       class="form-control form-control-sm rounded-0 shadow-none"
+                                       placeholder="Tên đăng nhập...">
+                                <input type="text" name="phone" th:value="${phone}"
+                                       class="form-control form-control-sm rounded-0 shadow-none"
+                                       placeholder="Số điện thoại...">
+                                <button type="submit" class="btn btn-dark btn-sm rounded-0">Tìm</button>
+                            </form>
+                        </div>
                     </div>
                 </th>
             </tr>
@@ -39,7 +54,15 @@
             <tbody>
             <tr th:each="user : ${listUsers}">
                 <td style="vertical-align: middle;">
-                    <input type="checkbox" class="action-select-user" th:value="${user.id}"
+                    <input type="checkbox" class="action-select-user"
+                           th:value="${user.id}"
+                           th:data-id="${user.id}"
+                           th:data-avatar="${user.avatar}"
+                           th:data-username="${user.username}"
+                           th:data-email="${user.email}"
+                           th:data-phone="${user.phone}"
+                           th:data-role="${user.role}"
+                           th:data-active="${user.active}"
                            onclick="resetSelectAllCheckBox('selectAllUser', 'action-select-user')">
                 </td>
                 <td style="vertical-align: middle;">
@@ -47,6 +70,7 @@
                          alt="Avatar" class="rounded-circle border"
                          style="width: 40px; height: 40px; object-fit: cover;">
                 </td>
+                <td hidden th:text="${user.id}"></td>
                 <td class="text-start fw-bold" th:text="${user.username}"></td>
                 <td th:text="${user.email}"></td>
                 <td th:text="${user.phone}"></td>
@@ -64,10 +88,13 @@
                             th:data-phone="${user.phone}"
                             th:data-role="${user.role}"
                             th:data-active="${user.active}"
-                            onclick="openEditUserModal(this)">
+                            onclick="openEditModal(this,'User')">
                         Sửa
                     </button>
-                    <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold">Xoá
+
+                    <button th:id="|deleteUser-${user.id}|"
+                            th:onclick="|deleteDetail('@{/api/users/{id}(id=${user.id})}')|" type="button"
+                            class="btn btn-sm btn-danger rounded-0 fw-bold">Xoá
                     </button>
                 </td>
             </tr>
@@ -77,6 +104,18 @@
             </tr>
             </tbody>
         </table>
+
+        <div class="d-flex justify-content-center p-2 border-top bg-light"
+             th:if="${not #lists.isEmpty(listPage)}">
+            <ul class="pagination pagination-sm mb-0">
+                <li class="page-item" th:each="page : ${listPage}">
+                    <a class="page-link py-1 shadow-none"
+                       th:href="@{/admin/users(page=${page},kw=${kw})}"
+                       th:text="${page}">
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <div th:replace="~{modals/base :: genericModal(

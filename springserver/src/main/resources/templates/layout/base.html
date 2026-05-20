@@ -100,6 +100,16 @@
                     </a>
                 </div>
             </div>
+
+            <div class="list-group rounded-0 border">
+                <div class="list-group-item border-0 border-bottom d-flex justify-content-between align-items-center py-2"
+                     th:classappend="${activeMenu == 'booking' ? 'active bg-dark text-white' : 'text-dark bg-light'}">
+                    <a th:href="@{/admin/bookings}" class="text-decoration-none flex-grow-1"
+                       th:classappend="${activeMenu == 'booking' ? 'text-white' : 'text-dark'}">
+                        Đơn đặt
+                    </a>
+                </div>
+            </div>
         </nav>
 
         <main class="col-md-10">

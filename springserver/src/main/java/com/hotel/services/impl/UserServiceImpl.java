@@ -1,5 +1,8 @@
 package com.hotel.services.impl;
 
+import com.hotel.converter.UserConverter;
+import com.hotel.dto.UserDTO;
+import com.hotel.entity.User;
 import com.hotel.entity.User;
 import com.hotel.enums.RoleUser;
 import com.hotel.repositories.UserRepository;
@@ -11,15 +14,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service("UserDetailService")
+@Transactional
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserConverter userConverter;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -36,13 +42,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllUsers() {
-        List<User> users = this.userRepository.getAllUsers();
+    public List<UserDTO> listUser(Map<String, String> params) {
+        List<User> userList = userRepository.listUser(params);
+        List<UserDTO> listUser = new ArrayList<>();
+        for (User c : userList) {
+            UserDTO userDTO = userConverter.toUserDTO(c);
+            String roleUser = RoleUser.getValue(c.getRole());
+            userDTO.setRole(roleUser);
 
-        for (User u : users) {
-            u.setRole(RoleUser.getValue(u.getRole()));
+            listUser.add(userDTO);
         }
+        return listUser;
+    }
 
-        return users;
+    @Override
+    public long countUser(Map<String, String> params) {
+        return userRepository.countUser(params);
+    }
+
+    @Override
+    public void addOrUpdateUser(UserDTO UserDTO) {
+        User User = userConverter.toUser(UserDTO);
+        this.userRepository.addOrUpdateUser(User);
+    }
+
+    @Override
+    public void deleteUser(int id) {
+        this.userRepository.deleteUser(id);
+    }
+
+    @Override
+    public void deleteUser(List<Integer> ids) {
+        this.userRepository.deleteUser(ids);
     }
 }

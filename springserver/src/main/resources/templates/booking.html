@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head}">
+    <title>Quản lý đặt phòng</title>
+</head>
+<body th:replace="~{layout/base :: main('booking', ~{:: #booking-content})}">
+
+<div id="booking-content">
+    <div class="table-responsive border shadow-sm">
+        <table class="table table-striped table-hover mb-0 align-middle text-center">
+            <thead class="table-dark">
+            <tr>
+                <th colspan="10">
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
+                                data-bs-toggle="modal" data-bs-target="#addBookingModal">
+                            Thêm Đơn Đặt
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
+                                onclick="deleteSelectedBookings()">
+                            Xoá
+                        </button>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th style="width: 40px; vertical-align: middle;">
+                    <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-booking')"
+                           id="selectAllBooking">
+                </th>
+                <th class="text-start">Tên Khách Hàng</th>
+                <th>Dự kiến Nhận</th>
+                <th>Dự kiến Trả</th>
+                <th>Thời gian thực nhận</th>
+                <th>Thời gian thực trả</th>
+                <th>Tổng Tiền</th>
+                <th>Yêu cầu thêm</th>
+                <th>Trạng Thái</th>
+                <th>Thao Tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="b : ${listBookings}">
+                <td style="vertical-align: middle;">
+                    <input type="checkbox" class="action-select-booking" th:value="${b.id}"
+                           onclick="resetSelectAllCheckBox('selectAllBooking', 'action-select-booking')">
+                </td>
+
+                <td class="text-start fw-bold" th:text="${b.customerName}"></td>
+
+                <td class="text-secondary small font-monospace" th:text="${b.expectedCheckIn}"></td>
+
+                <td class="text-secondary small font-monospace" th:text="${b.expectedCheckOut}"></td>
+
+                <td class="text-secondary small font-monospace" th:text="${b.actualCheckIn}"></td>
+
+                <td class="text-secondary small font-monospace" th:text="${b.actualCheckOut}"></td>
+
+                <td class="fw-bold text-danger"
+                    th:text="${b.totalAmount != null ? #numbers.formatDecimal(b.totalAmount, 0, 'COMMA', 0, 'POINT') + ' đ' : '0 đ'}"></td>
+
+                <td class="small text-muted"
+                    style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                    th:title="${b.specialRequest}"
+                    th:text="${b.specialRequest != null and !b.specialRequest.isEmpty() ? b.specialRequest : 'Không'}">
+                </td>
+
+                <td>
+                    <span th:if="${b.status == 'PENDING'}" class="badge bg-warning text-dark">Chờ xác nhận</span>
+                    <span th:if="${b.status == 'CONFIRMED'}" class="badge bg-info text-dark">Đã xác nhận</span>
+                    <span th:if="${b.status == 'CHECKED_IN'}" class="badge bg-primary">Đang lưu trú</span>
+                    <span th:if="${b.status == 'CHECKED_OUT'}" class="badge bg-success">Đã trả phòng</span>
+                    <span th:if="${b.status == 'CANCELLED'}" class="badge bg-danger">Đã hủy</span>
+                </td>
+
+                <td>
+                    <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
+                            data-bs-toggle="modal"
+                            th:data-bs-target="|#editBookingModal-${b.id}|">
+                        Sửa
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger rounded-0 fw-bold"
+                            th:onclick="|deleteBooking(${b.id})|">Xoá
+                    </button>
+                </td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(listBookings)}">
+                <td colspan="10" class="text-muted py-4">Chưa có đơn đặt phòng nào trong hệ thống.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <th:block th:each="b : ${listBookings}">
+        <div th:replace="~{modals/base :: genericModal(
+                |editBookingModal-${b.id}|,
+                'Sửa thông tin đơn đặt phòng',
+                ~{modals/booking_fields :: bookingBody(${b})},
+                ~{modals/booking_fields :: bookingFooter},
+                '/admin/bookings/update'
+            )}"></div>
+    </th:block>
+
+    <div th:replace="~{modals/base :: genericModal(
+        'addBookingModal',
+        'Tạo đơn đặt phòng mới',
+        ~{modals/booking_fields :: bookingBody(null)},
+        ~{modals/booking_fields :: bookingFooter},
+        '/admin/bookings/save'
+    )}"></div>
+
+</div>
+</body>
+</html>
