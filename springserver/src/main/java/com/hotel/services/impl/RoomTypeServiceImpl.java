@@ -57,4 +57,9 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     public void delete(List<Integer> ids) {
         this.roomTypeRepository.delete(ids);
     }
+
+    @Override
+    public RoomTypeDTO get(int id) {
+        return this.roomTypeConverter.toRoomTypeDTO(this.roomTypeRepository.get(id));
+    }
 }

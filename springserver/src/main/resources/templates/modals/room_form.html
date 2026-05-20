@@ -1,5 +1,5 @@
 <div th:fragment="roomForm(type)">
-    <form method="POST" th:action="@{/admin/rooms}" th:object="${room}">
+    <form method="POST" th:action="@{/admin/rooms}" th:object="${roomDTO}">
         <div class="modal-body p-4">
             <input type="hidden" name="id" th:id="${type + 'RoomId'}">
 
@@ -7,7 +7,7 @@
                 <label class="col-sm-3 col-form-label text-end fw-bold small">Số phòng:</label>
                 <div class="col-sm-9">
                     <input type="text" name="roomNumber"
-                           th:id="${type + 'RoomNumber'}"
+                           th:id="${type + 'RoomRoomnumber'}"
                            class="form-control form-control-sm rounded-0 shadow-none" placeholder="Nhập số phòng (VD: P101)" required>
                 </div>
             </div>
@@ -22,29 +22,47 @@
             </div>
 
             <div class="row mb-3 align-items-center">
-                <label class="col-sm-3 col-form-label text-end fw-bold small">ID Loại phòng:</label>
+                <label class="col-sm-3 col-form-label text-end fw-bold small">
+                    Loại phòng:
+                </label>
                 <div class="col-sm-9">
-                    <input type="number" name="typeId"
-                           th:id="${type + 'RoomTypeId'}"
-                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="Nhập ID của loại phòng" min="1" required>
+                    <select name="typeId"
+                            th:id="${type + 'RoomTypeid'}"
+                            class="form-select form-select-sm rounded-0 shadow-none"
+                            required>
+                        <option value="">-- Chọn loại phòng --</option>
+                        <option th:each="rt: ${listRoomType}" th:value="${rt.id}" th:text="${rt.name}"></option>
+                    </select>
                 </div>
             </div>
 
             <div class="row mb-3 align-items-center">
-                <label class="col-sm-3 col-form-label text-end fw-bold small">Trạng thái (Status):</label>
+                <label class="col-sm-3 col-form-label text-end fw-bold small">
+                    Trạng thái (Status):
+                </label>
                 <div class="col-sm-9">
-                    <input type="text" name="status"
-                           th:id="${type + 'RoomStatus'}"
-                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="VD: Đã dọn dẹp, Đang bảo trì..." required>
+                    <select name="status"
+                            th:id="${type + 'RoomStatus'}"
+                            class="form-select form-select-sm rounded-0 shadow-none"
+                            required>
+                        <option value="">-- Chọn trạng thái --</option>
+                        <option th:each="status: ${listStatus}" th:value="${status}" th:text="${status.value}"></option>
+                    </select>
                 </div>
             </div>
 
             <div class="row mb-3 align-items-center">
-                <label class="col-sm-3 col-form-label text-end fw-bold small">Tình trạng (Availability):</label>
+                <label class="col-sm-3 col-form-label text-end fw-bold small">
+                    Tình trạng (Availability):
+                </label>
                 <div class="col-sm-9">
-                    <input type="text" name="availabilityStatus"
-                           th:id="${type + 'RoomAvailabilityStatus'}"
-                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="VD: Trống, Có khách..." required>
+                    <select name="availabilityStatus"
+                            th:id="${type + 'RoomAvailabilitystatus'}"
+                            class="form-select form-select-sm rounded-0 shadow-none"
+                            required>
+                        <option value="">-- Chọn trạng thái --</option>
+                        <option th:each="status: ${listAvailabilityStatus}" th:value="${status}" th:text="${status.value}"></option>
+                    </select>
                 </div>
             </div>
 
@@ -53,7 +71,7 @@
                 <div class="col-sm-9">
                     <div class="form-check form-switch mb-0">
                         <input class="form-check-input shadow-none" type="checkbox" name="active" value="true"
-                               th:id="${type + 'ActiveCheckbox'}">
+                               th:id="${type + 'RoomActive'}">
                         <label class="form-check-label user-select-none fw-semibold small text-secondary" th:for="${type + 'ActiveCheckbox'}">
                             Tích chọn để kích hoạt phòng (Còn sử dụng)
                         </label>

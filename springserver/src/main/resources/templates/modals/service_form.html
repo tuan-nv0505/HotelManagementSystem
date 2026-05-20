@@ -1,5 +1,5 @@
 <div th:fragment="serviceForm(type)">
-    <form method="POST" th:action="@{/admin/services}" th:object="${service}">
+    <form method="POST" th:action="@{/admin/services}" th:object="${serviceDTO}">
         <div class="modal-body p-4">
             <input type="hidden" name="id" th:id="${type + 'ServiceId'}">
 
@@ -30,7 +30,7 @@
                         <input class="form-check-input shadow-none" type="checkbox" name="active" value="true"
                                th:id="${type + 'ActiveCheckbox'}">
                         <label class="form-check-label user-select-none fw-semibold small text-secondary"
-                               th:for="${type + 'ActiveCheckbox'}">
+                               th:for="${type + 'ServiceActive'}">
                             Tích chọn để kích hoạt dịch vụ (Còn sử dụng)
                         </label>
                     </div>

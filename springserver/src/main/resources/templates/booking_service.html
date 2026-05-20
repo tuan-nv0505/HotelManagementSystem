@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head}">
+    <title>Quản lý dịch vụ sử dụng</title>
+</head>
+<body th:replace="~{layout/base :: main('bookingService', ~{:: #booking-service-content})}">
+
+<div id="booking-service-content">
+    <div id="tableContainer" th:fragment="booking-service-table-fragment">
+        <div class="table-responsive border shadow-sm bg-white">
+            <table class="table table-striped table-hover mb-0 align-middle text-center">
+                <thead class="table-dark">
+                <tr>
+                    <th colspan="8">
+                        <div class="d-flex align-items-center gap-3 w-100 py-1">
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-sm btn-dark rounded-0 fw-bold" data-bs-toggle="modal" data-bs-target="#addBookingServiceModal">
+                                    Thêm
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
+                                        th:onclick="|deleteMulti('@{/api/booking-services}', 'bookingService')|">
+                                    Xoá
+                                </button>
+                            </div>
+
+                            <div class="mx-auto" style="min-width: 250px; max-width: 600px;">
+                                <form id="searchForm" class="d-flex gap-2" onsubmit="loadTableData(0); return false;">
+                                    <input type="number" name="bookingId" th:value="${bookingId}" class="form-control form-control-sm rounded-0 shadow-none" placeholder="Mã đặt phòng" min="1">
+                                    <button type="submit" class="btn btn-dark btn-sm rounded-0">Tìm</button>
+                                </form>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+                <tr>
+                    <th style="width: 40px; vertical-align: middle;">
+                        <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-booking-service')"
+                               id="selectAllBookingService">
+                    </th>
+                    <th class="text-start">Mã đặt phòng</th>
+                    <th>Tên dịch vụ</th>
+                    <th>Số lượng</th>
+                    <th>Giá khi dùng</th>
+                    <th class="text-start">Ghi chú</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="b : ${listBookingService}">
+                    <td style="vertical-align: middle;">
+                        <input type="checkbox" class="action-select-booking-service"
+                               onclick="resetSelectAllCheckBox('selectAllBookingService', 'action-select-booking-service')">
+                    </td>
+                    <td hidden th:text="${b.id}"></td>
+                    <td class="text-start fw-bold" th:text="${b.bookingId}"></td>
+                    <td th:text="${b.serviceName}"></td>
+                    <td th:text="${b.quantity}"></td>
+                    <td th:text="${b.priceAtUsage}"></td>
+                    <td class="text-start" th:text="${b.note}"></td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-dark rounded-0 me-1 fw-bold"
+                                th:data-id="${b.id}"
+                                th:data-bookingid="${b.bookingId}"
+                                th:data-serviceid="${b.serviceId}"
+                                th:data-quantity="${b.quantity}"
+                                th:data-priceatusage="${b.priceAtUsage}"
+                                th:data-note="${b.note}"
+                                onclick="openEditModal(this, 'BookingService')">
+                            Sửa
+                        </button>
+
+                        <button th:id="|deleteBookingService-${b.id}|" th:onclick="|deleteDetail('@{/api/booking-services/{id}(id=${b.id})}')|" type="button" class="btn btn-sm btn-danger rounded-0 fw-bold">Xoá</button>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(listBookingService)}">
+                    <td colspan="7" class="text-muted py-4">Chưa có dịch vụ nào được đặt trong hệ thống.</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-center p-2 border-top bg-light"
+                 th:if="${not #lists.isEmpty(listPage)}">
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item" th:each="page : ${listPage}">
+                        <a class="page-link py-1 shadow-none"
+                           th:href="@{/admin/booking-services(page=${page},kw=${kw},bookingId=${bookingId})}"
+                           th:text="${page}">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <div th:replace="~{modals/base :: genericModal('addBookingServiceModal', 'Thêm mới dịch vụ sử dụng', ~{modals/booking_service_form :: bookingServiceForm('add')})}"></div>
+    <div th:replace="~{modals/base :: genericModal('editBookingServiceModal', 'Sửa dịch vụ sử dụng', ~{modals/booking_service_form :: bookingServiceForm('edit')})}"></div>
+
+</div>
+</body>
+</html>

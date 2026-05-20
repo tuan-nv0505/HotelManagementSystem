@@ -28,7 +28,6 @@ function openEditModal(btnElement, prefix) {
             const fieldName = attr.name.replace('data-', '');
             const formattedFieldName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
             const inputField = document.getElementById(`edit${prefix}${formattedFieldName}`);
-
             if (inputField) {
                 if (inputField.type === 'checkbox') {
                     inputField.checked = (attr.value === 'true');
@@ -40,6 +39,7 @@ function openEditModal(btnElement, prefix) {
                     }
                 } else {
                     inputField.value = attr.value;
+                    console.log(`edit${prefix}${formattedFieldName}`, inputField.value, attr.value);
                 }
             }
         }

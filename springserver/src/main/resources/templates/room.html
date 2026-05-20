@@ -38,7 +38,7 @@
                         <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-room')"
                                id="selectAllRoom">
                     </th>
-                    <th class="text-start">Số phòng</th>
+                    <th class="text-start">phòng</th>
                     <th>Tầng</th>
                     <th>Loại phòng</th>
                     <th>Trạng thái dọn dẹp</th>
@@ -56,9 +56,9 @@
                     <td hidden th:text="${r.id}"></td>
                     <td class="text-start fw-bold" th:text="${r.roomNumber}"></td>
                     <td th:text="${r.floor}"></td>
-                    <td th:text="${r.typeId}"></td>
-                    <td class="text-start fw-bold" th:text="${r.status}"></td>
-                    <td class="text-start fw-bold" th:text="${r.availabilityStatus}"></td>
+                    <td th:text="${r.typeName}"></td>
+                    <td class="text-start fw-bold" th:text="${r.status.value}"></td>
+                    <td class="text-start fw-bold" th:text="${r.availabilityStatus.value}"></td>
                     <td>
                         <span th:if="${r.active}">Còn sử dụng</span>
                         <span th:unless="${r.active}">Không sử dụng</span>
@@ -68,7 +68,7 @@
                                 th:data-id="${r.id}"
                                 th:data-roomnumber="${r.roomNumber}"
                                 th:data-floor="${r.floor}"
-                                th:data-typeid="${r.type.roomType.name}"
+                                th:data-typeid="${r.typeId}"
                                 th:data-status="${r.status}"
                                 th:data-availabilitystatus="${r.availabilityStatus}"
                                 th:data-active="${r.active}"

@@ -1,5 +1,5 @@
 <div th:fragment="customerForm(type)">
-    <form method="POST" th:action="@{/admin/customers}" th:object="${customer}">
+    <form method="POST" th:action="@{/admin/customers}" th:object="${customerDTO}">
         <div class="modal-body p-4">
             <input type="hidden" name="id" th:id="${type + 'CustomerId'}">
 
@@ -70,10 +70,10 @@
                     <div class="form-check form-switch mb-0">
                         <input class="form-check-input shadow-none" type="checkbox" name="active" value="true"
                                th:id="${type + 'CustomerActive'}">
-
                         <label class="form-check-label user-select-none fw-semibold small text-secondary"
                                th:for="${type + 'CustomerActive'}">
-                            Tích chọn để kích hoạt (Còn hoạt động)
+                            Tích chọn để kích hoạt khách hàng (Còn hoạt động)
+
                         </label>
                     </div>
                 </div>

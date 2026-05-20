@@ -28,7 +28,7 @@ public class CustomerController {
 
     @GetMapping("/customers")
     public String customerView(Model model, @RequestParam Map<String, String> params) {
-        model.addAttribute("customer", new CustomerDTO());
+        model.addAttribute("customerDTO", new CustomerDTO());
         model.addAttribute("listCustomer", this.customerService.list(params));
         model.addAttribute("allUsers", userService.list(null));
 
@@ -46,7 +46,7 @@ public class CustomerController {
     }
 
     @PostMapping("/customers")
-    public String processService(@ModelAttribute(name = "service") CustomerDTO customerDTO, RedirectAttributes redirectAttributes) {
+    public String processService(@ModelAttribute(name = "serviceDTO") CustomerDTO customerDTO, RedirectAttributes redirectAttributes) {
         try {
             customerService.addOrUpdate(customerDTO);
             redirectAttributes.addFlashAttribute("successMessage", "Lưu khách hàng thành công!");

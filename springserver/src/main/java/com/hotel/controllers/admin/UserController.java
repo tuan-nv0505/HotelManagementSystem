@@ -35,7 +35,7 @@ public class UserController {
 
     @GetMapping("/users")
     public String userView(Model model, @RequestParam Map<String, String> params) {
-        model.addAttribute("user", new UserDTO());
+        model.addAttribute("userDTO", new UserDTO());
         model.addAttribute("roleUsers", RoleUser.values());
         model.addAttribute("listUsers", userService.list(params));
 
@@ -54,7 +54,7 @@ public class UserController {
 
     @PostMapping(path = "/users", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public String processUser(@ModelAttribute(name = "user") UserDTO userDTO) {
+    public String processUser(@ModelAttribute(name = "userDTO") UserDTO userDTO) {
         userService.addOrUpdate(userDTO);
         return "redirect:/admin/users";
     }

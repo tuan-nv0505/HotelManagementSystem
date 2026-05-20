@@ -1,7 +1,6 @@
 package com.hotel.repositories.impl;
 
 import com.hotel.entity.Booking;
-import com.hotel.entity.Booking;
 import com.hotel.entity.Customer;
 import com.hotel.repositories.BookingRepository;
 import jakarta.persistence.Query;
@@ -113,5 +112,11 @@ public class BookingRepositoryImpl implements BookingRepository {
         criteriaDelete.where(root.get("id").in(ids));
 
         session.createMutationQuery(criteriaDelete).executeUpdate();
+    }
+
+    @Override
+    public Booking get(int id) {
+        Session session = this.factory.getObject().getCurrentSession();
+        return session.get(Booking.class, id);
     }
 }

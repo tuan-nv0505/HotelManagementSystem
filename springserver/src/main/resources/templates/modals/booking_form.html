@@ -1,5 +1,5 @@
 <div th:fragment="bookingForm(type)">
-    <form method="POST" th:action="@{/admin/bookings}" th:object="${booking}">
+    <form method="POST" th:action="@{/admin/bookings}" th:object="${bookingDTO}">
         <div class="modal-body p-4">
             <input type="hidden" name="id" th:id="${type + 'BookingId'}">
 

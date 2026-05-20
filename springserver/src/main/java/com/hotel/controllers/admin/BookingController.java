@@ -30,7 +30,7 @@ public class BookingController {
 
     @GetMapping("/bookings")
     public String bookingView(Model model, @RequestParam Map<String, String> params) {
-        model.addAttribute("booking", new BookingDTO());
+        model.addAttribute("bookingDTO", new BookingDTO());
         model.addAttribute("statusBookings", StatusBooking.values());
         model.addAttribute("allCustomers", customerService.list(null));
         model.addAttribute("listBookings", bookingService.list(params));
@@ -50,7 +50,7 @@ public class BookingController {
     }
 
     @PostMapping("/bookings")
-    public String processService(@ModelAttribute(name = "booking") BookingDTO bookingDTO, RedirectAttributes redirectAttributes) {
+    public String processService(@ModelAttribute(name = "bookingDTO") BookingDTO bookingDTO, RedirectAttributes redirectAttributes) {
         try {
             this.bookingService.addOrUpdate(bookingDTO);
             redirectAttributes.addFlashAttribute("successMessage", "Lưu đơn đặt phòng thành công!");

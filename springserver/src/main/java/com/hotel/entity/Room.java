@@ -1,5 +1,7 @@
 package com.hotel.entity;
 
+import com.hotel.enums.AvailabilityStatus;
+import com.hotel.enums.StatusRoom;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,12 +32,14 @@ public class Room {
     @ColumnDefault("'VACANT_CLEAN'")
     @Lob
     @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private StatusRoom status;
 
     @ColumnDefault("'READY'")
     @Lob
     @Column(name = "availability_status")
-    private String availabilityStatus;
+    @Enumerated(EnumType.STRING)
+    private AvailabilityStatus availabilityStatus;
 
     @ColumnDefault("1")
     @Column(name = "active")

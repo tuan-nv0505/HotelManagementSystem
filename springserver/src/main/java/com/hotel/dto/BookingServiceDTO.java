@@ -8,10 +8,10 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class BookingServiceDTO {
-
     private Integer id;
     private Integer bookingId;
     private Integer serviceId;
+    private String serviceName;
     private Integer quantity;
     private BigDecimal priceAtUsage;
     private String note;
