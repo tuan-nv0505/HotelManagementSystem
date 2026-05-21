@@ -4,6 +4,7 @@ import com.hotel.converter.BookingConverter;
 import com.hotel.dto.BookingDTO;
 import com.hotel.entity.Booking;
 import com.hotel.entity.Customer;
+import com.hotel.exceptions.NotFoundBookingException;
 import com.hotel.repositories.BookingRepository;
 import com.hotel.repositories.CustomerRepository;
 import com.hotel.services.BookingService;
@@ -88,5 +89,14 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void delete(List<Integer> ids) {
         this.bookingRepository.delete(ids);
+    }
+
+    @Override
+    public BookingDTO get(int id) {
+        Booking booking = this.bookingRepository.get(id);
+        if (booking == null) {
+            throw new NotFoundBookingException(String.format("Not found Booking ID: %d", id));
+        }
+        return this.bookingConverter.toBookingDTO(booking);
     }
 }

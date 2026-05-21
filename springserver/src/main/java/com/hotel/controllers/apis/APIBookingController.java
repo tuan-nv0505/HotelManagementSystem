@@ -17,7 +17,7 @@ public class APIBookingController {
 
     @DeleteMapping("/bookings/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteService(@PathVariable(value = "id") int id) {
+    public void deleteBooking(@PathVariable(value = "id") int id) {
         this.bookingService.delete(id);
     }
 

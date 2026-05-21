@@ -77,4 +77,9 @@ public class CustomerServiceImpl implements CustomerService {
         this.customerRepository.delete(ids);
     }
 
+    @Override
+    public CustomerDTO get(int id) {
+        return null;
+    }
+
 }

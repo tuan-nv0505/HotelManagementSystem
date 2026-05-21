@@ -4,8 +4,10 @@
     <title>Quản lý dịch vụ sử dụng</title>
 </head>
 <body th:replace="~{layout/base :: main('bookingService', ~{:: #booking-service-content})}">
-
 <div id="booking-service-content">
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <span th:text="${errorMessage}"></span>
+    </div>
     <div id="tableContainer" th:fragment="booking-service-table-fragment">
         <div class="table-responsive border shadow-sm bg-white">
             <table class="table table-striped table-hover mb-0 align-middle text-center">

@@ -1,38 +1,38 @@
 package com.hotel.controllers.apis;
 
-import com.hotel.services.UserService;
+import com.hotel.services.RoomService;
+import com.hotel.services.RoomTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Controller
+@RestController
 @RequestMapping("/api")
-public class APIUserController {
+public class APIRoomController {
     @Autowired
-    private UserService userService;
+    private RoomService roomService;
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/rooms/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable(value = "id") int id) {
-        this.userService.delete(id);
+    public void deleteBookingService(@PathVariable(value = "id") int id) {
+        this.roomService.delete(id);
     }
 
-    @DeleteMapping("/users")
+    @DeleteMapping("/rooms")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteMultiUser(@RequestBody List<Map<String, String>> listCustomerDelete) {
+    public void deleteMultiBookingService(@RequestBody List<Map<String, String>> listRoomDelete) {
         List<Integer> ids = new ArrayList<>();
-        listCustomerDelete.forEach(item -> {
+        listRoomDelete.forEach(item -> {
             ids.add(Integer.valueOf(item.get("id")));
         });
 
         if (ids.isEmpty())
             return;
 
-        this.userService.delete(ids);
+        this.roomService.delete(ids);
     }
 }

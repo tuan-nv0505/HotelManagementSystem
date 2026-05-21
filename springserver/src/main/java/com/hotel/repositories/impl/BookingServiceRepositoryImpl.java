@@ -112,4 +112,35 @@ public class BookingServiceRepositoryImpl implements BookingServiceRepository {
         Session session = this.factory.getObject().getCurrentSession();
         return session.get(BookingService.class, id);
     }
+
+    @Override
+    public boolean existsByService(int serviceId) {
+        Session session = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Integer> criteriaQuery = builder.createQuery(Integer.class);
+        Root<BookingService> root = criteriaQuery.from(BookingService.class);
+        criteriaQuery.select(root.get("id"));
+        criteriaQuery.where(builder.equal(root.get("service").get("id"), serviceId));
+
+        Query query = session.createQuery(criteriaQuery);
+        query.setMaxResults(1);
+
+        return !query.getResultList().isEmpty();
+    }
+
+    @Override
+    public boolean existsByService(List<Integer> listServiceId) {
+        Session session = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Integer> criteriaQuery = builder.createQuery(Integer.class);
+        Root<BookingService> root = criteriaQuery.from(BookingService.class);
+
+        criteriaQuery.select(root.get("id"));
+        criteriaQuery.where(root.get("service").get("id").in(listServiceId));
+
+        Query query = session.createQuery(criteriaQuery);
+        query.setMaxResults(1);
+
+        return !query.getResultList().isEmpty();
+    }
 }
