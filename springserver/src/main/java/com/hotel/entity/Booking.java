@@ -61,4 +61,7 @@ public class Booking {
 
     @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY)
     private Set<BookingRoom> bookingRooms;
+
+    @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY)
+    private Set<BookingService> bookingServices;
 }

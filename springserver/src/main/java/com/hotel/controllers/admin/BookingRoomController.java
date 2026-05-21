@@ -30,7 +30,7 @@ public class BookingRoomController {
     @Autowired
     private Environment env;
 
-    @GetMapping("/booking_rooms")
+    @GetMapping("/booking-rooms")
     public String bookingRoomView(Model model, @RequestParam Map<String, String> params) {
         model.addAttribute("BookingRoomDTO", new BookingRoomDTO());
         model.addAttribute("allBookings", bookingService.list(null));
@@ -50,7 +50,7 @@ public class BookingRoomController {
         return "booking_room";
     }
 
-    @PostMapping("/booking_rooms")
+    @PostMapping("/booking-rooms")
     public String processService(@ModelAttribute(name = "bookingDTO") BookingRoomDTO bookingRoomDTO, RedirectAttributes redirectAttributes) {
         try {
             this.bookingRoomService.addOrUpdate(bookingRoomDTO);
@@ -59,6 +59,6 @@ public class BookingRoomController {
         } catch (RuntimeException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
         }
-        return "redirect:/admin/booking_rooms";
+        return "redirect:/admin/booking-rooms";
     }
 }

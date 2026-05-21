@@ -32,6 +32,7 @@ public class RoomConverter {
         RoomDTO roomDTO = this.modelMapper.map(roomEntity, RoomDTO.class);
         roomDTO.setTypeId(roomEntity.getType().getId());
         roomDTO.setTypeName(roomEntity.getType().getName());
+        roomDTO.setTypeBasePrice(roomEntity.getType().getBasePrice());
         return roomDTO;
     }
 

@@ -3,18 +3,20 @@ package com.hotel.services.impl;
 import com.hotel.converter.BookingConverter;
 import com.hotel.dto.BookingDTO;
 import com.hotel.entity.Booking;
+import com.hotel.entity.BookingRoom;
 import com.hotel.entity.Customer;
 import com.hotel.exceptions.NotFoundBookingException;
 import com.hotel.repositories.BookingRepository;
 import com.hotel.repositories.CustomerRepository;
+import com.hotel.repositories.RoomInventoryRepository;
 import com.hotel.services.BookingService;
 import jakarta.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private RoomInventoryRepository roomInventoryRepository;
 
     @Override
     public List<BookingDTO> list(Map<String, String> params) {
@@ -70,6 +75,9 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void addOrUpdate(BookingDTO bookingDTO) {
         Booking booking = bookingConverter.toBooking(bookingDTO);
+        if (bookingDTO.getId() == null) {
+            booking.setTotalAmount(BigDecimal.valueOf(0.0));
+        }
         Customer customer = null;
         try {
             customer = customerRepository.getCustomerByName(bookingDTO.getCustomerName());
@@ -98,5 +106,31 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundBookingException(String.format("Not found Booking ID: %d", id));
         }
         return this.bookingConverter.toBookingDTO(booking);
+    }
+
+    @Override
+    public void recalculateTotalAmount(int bookingId) {
+        Booking booking = bookingRepository.get(bookingId);
+        if (booking == null) return;
+
+        BigDecimal roomTotal = BigDecimal.ZERO;
+        if (booking.getBookingRooms() != null) {
+            for (BookingRoom br : booking.getBookingRooms()) {
+                roomTotal = roomTotal.add(br.getPriceAtBooking());
+            }
+        }
+
+        BigDecimal serviceTotal = BigDecimal.ZERO;
+        if (booking.getBookingServices() != null) {
+            for (com.hotel.entity.BookingService bs : booking.getBookingServices()) {
+                BigDecimal quantity = BigDecimal.valueOf(bs.getQuantity());
+                BigDecimal subTotal = bs.getPriceAtUsage().multiply(quantity);
+                serviceTotal = serviceTotal.add(subTotal);
+            }
+        }
+
+        BigDecimal totalAmount = roomTotal.add(serviceTotal);
+        booking.setTotalAmount(totalAmount);
+        bookingRepository.addOrUpdate(booking);
     }
 }

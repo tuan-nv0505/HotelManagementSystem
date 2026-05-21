@@ -34,6 +34,7 @@ public class BookingRepositoryImpl implements BookingRepository {
         Root<Booking> root = query.from(Booking.class);
         query.select(root);
         query.where(this.getPredicates(params, builder, root).toArray(Predicate[]::new));
+        query.orderBy(builder.desc(root.get("id")));
         Query q = session.createQuery(query);
 
         if (params != null) {
@@ -118,5 +119,11 @@ public class BookingRepositoryImpl implements BookingRepository {
     public Booking get(int id) {
         Session session = this.factory.getObject().getCurrentSession();
         return session.get(Booking.class, id);
+    }
+
+    @Override
+    public void flush() {
+        Session session = this.factory.getObject().getCurrentSession();
+        session.flush();
     }
 }

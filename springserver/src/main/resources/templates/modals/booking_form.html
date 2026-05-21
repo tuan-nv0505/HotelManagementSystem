@@ -60,14 +60,13 @@
                 </div>
             </div>
 
-            <div class="row mb-3 align-items-center">
+            <div class="row mb-3 align-items-center" th:if="${type == 'edit'}">
                 <label class="col-sm-3 col-form-label text-end fw-bold small">Tổng tiền (VNĐ):</label>
                 <div class="col-sm-9">
                     <input type="number" name="totalAmount"
                            th:id="${type + 'BookingTotalamount'}"
                            class="form-control form-control-sm rounded-0 shadow-none"
-                           placeholder="0">
-                </div>
+                           readonly></div>
             </div>
 
             <div class="row mb-3 align-items-center">

@@ -7,6 +7,8 @@ import com.hotel.dto.UserDTO;
 import com.hotel.entity.User;
 import com.hotel.entity.User;
 import com.hotel.enums.RoleUser;
+import com.hotel.exceptions.DuplicateUsernameException;
+import com.hotel.exceptions.InvalidPasswordException;
 import com.hotel.repositories.UserRepository;
 import com.hotel.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,8 +77,28 @@ public class UserServiceImpl implements UserService {
     @Override
     public void addOrUpdate(UserDTO userDTO) {
         User user = userConverter.toUser(userDTO);
-        user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
-        if (!userDTO.getFile().isEmpty()) {
+        User existingUser = userRepository.getUserByUsername(userDTO.getUsername());
+
+        if (userDTO.getId() == null) {
+            if (existingUser != null) {
+                throw new DuplicateUsernameException("Tên đăng nhập đã tồn tại!");
+            }
+            if (userDTO.getPassword() == null || userDTO.getPassword().trim().isEmpty()) {
+                throw new InvalidPasswordException("Vui lòng nhập mật khẩu!");
+            }
+            user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
+        } else {
+            if (existingUser != null && !existingUser.getId().equals(userDTO.getId())) {
+                throw new DuplicateUsernameException("Tên đăng nhập đã tồn tại!");
+            }
+            if (userDTO.getPassword() != null && !userDTO.getPassword().trim().isEmpty()) {
+                user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
+            } else {
+                User oldUser = userRepository.getUserById(userDTO.getId());
+                user.setPassword(oldUser.getPassword());
+            }
+        }
+        if (userDTO.getFile() != null && !userDTO.getFile().isEmpty()) {
             try {
                 Map res = this.cloudinary.uploader().upload(userDTO.getFile().getBytes(),
                         ObjectUtils.asMap("resource_type", "auto"));
