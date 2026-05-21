@@ -26,6 +26,8 @@ public class BookingServiceServiceImpl implements BookingServiceService {
     private BookingRepository bookingRepository;
     @Autowired
     private ServiceRepository serviceRepository;
+    @Autowired
+    private com.hotel.services.BookingService bookingServiceImpl;
 
     @Autowired
     private BookingServiceConverter bookingServiceConverter;
@@ -63,6 +65,7 @@ public class BookingServiceServiceImpl implements BookingServiceService {
         bookingService.setCreatedAt(Instant.now());
 
         this.bookingServiceRepository.addOrUpdate(bookingService);
+        bookingServiceImpl.recalculateTotalAmount(bookingServiceDTO.getBookingId());
     }
 
     @Override

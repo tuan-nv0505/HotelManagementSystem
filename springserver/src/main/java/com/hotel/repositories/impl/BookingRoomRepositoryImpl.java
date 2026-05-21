@@ -36,6 +36,7 @@ public class BookingRoomRepositoryImpl implements BookingRoomRepository {
         Root<BookingRoom> root = query.from(BookingRoom.class);
         query.select(root);
         query.where(this.getPredicates(params, builder, root).toArray(Predicate[]::new));
+        query.orderBy(builder.desc(root.get("id")));
         Query q = session.createQuery(query);
 
         if (params != null) {

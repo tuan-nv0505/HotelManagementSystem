@@ -6,6 +6,20 @@
 <body th:replace="~{layout/base :: main('user', ~{:: #user-content})}">
 
 <div id="user-content">
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show rounded-0 py-2 small mb-3"
+         role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close py-2 shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show rounded-0 py-2 small mb-3"
+         role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close py-2 shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
     <div class="table-responsive border shadow-sm">
         <table class="table table-striped table-hover mb-0 align-middle text-center">
             <thead class="table-dark">

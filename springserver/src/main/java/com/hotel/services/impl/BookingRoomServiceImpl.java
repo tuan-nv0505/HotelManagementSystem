@@ -11,6 +11,7 @@ import com.hotel.repositories.BookingRepository;
 import com.hotel.repositories.BookingRoomRepository;
 import com.hotel.repositories.RoomRepository;
 import com.hotel.services.BookingRoomService;
+import com.hotel.services.BookingService;
 import jakarta.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,8 @@ public class BookingRoomServiceImpl implements BookingRoomService {
     private BookingRepository bookingRepository;
     @Autowired
     private RoomRepository roomRepository;
+    @Autowired
+    private BookingService bookingService;
 
     @Override
     public List<BookingRoomDTO> list(Map<String, String> params) {
@@ -65,10 +68,12 @@ public class BookingRoomServiceImpl implements BookingRoomService {
         if (booking != null && room != null) {
             bookingRoom.setBooking(booking);
             bookingRoom.setRoom(room);
+            bookingRoom.setPriceAtBooking(room.getType().getBasePrice());
         } else {
             throw new RuntimeException("Không tìm thấy Đơn đặt phòng hoặc Phòng tương ứng!");
         }
         this.bookingRoomRepository.addOrUpdate(bookingRoom);
+        bookingService.recalculateTotalAmount(bookingRoomDTO.getBookingId());
     }
 
     @Override

@@ -5,14 +5,17 @@ import com.hotel.entity.Customer;
 import com.hotel.entity.User;
 import com.hotel.enums.RoleUser;
 import com.hotel.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
@@ -54,8 +57,16 @@ public class UserController {
 
     @PostMapping(path = "/users", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public String processUser(@ModelAttribute(name = "userDTO") UserDTO userDTO) {
+    public String processUser(@Valid @ModelAttribute(name = "userDTO") UserDTO userDTO, BindingResult bindingResult,
+                              RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errorMessage", bindingResult.getAllErrors().get(0).getDefaultMessage());
+            return "redirect:/admin/users";
+        }
+
         userService.addOrUpdate(userDTO);
+        redirectAttributes.addFlashAttribute("successMessage", "Lưu người dùng thành công!");
+
         return "redirect:/admin/users";
     }
 }

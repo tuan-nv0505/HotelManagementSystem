@@ -31,8 +31,7 @@ openEditModal = (btnElement, prefix) => {
             if (inputField) {
                 if (inputField.type === 'checkbox') {
                     inputField.checked = (attr.value === 'true');
-                }
-                else if (inputField.type === 'file') {
+                } else if (inputField.type === 'file') {
                     const previewImg = document.getElementById('editImagePreview');
                     if (previewImg && attr.value) {
                         previewImg.src = attr.value;
@@ -63,8 +62,7 @@ deleteDetail = async (url) => {
         const res = await fetch(url, {method: "DELETE"});
         if (res.status === 204) {
             location.reload();
-        }
-        else if (res.status === 400) {
+        } else if (res.status === 400) {
             const data = await res.json();
             alert(data.error);
         }
@@ -108,12 +106,11 @@ deleteMulti = async (url, prefix) => {
         })
         if (res.status === 204) {
             location.reload();
-        }
-        else if (res.status === 400) {
+        } else if (res.status === 400) {
             const data = await res.json();
             alert(data.error);
         }
-    } catch(ex) {
+    } catch (ex) {
         alert("Lỗi hệ thống!");
     }
 }

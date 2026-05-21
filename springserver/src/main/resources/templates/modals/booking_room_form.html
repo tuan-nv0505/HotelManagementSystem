@@ -1,5 +1,5 @@
 <div th:fragment="bookingRoomForm(type)">
-    <form method="POST" th:action="@{/admin/booking_rooms}" th:object="${BookingRoomDTO}">
+    <form method="POST" th:action="@{/admin/booking-rooms}" th:object="${BookingRoomDTO}">
         <div class="modal-body p-4">
             <input type="hidden" name="id" th:id="${type + 'BookingRoomId'}">
 
@@ -34,14 +34,6 @@
                                 th:label="${'Phòng ' + r.roomNumber}">
                         </option>
                     </datalist>
-                </div>
-            </div>
-
-            <div class="row mb-3 align-items-center">
-                <label class="col-sm-3 col-form-label text-end fw-bold small">Giá lúc đặt:</label>
-                <div class="col-sm-9">
-                    <input type="number" name="priceAtBooking" th:id="${type + 'BookingRoomPriceatbooking'}"
-                           class="form-control form-control-sm rounded-0 shadow-none" placeholder="0" required>
                 </div>
             </div>
         </div>

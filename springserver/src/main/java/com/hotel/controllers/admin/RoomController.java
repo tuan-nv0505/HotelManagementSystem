@@ -1,6 +1,7 @@
 package com.hotel.controllers.admin;
 
 import com.hotel.dto.RoomDTO;
+import com.hotel.entity.Room;
 import com.hotel.enums.AvailabilityStatus;
 import com.hotel.enums.StatusRoom;
 import com.hotel.services.RoomService;
@@ -8,10 +9,12 @@ import com.hotel.services.RoomTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
