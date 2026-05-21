@@ -4,8 +4,10 @@
     <title>Quản lý dịch vụ sử dụng</title>
 </head>
 <body th:replace="~{layout/base :: main('bookingService', ~{:: #booking-service-content})}">
-
 <div id="booking-service-content">
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <span th:text="${errorMessage}"></span>
+    </div>
     <div id="tableContainer" th:fragment="booking-service-table-fragment">
         <div class="table-responsive border shadow-sm bg-white">
             <table class="table table-striped table-hover mb-0 align-middle text-center">
@@ -18,7 +20,7 @@
                                     Thêm
                                 </button>
                                 <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
-                                        th:onclick="|deleteMulti('@{/api/booking-services}', 'bookingService')|">
+                                        th:onclick="|deleteMulti('@{/api/booking-services}', 'booking-service')|">
                                     Xoá
                                 </button>
                             </div>
@@ -49,6 +51,12 @@
                 <tr th:each="b : ${listBookingService}">
                     <td style="vertical-align: middle;">
                         <input type="checkbox" class="action-select-booking-service"
+                               th:data-id="${b.id}"
+                               th:data-bookingid="${b.bookingId}"
+                               th:data-serviceid="${b.serviceId}"
+                               th:data-quantity="${b.quantity}"
+                               th:data-priceatusage="${b.priceAtUsage}"
+                               th:data-note="${b.note}"
                                onclick="resetSelectAllCheckBox('selectAllBookingService', 'action-select-booking-service')">
                     </td>
                     <td hidden th:text="${b.id}"></td>

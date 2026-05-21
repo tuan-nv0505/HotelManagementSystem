@@ -1,4 +1,4 @@
-function selectAllCheckbox(selectAllId, itemClass) {
+selectAllCheckbox = (selectAllId, itemClass) => {
     const master = document.getElementById(selectAllId);
     const items = document.getElementsByClassName(itemClass);
 
@@ -16,7 +16,7 @@ function resetSelectAllCheckBox(selectAllId, itemClass) {
     master.checked = allChecked;
 }
 
-function openEditModal(btnElement, prefix) {
+openEditModal = (btnElement, prefix) => {
     const modalId = `edit${prefix}Modal`;
     const editModal = document.getElementById(modalId);
     if (!editModal) {
@@ -55,23 +55,27 @@ function openEditModal(btnElement, prefix) {
     bsModal.show();
 }
 
-function deleteDetail(url) {
+deleteDetail = async (url) => {
     if (confirm("Xác nhận xoá?") === false)
         return;
 
-    fetch(url, {
-        method: "delete"
-    }).then(res => {
-        if (res.status === 204)
+    try {
+        const res = await fetch(url, {method: "DELETE"});
+        if (res.status === 204) {
             location.reload();
-        else
-            alert("Xóa thất bại!");
-    });
+        }
+        else if (res.status === 400) {
+            const data = await res.json();
+            alert(data.error);
+        }
+    } catch (ex) {
+        alert("Lỗi hệ thống!");
+    }
 }
 
-function deleteMulti(url, prefix) {
+deleteMulti = async (url, prefix) => {
     const listCheckBox = document.getElementsByClassName(`action-select-${prefix}`);
-    const listElementNeedDelete = [];
+    const listElementDelete = [];
     Array.from(listCheckBox).forEach(checkBox => {
         if (checkBox.checked === false)
             return;
@@ -81,10 +85,11 @@ function deleteMulti(url, prefix) {
                 return;
             service[attr.name.replace('data-', '')] = attr.value;
         })
-        listElementNeedDelete.push(service);
+        listElementDelete.push(service);
     })
+    console.log(listElementDelete);
 
-    if (listElementNeedDelete.length === 0) {
+    if (listElementDelete.length === 0) {
         alert("Không có cái nào để xoá!");
         return;
     }
@@ -92,22 +97,28 @@ function deleteMulti(url, prefix) {
     if (confirm("Chắc chắn xoá không?") === false)
         return;
 
-    fetch(url, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+    try {
+        const res = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
 
-        body: JSON.stringify(listElementNeedDelete)
-    }).then(res => {
-        if (res.status === 204)
+            body: JSON.stringify(listElementDelete)
+        })
+        if (res.status === 204) {
             location.reload();
-        else
-            alert("Xóa thất bại!");
-    });
+        }
+        else if (res.status === 400) {
+            const data = await res.json();
+            alert(data.error);
+        }
+    } catch(ex) {
+        alert("Lỗi hệ thống!");
+    }
 }
 
-function previewImage(input) {
+previewImage = (input) => {
     const type = input.getAttribute("data-prefix");
     const preview = document.getElementById(`${type}ImagePreview`);
 

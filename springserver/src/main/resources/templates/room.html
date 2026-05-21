@@ -51,6 +51,13 @@
                 <tr th:each="r : ${listRoom}">
                     <td style="vertical-align: middle;">
                         <input type="checkbox" class="action-select-room"
+                               th:data-id="${r.id}"
+                               th:data-roomnumber="${r.roomNumber}"
+                               th:data-floor="${r.floor}"
+                               th:data-typeid="${r.typeId}"
+                               th:data-status="${r.status}"
+                               th:data-availabilitystatus="${r.availabilityStatus}"
+                               th:data-active="${r.active}"
                                onclick="resetSelectAllCheckBox('selectAllRoom', 'action-select-room')">
                     </td>
                     <td hidden th:text="${r.id}"></td>

@@ -115,7 +115,6 @@ public class ServiceRepositoryImpl implements ServiceRepository {
         criteriaDelete.where(root.get("id").in(ids));
 
         session.createMutationQuery(criteriaDelete).executeUpdate();
-        System.out.println("OK");
     }
 
     @Override

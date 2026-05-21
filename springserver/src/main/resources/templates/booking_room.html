@@ -34,7 +34,7 @@
                                 Thêm phòng
                             </button>
                             <button type="button" class="btn btn-sm btn-danger rounded-0 fw-bold"
-                                    th:onclick="|deleteMulti('@{/api/booking_rooms}', 'booking-room')|">
+                                    th:onclick="|deleteMulti('@{/api/booking-rooms}', 'booking-room')|">
                                 Xoá
                             </button>
                         </div>
@@ -57,7 +57,7 @@
             </tr>
             <tr>
                 <th style="width: 40px; vertical-align: middle;">
-                    <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-booking_room')"
+                    <input type="checkbox" onclick="selectAllCheckbox(this.id, 'action-select-booking-room')"
                            id="selectAllBookingRoom">
                 </th>
                 <th>Khách hàng đặt phòng</th>
@@ -69,13 +69,13 @@
             <tbody>
             <tr th:each="br : ${bookingRooms}">
                 <td style="vertical-align: middle;">
-                    <input type="checkbox" class="action-select-booking_room"
+                    <input type="checkbox" class="action-select-booking-room"
                            th:value="${br.id}"
                            th:data-id="${br.id}"
                            th:data-bookingid="${br.bookingId}"
                            th:data-roomid="${br.roomId}"
                            th:data-priceatbooking="${br.priceAtBooking}"
-                           onclick="resetSelectAllCheckBox('selectAllBookingRoom', 'action-select-booking_room')">
+                           onclick="resetSelectAllCheckBox('selectAllBookingRoom', 'action-select-booking-room')">
                 </td>
                 <td class="fw-bold text-secondary" th:text="'#' + ${br.bookingCustomerName}"></td>
 
@@ -94,7 +94,7 @@
                     </button>
 
                     <button th:id="|deleteBookingRoom-${br.id}|"
-                            th:onclick="|deleteDetail('@{/api/booking_rooms/{id}(id=${br.id})}')|" type="button"
+                            th:onclick="|deleteDetail('@{/api/booking-rooms/{id}(id=${br.id})}')|" type="button"
                             class="btn btn-sm btn-outline-danger rounded-0 fw-bold">Xoá
                     </button>
                 </td>
@@ -111,7 +111,7 @@
             <ul class="pagination pagination-sm mb-0">
                 <li class="page-item" th:each="page : ${listPage}">
                     <a class="page-link py-1 shadow-none"
-                       th:href="@{/admin/booking_rooms(page=${page},customerName=${customerName} ,roomName=${roomName})}"
+                       th:href="@{/admin/booking-rooms(page=${page},customerName=${customerName} ,roomName=${roomName})}"
                        th:text="${page}">
                     </a>
                 </li>

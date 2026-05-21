@@ -1,6 +1,6 @@
 package com.hotel.controllers.apis;
 
-import com.hotel.services.BookingServiceService;
+import com.hotel.services.RoomService;
 import com.hotel.services.RoomTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,27 +12,27 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
-public class APIBookingServiceController {
+public class APIRoomController {
     @Autowired
-    private BookingServiceService bookingServiceService;
+    private RoomService roomService;
 
-    @DeleteMapping("/booking-services/{id}")
+    @DeleteMapping("/rooms/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBookingService(@PathVariable(value = "id") int id) {
-        this.bookingServiceService.delete(id);
+        this.roomService.delete(id);
     }
 
-    @DeleteMapping("/booking-services")
+    @DeleteMapping("/rooms")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteMultiBookingService(@RequestBody List<Map<String, String>> listBookingServiceDelete) {
+    public void deleteMultiBookingService(@RequestBody List<Map<String, String>> listRoomDelete) {
         List<Integer> ids = new ArrayList<>();
-        listBookingServiceDelete.forEach(item -> {
+        listRoomDelete.forEach(item -> {
             ids.add(Integer.valueOf(item.get("id")));
         });
 
         if (ids.isEmpty())
             return;
 
-        this.bookingServiceService.delete(ids);
+        this.roomService.delete(ids);
     }
 }

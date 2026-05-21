@@ -15,13 +15,13 @@ public class APIBookingRoomController {
     @Autowired
     private BookingRoomService bookingRoomService;
 
-    @DeleteMapping("/booking_rooms/{id}")
+    @DeleteMapping("/booking-rooms/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBookingRoom(@PathVariable(value = "id") int id) {
         this.bookingRoomService.delete(id);
     }
 
-    @DeleteMapping("/booking_rooms")
+    @DeleteMapping("/booking-rooms")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMultiBookingRoom(@RequestBody List<Map<String, String>> listBookingDelete) {
         List<Integer> ids = new ArrayList<>();
