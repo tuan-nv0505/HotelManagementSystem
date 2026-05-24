@@ -26,4 +26,5 @@ public class UserDTO extends BaseDTO {
     private String avatar;
     private String createdAt;
     private MultipartFile file;
+    private String name;
 }

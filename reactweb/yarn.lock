@@ -3073,6 +3073,11 @@ boolbase@^1.0.0, boolbase@~1.0.0:
   resolved "https://registry.npmjs.org/boolbase/-/boolbase-1.0.0.tgz"
   integrity sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==
 
+bootstrap-icons@^1.13.1:
+  version "1.13.1"
+  resolved "https://registry.npmjs.org/bootstrap-icons/-/bootstrap-icons-1.13.1.tgz"
+  integrity sha512-ijombt4v6bv5CLeXvRWKy7CuM3TRTuPEuGaGKvTV5cz65rQSY8RQ2JcHt6b90cBBAC7s8fsf2EkQDldzCoXUjw==
+
 bootstrap@^5.3.8:
   version "5.3.8"
   resolved "https://registry.npmjs.org/bootstrap/-/bootstrap-5.3.8.tgz"
@@ -3451,6 +3456,11 @@ cookie-signature@~1.0.6:
   version "1.0.7"
   resolved "https://registry.npmjs.org/cookie-signature/-/cookie-signature-1.0.7.tgz"
   integrity sha512-NXdYc3dLr47pBkpUCHtKSwIOQXLVn8dZEuywboCOJY/osA0wFSLlSawr3KN8qXJEyX66FcONTH8EIlVuK0yyFA==
+
+cookie@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.npmjs.org/cookie/-/cookie-0.3.1.tgz"
+  integrity sha512-+IJOX0OqlHCszo2mBUq+SrEbCj6w7Kpffqx60zYbPTFaO4+yYgRjHwcZNpWvaTylDHaV7PPmBHzSecZiMhtPgw==
 
 cookie@~0.7.1:
   version "0.7.2"
@@ -7847,6 +7857,14 @@ react-bootstrap@^2.10.10:
     react-transition-group "^4.4.5"
     uncontrollable "^7.2.1"
     warning "^4.0.3"
+
+react-cookies@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.npmjs.org/react-cookies/-/react-cookies-0.1.1.tgz"
+  integrity sha512-PP75kJ4vtoHuuTdq0TAD3RmlAv7vuDQh9fkC4oDlhntgs9vX1DmREomO0Y1mcQKR9nMZ6/zxoflaMJ3MAmF5KQ==
+  dependencies:
+    cookie "^0.3.1"
+    object-assign "^4.1.1"
 
 react-dev-utils@^12.0.1:
   version "12.0.1"

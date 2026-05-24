@@ -7,15 +7,16 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.hotel.dto.UserDTO;
 import com.hotel.services.UserService;
 import com.hotel.utils.JwtUtils;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -28,16 +29,57 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 @PropertySource("classpath:login.properties")
+@CrossOrigin
 public class APILoginController {
     @Autowired
     private UserService userService;
     @Value("${GOOGLE_CLIENT_ID}")
-    private static String GOOGLE_CLIENT_ID;
+    private String GOOGLE_CLIENT_ID;
     @Value("${FACEBOOK_APP_ID}")
-    private static String FACEBOOK_APP_ID;
+    private String FACEBOOK_APP_ID;
     @Value("${FACEBOOK_APP_SECRET}")
-    private static String FACEBOOK_APP_SECRET;
+    private String FACEBOOK_APP_SECRET;
 
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
+        if (this.userService.authenticate(userDTO.getUsername(), userDTO.getPassword())) {
+            try {
+                String token = JwtUtils.generateToken(userDTO);
+                return ResponseEntity.ok().body(Collections.singletonMap("token", token));
+            } catch (Exception e) {
+                return ResponseEntity.status(500).body("Lỗi khi tạo JWT");
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sai thông tin đăng nhập");
+    }
+
+    @PostMapping(path = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> create(@Valid @ModelAttribute(name = "userDTO") UserDTO userDTO, BindingResult bindingResult) {
+        Map<String, Object> response = new HashMap<>();
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(error -> {
+                errors.put(error.getField(), error.getDefaultMessage());
+            });
+
+            response.put("status", "FAIL");
+            response.put("message", "Dữ liệu đầu vào không hợp lệ");
+            response.put("errors", errors);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        try {
+            userService.addOrUpdate(userDTO);
+            response.put("status", "SUCCESS");
+            response.put("message", "Tạo tài khoản thành công");
+            response.put("user", userDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            response.put("status", "ERROR");
+            response.put("message", "Lỗi server: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 
     @PostMapping("/google")
     public ResponseEntity<Map<String, Object>> loginWithGoogle(@RequestParam("idToken") String idTokenString) {

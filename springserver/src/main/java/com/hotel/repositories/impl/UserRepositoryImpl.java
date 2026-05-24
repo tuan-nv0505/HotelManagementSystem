@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,8 @@ import java.util.Map;
 public class UserRepositoryImpl implements UserRepository {
     @Autowired
     private LocalSessionFactoryBean factory;
-
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private Environment env;
 
@@ -46,6 +48,13 @@ public class UserRepositoryImpl implements UserRepository {
         query.setParameter("id", id);
 
         return (User) query.getSingleResult();
+    }
+
+    @Override
+    public boolean authenticate(String username, String password) {
+        User u = this.getUserByUsername(username);
+
+        return this.passwordEncoder.matches(password, u.getPassword());
     }
 
     @Override
