@@ -16,6 +16,7 @@ public class APIUserController {
     @Autowired
     private UserService userService;
 
+
     @DeleteMapping("/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable(value = "id") int id) {

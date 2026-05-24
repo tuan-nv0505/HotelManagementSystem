@@ -126,4 +126,9 @@ public class UserServiceImpl implements UserService {
     public UserDTO get(int id) {
         return null;
     }
+
+    @Override
+    public boolean authenticate(String username, String password) {
+        return this.userRepository.authenticate(username, password);
+    }
 }
