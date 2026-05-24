@@ -106,4 +106,10 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     public Payment get(int id) {
         return null;
     }
+
+    @Override
+    public void save(Payment payment) {
+        Session session = factory.getObject().getCurrentSession();
+        session.persist(payment);
+    }
 }

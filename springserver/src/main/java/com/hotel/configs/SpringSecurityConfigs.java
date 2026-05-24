@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,9 +23,10 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
                 "com.hotel"
         }
 )
+@Order(2)
 public class SpringSecurityConfigs {
-//    @Autowired
-//    private UserDetailsService userDetailsService;
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -48,6 +50,17 @@ public class SpringSecurityConfigs {
                 .failureUrl("/admin/login?error=true")
                 .permitAll()
         ).logout((logout) -> logout.logoutSuccessUrl("/admin/login").permitAll());
+
+//        http.securityMatcher("/admin/**", "/").csrf(c -> c.disable()).authorizeHttpRequests((requests) -> requests
+//                .requestMatchers("/admin").hasRole("ADMIN")
+//                .requestMatchers("/api/**").permitAll()
+//                .anyRequest().permitAll()
+//        ).formLogin(form -> form.loginPage("/admin/login")
+//                .loginProcessingUrl("/admin/login")
+//                .defaultSuccessUrl("/admin/", true)
+//                .failureUrl("/admin/login?error=true")
+//                .permitAll()
+//        ).logout((logout) -> logout.logoutSuccessUrl("/admin/login").permitAll());
 
         return http.build();
     }
