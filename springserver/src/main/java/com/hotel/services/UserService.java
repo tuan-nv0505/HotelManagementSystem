@@ -9,4 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface UserService extends UserDetailsService, BaseService<UserDTO> {
+    boolean authenticate(String username, String password);
+
+    UserDTO getUserByUsername(String username);
 }

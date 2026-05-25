@@ -16,7 +16,7 @@ import static org.hibernate.cfg.JdbcSettings.DIALECT;
 import static org.hibernate.cfg.JdbcSettings.SHOW_SQL;
 
 @Configuration
-@PropertySource("classpath:databases.properties")
+@PropertySource("classpath:secret/databases.properties")
 public class HibernateConfigs {
 
     @Autowired

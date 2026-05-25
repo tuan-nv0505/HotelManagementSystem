@@ -43,7 +43,7 @@ public class Room {
 
     @ColumnDefault("1")
     @Column(name = "active")
-    private Boolean active;
+    private Boolean active = true;
 
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     private Set<BookingRoom> bookingRooms;

@@ -37,7 +37,7 @@ public class RoomType {
 
     @ColumnDefault("1")
     @Column(name = "active")
-    private Boolean active;
+    private Boolean active = true;
 
     @OneToMany(mappedBy = "roomType", fetch = FetchType.LAZY)
     private List<RoomInventory> roomInventories;

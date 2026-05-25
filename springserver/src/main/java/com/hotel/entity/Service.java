@@ -25,6 +25,6 @@ public class Service {
 
     @ColumnDefault("1")
     @Column(name = "active")
-    private Boolean active;
+    private Boolean active = true;
 
 }

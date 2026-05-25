@@ -11,4 +11,5 @@ public interface UserRepository extends BaseRepository<User> {
 
     User getUserById(Integer id);
 
+    boolean authenticate(String username, String password);
 }
