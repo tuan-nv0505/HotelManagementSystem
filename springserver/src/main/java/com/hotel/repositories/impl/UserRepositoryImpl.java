@@ -31,15 +31,23 @@ public class UserRepositoryImpl implements UserRepository {
     private Environment env;
 
     @Override
+    public User getUserByEmail(String email) {
+        Session s = this.factory.getObject().getCurrentSession();
+        List<User> list = s.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
+                .setParameter("email", email)
+                .getResultList();
+
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
     public User getUserByUsername(String username) {
-        Session session = this.factory.getObject().getCurrentSession();
-        try {
-            Query query = session.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class);
-            query.setParameter("username", username);
-            return (User) query.getSingleResult();
-        } catch (jakarta.persistence.NoResultException e) {
-            return null;
-        }
+        Session s = this.factory.getObject().getCurrentSession();
+        List<User> list = s.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
+                .setParameter("username", username)
+                .getResultList();
+
+        return list.isEmpty() ? null : list.get(0);
     }
 
     @Override

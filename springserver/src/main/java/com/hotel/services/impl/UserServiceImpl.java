@@ -13,6 +13,7 @@ import com.hotel.exceptions.InvalidPasswordException;
 import com.hotel.repositories.CustomerRepository;
 import com.hotel.repositories.UserRepository;
 import com.hotel.services.UserService;
+import jakarta.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -128,6 +129,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
     @Override
     public void delete(int id) {
         this.userRepository.delete(id);
@@ -156,5 +158,42 @@ public class UserServiceImpl implements UserService {
     public UserDTO getUserByUsername(String username) {
         User u = this.userRepository.getUserByUsername(username);
         return this.userConverter.toUserDTO(u);
+    }
+
+    @Override
+    public void addOrUpdateSocial(UserDTO userDTO) {
+        User user = null;
+
+        if (userDTO.getEmail() != null && !userDTO.getEmail().isEmpty()) {
+            user = userRepository.getUserByEmail(userDTO.getEmail());
+        }
+
+        if (user == null && userDTO.getUsername() != null) {
+            user = userRepository.getUserByUsername(userDTO.getUsername());
+        }
+
+        if (user != null) {
+            user.setAvatar(userDTO.getAvatar());
+            this.userRepository.addOrUpdate(user);
+        } else {
+            user = userConverter.toUser(userDTO);
+            user.setRole(RoleUser.ROLE_CUSTOMER.name());
+            user.setPassword(bCryptPasswordEncoder.encode(UUID.randomUUID().toString()));
+            this.userRepository.addOrUpdate(user);
+
+            Customer customer = customerRepository.getCustomerByUser(user);
+            if (customer == null) {
+                customer = new Customer();
+                customer.setUser(user);
+                customer.setName(userDTO.getName() != null ? userDTO.getName() : userDTO.getUsername());
+                customer.setEmail(userDTO.getEmail());
+                customer.setPhone(userDTO.getPhone());
+                customer.setAddress("Chưa cập nhật");
+                this.customerRepository.addOrUpdate(customer);
+            } else {
+                customer.setName(userDTO.getName() != null ? userDTO.getName() : customer.getName());
+                this.customerRepository.addOrUpdate(customer);
+            }
+        }
     }
 }

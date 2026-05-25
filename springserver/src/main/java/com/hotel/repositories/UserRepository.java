@@ -9,6 +9,8 @@ import java.util.Map;
 public interface UserRepository extends BaseRepository<User> {
     User getUserByUsername(String username);
 
+    User getUserByEmail(String email);
+
     User getUserById(Integer id);
 
     boolean authenticate(String username, String password);

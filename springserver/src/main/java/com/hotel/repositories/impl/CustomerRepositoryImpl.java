@@ -129,6 +129,14 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     }
 
     @Override
+    public Customer getCustomerByUser(User user) {
+        Session session = this.factory.getObject().getCurrentSession();
+        List<Customer> list = session.createQuery(
+                "SELECT c FROM Customer c WHERE c.user = :user", Customer.class).setParameter("user", user).getResultList();
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
     public Customer save(Customer entity) {
         Session session = this.factory.getObject().getCurrentSession();
         session.persist(entity);

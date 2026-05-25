@@ -81,7 +81,8 @@ public class APILoginController {
     }
 
     @PostMapping("/google")
-    public ResponseEntity<Map<String, Object>> loginWithGoogle(@RequestParam("idToken") String idTokenString) {
+    public ResponseEntity<Map<String, Object>> loginWithGoogle(@RequestBody Map<String, String> body) {
+        String idTokenString = body.get("idToken");
         Map<String, Object> response = new HashMap<>();
         try {
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
@@ -92,16 +93,17 @@ public class APILoginController {
             if (idToken != null) {
                 GoogleIdToken.Payload payload = idToken.getPayload();
 
-                String email = payload.getEmail();
-                String username = (String) payload.get("name");
                 String pictureUrl = (String) payload.get("picture");
 
                 UserDTO userDTO = new UserDTO();
-                userDTO.setEmail(email);
-                userDTO.setUsername(username);
+                userDTO.setEmail(payload.getEmail());
+                userDTO.setName((String) payload.get("name"));
+                userDTO.setUsername(payload.getEmail());
                 userDTO.setAvatar(pictureUrl);
                 userDTO.setPhone("0000000000");
-                userService.addOrUpdate(userDTO);
+                String randomPassword = java.util.UUID.randomUUID().toString();
+                userDTO.setPassword(randomPassword);
+                userService.addOrUpdateSocial(userDTO);
                 String jwtToken = JwtUtils.generateToken(userDTO);
 
                 response.put("status", "SUCCESS");
@@ -115,15 +117,16 @@ public class APILoginController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             response.put("status", "ERROR");
-            response.put("message", "Lỗi server: " + e.getMessage());
+            response.put("message", "Lỗi server: " + e.toString());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
     @PostMapping("/facebook")
-
-    public ResponseEntity<Map<String, Object>> loginWithFacebook(@RequestParam("accessToken") String accessToken) {
+    public ResponseEntity<Map<String, Object>> loginWithFacebook(@RequestBody Map<String, String> body) {
+        String accessToken = body.get("accessToken");
         Map<String, Object> response = new HashMap<>();
         try {
             String appAccessToken = FACEBOOK_APP_ID + "|" + FACEBOOK_APP_SECRET;
@@ -181,7 +184,7 @@ public class APILoginController {
                 com.google.gson.JsonObject jsonObject = com.google.gson.JsonParser.parseString(jsonResponse).getAsJsonObject();
 
                 String facebookId = jsonObject.get("id").getAsString();
-                String name = jsonObject.has("name") ? jsonObject.get("name").getAsString() : "Người dùng Facebook";
+                String name = jsonObject.has("name") ? jsonObject.get("name").getAsString() : "fb_" + facebookId;
 
                 String pictureUrl = "";
                 if (jsonObject.has("picture")) {
@@ -200,7 +203,7 @@ public class APILoginController {
                 userDTO.setEmail(email);
                 userDTO.setPhone(phone);
 
-                userService.addOrUpdate(userDTO);
+                userService.addOrUpdateSocial(userDTO);
                 String jwtToken = JwtUtils.generateToken(userDTO);
 
                 response.put("status", "SUCCESS");
