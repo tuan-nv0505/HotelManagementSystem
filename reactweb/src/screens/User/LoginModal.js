@@ -7,7 +7,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import cookies from 'react-cookies';
 import { MyUserContext } from "../../configs/Contexts";
 import { AuthSwitchFooter, ModalCloseButton, SharedModalStyle } from './UserStyle';
-import { GoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
 import FacebookLogin from '@greatsumini/react-facebook-login';
 
 const LoginModal = ({ show, handleClose, showRegister }) => {
@@ -141,62 +141,85 @@ const LoginModal = ({ show, handleClose, showRegister }) => {
                                 {loading && <MySpinner />}
 
                                 <div className="d-flex justify-content-center gap-3 mb-4" style={{ display: loading ? 'none' : 'flex' }}>
-                                    
-                                    <div>
-                                        <GoogleLogin
-                                            onSuccess={handleGoogleSuccess}
-                                            onError={() => setErr("Không thể kết nối với Google.")}
-                                            shape="pill" 
-                                            width="180" 
-                                        />
-                                    </div>
 
-                                    <div>
-                                        <FacebookLogin
-                                            appId="1325779246184552"
-                                            onSuccess={handleFacebookSuccess}
-                                            onFail={(error) => {
-                                                console.error('Lỗi đăng nhập Facebook:', error);
-                                                setErr("Đăng nhập Facebook bị hủy hoặc thất bại.");
-                                            }}
-                                            render={({ onClick }) => (
-                                                <button
-                                                    type="button"
-                                                    onClick={onClick}
-                                                    style={{
-                                                        width: '180px',
-                                                        height: '40px', 
-                                                        backgroundColor: '#fff',
-                                                        border: '1px solid #dadce0',
-                                                        borderRadius: '20px', 
-                                                        boxShadow: '0 1px 2px 0 rgba(60,64,67,0.3)',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        gap: '8px',
-                                                        cursor: 'pointer',
-                                                        transition: 'background-color 0.2s'
-                                                    }}
-                                                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
-                                                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#fff'}
-                                                >
-                                                    <img 
-                                                        src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" 
-                                                        alt="Facebook Logo" 
-                                                        style={{ width: '20px', height: '20px' }} 
-                                                    />
-                                                    <span style={{
-                                                        color: '#3c4043',
-                                                        fontSize: '14px',
-                                                        fontWeight: '500',
-                                                        fontFamily: '"Google Sans", Roboto, Arial, sans-serif'
-                                                    }}>
-                                                        Facebook
-                                                    </span>
-                                                </button>
-                                            )}
+                                    {/* Nút Google (Custom) */}
+                                    <button
+                                        type="button"
+                                        onClick={() => loginGoogle()}
+                                        style={{
+                                            width: '180px',
+                                            height: '40px',
+                                            borderRadius: '20px',
+                                            backgroundColor: '#ffffff',
+                                            color: '#3c4043',
+                                            border: '1px solid #dadce0',
+                                            fontWeight: '500',
+                                            fontSize: '14px',
+                                            fontFamily: '"Google Sans", Roboto, Arial, sans-serif',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '10px',
+                                            cursor: 'pointer',
+                                            boxShadow: '0 1px 2px 0 rgba(60,64,67,0.3)',
+                                            transition: 'background-color 0.2s',
+                                        }}
+                                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
+                                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
+                                    >
+                                        <img
+                                            src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+                                            alt="Google"
+                                            style={{ width: '20px', height: '20px' }}
                                         />
-                                    </div>
+                                        <span>Google</span>
+                                    </button>
+
+                                    {/* Nút Facebook (Custom) */}
+                                    <FacebookLogin
+                                        appId="1325779246184552"
+                                        onSuccess={handleFacebookSuccess}
+                                        onFail={(error) => {
+                                            console.error('Lỗi đăng nhập Facebook:', error);
+                                            setErr("Đăng nhập Facebook bị hủy hoặc thất bại.");
+                                        }}
+                                        render={({ onClick }) => (
+                                            <button
+                                                type="button"
+                                                onClick={onClick}
+                                                style={{
+                                                    width: '180px',
+                                                    height: '40px',
+                                                    backgroundColor: '#fff',
+                                                    border: '1px solid #dadce0',
+                                                    borderRadius: '20px',
+                                                    boxShadow: '0 1px 2px 0 rgba(60,64,67,0.3)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    gap: '8px',
+                                                    cursor: 'pointer',
+                                                    transition: 'background-color 0.2s'
+                                                }}
+                                                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
+                                                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#fff'}
+                                            >
+                                                <img
+                                                    src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg"
+                                                    alt="Facebook"
+                                                    style={{ width: '20px', height: '20px' }}
+                                                />
+                                                <span style={{
+                                                    color: '#3c4043',
+                                                    fontSize: '14px',
+                                                    fontWeight: '500',
+                                                    fontFamily: '"Google Sans", Roboto, Arial, sans-serif'
+                                                }}>
+                                                    Facebook
+                                                </span>
+                                            </button>
+                                        )}
+                                    />
                                 </div>
 
                                 <a href="#!" className="fw-bold text-primary text-decoration-none" onClick={(e) => { e.preventDefault(); setErr(""); setIsEmailMode(true); }}>

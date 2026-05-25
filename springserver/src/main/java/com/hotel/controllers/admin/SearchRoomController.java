@@ -1,6 +1,5 @@
 package com.hotel.controllers.admin;
 
-import com.hotel.services.RoomInventoryService;
 import com.hotel.services.RoomService;
 import com.hotel.services.RoomTypeService;
 import org.springframework.beans.factory.annotation.Autowired;

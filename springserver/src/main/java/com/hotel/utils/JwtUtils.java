@@ -10,13 +10,19 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 
 import java.util.Date;
 
+@PropertySource("classpath:secret/jwt.properties")
 public class JwtUtils {
     private static final long EXPIRATION_MS = 86400000;
-    @Value("${jwt.secret}")
+    @Value("${jwt}")
     private static String SECRET;
+
+    static {
+        System.out.println("secret: " + SECRET);
+    }
 
     public static String generateToken(UserDTO userDTO) throws Exception {
         JWSSigner signer = new MACSigner(SECRET);
