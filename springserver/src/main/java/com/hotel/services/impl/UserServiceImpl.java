@@ -127,4 +127,9 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
+    public UserDTO save(UserDTO entity) {
+        return null;
+    }
+
 }

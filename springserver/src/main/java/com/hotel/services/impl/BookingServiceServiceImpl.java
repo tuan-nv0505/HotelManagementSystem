@@ -84,6 +84,11 @@ public class BookingServiceServiceImpl implements BookingServiceService {
     }
 
     @Override
+    public BookingServiceDTO save(BookingServiceDTO entity) {
+        return null;
+    }
+
+    @Override
     public boolean existsByService(int serviceId) {
         return this.bookingServiceRepository.existsByService(serviceId);
     }

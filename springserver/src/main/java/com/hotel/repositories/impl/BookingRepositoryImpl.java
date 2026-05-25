@@ -2,6 +2,7 @@ package com.hotel.repositories.impl;
 
 import com.hotel.entity.Booking;
 import com.hotel.entity.Customer;
+import com.hotel.entity.RoomInventory;
 import com.hotel.repositories.BookingRepository;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.*;
@@ -64,7 +65,8 @@ public class BookingRepositoryImpl implements BookingRepository {
         return (Long) query.getSingleResult();
     }
 
-    private List<Predicate> getPredicates(Map<String, String> params, CriteriaBuilder builder, Root<Booking> root) {
+    @Override
+    public List<Predicate> getPredicates(Map<String, String> params, CriteriaBuilder builder, Root<Booking> root) {
         List<Predicate> predicates = new ArrayList<>();
         if (params != null) {
             String customerName = params.get("customerName");
@@ -125,5 +127,12 @@ public class BookingRepositoryImpl implements BookingRepository {
     public void flush() {
         Session session = this.factory.getObject().getCurrentSession();
         session.flush();
+    }
+
+    @Override
+    public Booking save(Booking entity) {
+        Session session = this.factory.getObject().getCurrentSession();
+        session.persist(entity);
+        return entity;
     }
 }

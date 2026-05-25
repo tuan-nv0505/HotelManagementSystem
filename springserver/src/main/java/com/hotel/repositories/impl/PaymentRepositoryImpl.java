@@ -2,6 +2,7 @@ package com.hotel.repositories.impl;
 
 import com.hotel.entity.Payment;
 import com.hotel.entity.Payment;
+import com.hotel.entity.RoomInventory;
 import com.hotel.entity.User;
 import com.hotel.repositories.PaymentRepository;
 import jakarta.persistence.Query;
@@ -65,7 +66,8 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     }
 
 
-    private List<Predicate> getPredicates(Map<String, String> params, CriteriaBuilder builder, Root<Payment> root) {
+    @Override
+    public List<Predicate> getPredicates(Map<String, String> params, CriteriaBuilder builder, Root<Payment> root) {
         List<Predicate> predicates = new ArrayList<>();
         if (params != null) {
             String transactionCode = params.get("transactionCode");
@@ -105,5 +107,12 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     @Override
     public Payment get(int id) {
         return null;
+    }
+
+    @Override
+    public Payment save(Payment entity) {
+        Session session = this.factory.getObject().getCurrentSession();
+        session.persist(entity);
+        return entity;
     }
 }

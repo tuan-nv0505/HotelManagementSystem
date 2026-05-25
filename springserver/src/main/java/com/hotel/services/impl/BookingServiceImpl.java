@@ -109,6 +109,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public BookingDTO save(BookingDTO entity) {
+        return null;
+    }
+
+    @Override
     public void recalculateTotalAmount(int bookingId) {
         Booking booking = bookingRepository.get(bookingId);
         if (booking == null) return;

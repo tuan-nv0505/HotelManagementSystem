@@ -1,5 +1,6 @@
 package com.hotel.repositories.impl;
 
+import com.hotel.entity.RoomInventory;
 import com.hotel.entity.Service;
 import com.hotel.repositories.ServiceRepository;
 import jakarta.persistence.Query;
@@ -67,7 +68,8 @@ public class ServiceRepositoryImpl implements ServiceRepository {
         return (Long) query.getSingleResult();
     }
 
-    private List<Predicate> getPredicates(Map<String, String> params, CriteriaBuilder builder, Root<Service> root) {
+    @Override
+    public List<Predicate> getPredicates(Map<String, String> params, CriteriaBuilder builder, Root<Service> root) {
         List<Predicate> predicates = new ArrayList<>();
         if (params != null) {
             String kw = params.get("kw");
@@ -121,5 +123,12 @@ public class ServiceRepositoryImpl implements ServiceRepository {
     public Service get(int id) {
         Session session = this.factory.getObject().getCurrentSession();
         return session.get(Service.class, id);
+    }
+
+    @Override
+    public Service save(Service entity) {
+        Session session = this.factory.getObject().getCurrentSession();
+        session.persist(entity);
+        return entity;
     }
 }

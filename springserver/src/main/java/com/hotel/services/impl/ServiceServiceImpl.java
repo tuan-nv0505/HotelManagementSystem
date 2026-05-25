@@ -61,4 +61,9 @@ public class ServiceServiceImpl implements ServiceService {
     public ServiceDTO get(int id) {
         return this.serviceConverter.toServiceDTO(this.serviceRepository.get(id));
     }
+
+    @Override
+    public ServiceDTO save(ServiceDTO entity) {
+        return null;
+    }
 }

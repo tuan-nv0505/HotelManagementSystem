@@ -1,5 +1,6 @@
 package com.hotel.repositories.impl;
 
+import com.hotel.entity.RoomInventory;
 import com.hotel.entity.User;
 import com.hotel.entity.User;
 import com.hotel.repositories.UserRepository;
@@ -85,7 +86,8 @@ public class UserRepositoryImpl implements UserRepository {
         return (Long) query.getSingleResult();
     }
 
-    private List<Predicate> getPredicates(Map<String, String> params, CriteriaBuilder builder, Root<User> root) {
+    @Override
+    public List<Predicate> getPredicates(Map<String, String> params, CriteriaBuilder builder, Root<User> root) {
         List<Predicate> predicates = new ArrayList<>();
         if (params != null) {
             String kw = params.get("kw");
@@ -133,5 +135,12 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User get(int id) {
         return null;
+    }
+
+    @Override
+    public User save(User entity) {
+        Session session = this.factory.getObject().getCurrentSession();
+        session.persist(entity);
+        return entity;
     }
 }

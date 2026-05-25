@@ -1,5 +1,6 @@
 package com.hotel.repositories.impl;
 
+import com.hotel.entity.RoomInventory;
 import com.hotel.entity.RoomType;
 import com.hotel.entity.RoomType;
 import com.hotel.repositories.RoomTypeRepository;
@@ -66,7 +67,8 @@ public class RoomTypeRepositoryImpl implements RoomTypeRepository {
         return (Long) query.getSingleResult();
     }
 
-    private List<Predicate> getPredicates(Map<String, String> params, CriteriaBuilder builder, Root<RoomType> root) {
+    @Override
+    public List<Predicate> getPredicates(Map<String, String> params, CriteriaBuilder builder, Root<RoomType> root) {
         List<Predicate> predicates = new ArrayList<>();
         if (params != null) {
             String kw = params.get("kw");
@@ -120,5 +122,12 @@ public class RoomTypeRepositoryImpl implements RoomTypeRepository {
     public RoomType get(int id) {
         Session session = this.factory.getObject().getCurrentSession();
         return session.get(RoomType.class, id);
+    }
+
+    @Override
+    public RoomType save(RoomType entity) {
+        Session session = this.factory.getObject().getCurrentSession();
+        session.persist(entity);
+        return entity;
     }
 }

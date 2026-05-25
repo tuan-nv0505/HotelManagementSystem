@@ -5,6 +5,7 @@ import com.cloudinary.utils.ObjectUtils;
 import com.hotel.converter.RoomTypeConverter;
 import com.hotel.dto.RoomTypeDTO;
 import com.hotel.repositories.RoomTypeRepository;
+import com.hotel.services.RoomInventoryService;
 import com.hotel.services.RoomTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,10 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     private RoomTypeRepository roomTypeRepository;
     @Autowired
     private RoomTypeConverter roomTypeConverter;
+
+    @Autowired
+    private RoomInventoryService roomInventoryService;
+
     @Autowired
     private Cloudinary cloudinary;
 
@@ -61,5 +66,10 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     @Override
     public RoomTypeDTO get(int id) {
         return this.roomTypeConverter.toRoomTypeDTO(this.roomTypeRepository.get(id));
+    }
+
+    @Override
+    public RoomTypeDTO save(RoomTypeDTO entity) {
+        return null;
     }
 }

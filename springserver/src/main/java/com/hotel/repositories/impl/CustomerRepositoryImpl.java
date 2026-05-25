@@ -1,6 +1,7 @@
 package com.hotel.repositories.impl;
 
 import com.hotel.entity.Customer;
+import com.hotel.entity.RoomInventory;
 import com.hotel.entity.Service;
 import com.hotel.entity.User;
 import com.hotel.enums.RoleUser;
@@ -67,7 +68,8 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         return (Long) query.getSingleResult();
     }
 
-    private List<Predicate> getPredicates(Map<String, String> params, CriteriaBuilder builder, Root<Customer> root) {
+    @Override
+    public List<Predicate> getPredicates(Map<String, String> params, CriteriaBuilder builder, Root<Customer> root) {
         List<Predicate> predicates = new ArrayList<>();
         if (params != null) {
             String kw = params.get("kw");
@@ -124,5 +126,12 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         query.setParameter("name", name);
 
         return (Customer) query.getSingleResult();
+    }
+
+    @Override
+    public Customer save(Customer entity) {
+        Session session = this.factory.getObject().getCurrentSession();
+        session.persist(entity);
+        return entity;
     }
 }

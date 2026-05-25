@@ -90,4 +90,9 @@ public class BookingRoomServiceImpl implements BookingRoomService {
     public BookingRoomDTO get(int id) {
         return null;
     }
+
+    @Override
+    public BookingRoomDTO save(BookingRoomDTO entity) {
+        return null;
+    }
 }

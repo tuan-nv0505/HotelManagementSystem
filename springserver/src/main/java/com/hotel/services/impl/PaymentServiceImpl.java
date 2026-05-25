@@ -62,4 +62,9 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentDTO get(int id) {
         return null;
     }
+
+    @Override
+    public PaymentDTO save(PaymentDTO entity) {
+        return null;
+    }
 }
