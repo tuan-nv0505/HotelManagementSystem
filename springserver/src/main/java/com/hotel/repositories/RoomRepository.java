@@ -10,4 +10,5 @@ import java.util.Map;
 
 public interface RoomRepository extends BaseRepository<Room>{
     List<Room> findAvailableRooms(Map<String, String> params);
+    long countAvailableRoom(Map<String, String> params);
 }

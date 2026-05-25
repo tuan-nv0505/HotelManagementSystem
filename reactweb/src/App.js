@@ -6,6 +6,8 @@ import Footer from "./components/Footer";
 import Home from "./screens/Home/Home";
 import { MyUserContext } from "./configs/Contexts"; 
 import myUserReducer from "./reducers/MyUserReducer"; 
+import RoomType from "./screens/Booking/RoomType";
+import Room from "./screens/Booking/Room";
 
 const App = () => {
   const [user, dispatch] = useReducer(myUserReducer, cookies.load("user") || null);
@@ -16,6 +18,9 @@ const App = () => {
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/room-types" element={<RoomType />} >
+            <Route path=":id/rooms" element={<Room />} />
+          </Route>
         </Routes>
         <Footer />
       </BrowserRouter>

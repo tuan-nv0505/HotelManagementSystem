@@ -129,15 +129,11 @@ public class RoomRepositoryImpl implements RoomRepository {
         return entity;
     }
 
-    @Override
-    public List<Room> findAvailableRooms(Map<String, String> params) {
-        Session session = this.factory.getObject().getCurrentSession();
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<Room> query = cb.createQuery(Room.class);
-        Root<Room> room = query.from(Room.class);
-        room.fetch("type");
-
-        Subquery<Integer> bookedRoomSubquery = query.subquery(Integer.class);
+    private List<Predicate> findAvailableRoomsPredicate(Map<String, String> params,
+                                                        CriteriaBuilder builder,
+                                                        CriteriaQuery<Room> criteriaQuery,
+                                                        Root<Room> root) {
+        Subquery<Integer> bookedRoomSubquery = criteriaQuery.subquery(Integer.class);
         Root<BookingRoom> subBookingRoom = bookedRoomSubquery.from(BookingRoom.class);
         Join<BookingRoom, Booking> subBooking = subBookingRoom.join("booking");
 
@@ -157,28 +153,67 @@ public class RoomRepositoryImpl implements RoomRepository {
                         ? LocalDate.now()
                         : LocalDate.parse(expectedCheckInStr);
 
-        subPredicates.add(cb.lessThan(subBooking.get("expectedCheckIn"), expectedCheckOut));
-        subPredicates.add(cb.greaterThan(subBooking.get("expectedCheckOut"), expectedCheckIn));
-        subPredicates.add(cb.notEqual(subBooking.get("status"), "CANCELLED"));
+        subPredicates.add(builder.lessThan(subBooking.get("expectedCheckIn"), expectedCheckOut));
+        subPredicates.add(builder.greaterThan(subBooking.get("expectedCheckOut"), expectedCheckIn));
+        subPredicates.add(builder.notEqual(subBooking.get("status"), "CANCELLED"));
 
         String roomTypeId = params.get("roomTypeId");
         if (roomTypeId != null && !roomTypeId.isEmpty()) {
             Join<BookingRoom, Room> subRoomJoin = subBookingRoom.join("room");
-            subPredicates.add(cb.equal(subRoomJoin.get("type").get("id"), roomTypeId));
+            subPredicates.add(builder.equal(subRoomJoin.get("type").get("id"), roomTypeId));
         }
 
-        bookedRoomSubquery.where(cb.and(subPredicates.toArray(new Predicate[0])));
+        bookedRoomSubquery.where(builder.and(subPredicates.toArray(new Predicate[0])));
 
         List<Predicate> mainPredicates = new ArrayList<>();
-        mainPredicates.add(cb.equal(room.get("availabilityStatus"), "READY"));
-        mainPredicates.add(cb.equal(room.get("active"), true));
-        mainPredicates.add(cb.not(room.get("id").in(bookedRoomSubquery)));
+        mainPredicates.add(builder.equal(root.get("availabilityStatus"), "READY"));
+        mainPredicates.add(builder.equal(root.get("active"), true));
+        mainPredicates.add(builder.not(root.get("id").in(bookedRoomSubquery)));
 
         if (roomTypeId != null && !roomTypeId.isEmpty()) {
-            mainPredicates.add(cb.equal(room.get("type").get("id"), roomTypeId));
+            mainPredicates.add(builder.equal(root.get("type").get("id"), roomTypeId));
         }
 
-        query.select(room).where(cb.and(mainPredicates.toArray(new Predicate[0])));
-        return session.createQuery(query).getResultList();
+        return mainPredicates;
+    }
+
+    @Override
+    public List<Room> findAvailableRooms(Map<String, String> params) {
+        Session session = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Room> query = cb.createQuery(Room.class);
+        Root<Room> room = query.from(Room.class);
+        room.fetch("type");
+
+        List<Predicate> predicates = this.findAvailableRoomsPredicate(params, cb, query, room);
+
+        query.select(room).where(cb.and(predicates.toArray(new Predicate[0])));
+
+        Query q = session.createQuery(query);
+
+        int pageSize = this.env.getProperty("rooms.page_size", Integer.class);
+        int page = Integer.parseInt(params.getOrDefault("page", "1"));
+
+        int start = (page - 1) * pageSize;
+
+        q.setFirstResult(start);
+        q.setMaxResults(pageSize);
+
+        return q.getResultList();
+    }
+
+    @Override
+    public long countAvailableRoom(Map<String, String> params) {
+        Session session = factory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Room> roomCriteriaQuery = builder.createQuery(Room.class);
+        CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+        Root<Room> root = criteriaQuery.from(Room.class);criteriaQuery.select(builder.count(root));
+
+        List<Predicate> predicates = this.findAvailableRoomsPredicate(params, builder, roomCriteriaQuery, root);
+        criteriaQuery.where(predicates.toArray(Predicate[]::new));
+
+        Query query = session.createQuery(criteriaQuery);
+        return (Long) query.getSingleResult();
     }
 }

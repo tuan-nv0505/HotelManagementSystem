@@ -2,38 +2,19 @@ import React from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import bgImage from '../images/hotel-background.jpg';
+import HeroBanner from '../../components/HeroBanner';
 
 const Home = () => {
     return (
         <div className="home-page">
-            <div className="hero-section position-relative d-flex align-items-center"
-                style={{
-                    backgroundImage: `url(${bgImage})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    height: '500px'
-                }}
+            <HeroBanner 
+                title="Trải nghiệm lưu trú đẳng cấp"
+                subtitle="Đặt phòng sang trọng với mức giá ưu đãi nhất tại Hotel Booking System"
             >
-                <div className="position-absolute top-0 start-0 w-100 h-100"
-                    style={{
-                        background: 'linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6))'
-                    }}
-                ></div>
-
-                <Container className="position-relative text-white">
-                    <h1 className="display-4 fw-bold" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
-                        Trải nghiệm lưu trú đẳng cấp
-                    </h1>
-                    <p className="fs-4 mb-4" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-                        Đặt phòng sang trọng với mức giá ưu đãi nhất tại Hotel Booking System
-                    </p>
-                    <Button as={Link} to="/booking" size="lg" style={{ backgroundColor: '#ff5e1f', border: 'none', padding: '12px 30px' }}>
-                        <i className="bi bi-calendar-check me-2"></i>Đặt phòng ngay
-                    </Button>
-                </Container>
-            </div>
-
+                <Button as={Link} to="/room-types" size="lg" style={{ backgroundColor: '#ff5e1f', border: 'none', padding: '12px 30px' }}>
+                    <i className="bi bi-calendar-check me-2"></i>Đặt phòng ngay
+                </Button>
+            </HeroBanner>
 
             <Container className="my-5">
                 <h2 className="fw-bold mb-4 text-center">Các loại phòng nổi bật</h2>

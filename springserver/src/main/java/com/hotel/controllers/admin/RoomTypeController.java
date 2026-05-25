@@ -35,9 +35,8 @@ public class RoomTypeController {
         int pageSize = this.env.getProperty("room_types.page_size", Integer.class, 5);
         long totalRoomTypes = this.roomTypeService.count(params);
         int totalPages = (int) Math.ceil((double) totalRoomTypes / pageSize);
-        List<Integer> listPage = IntStream.range(0, totalPages).boxed().toList();
+        List<Integer> listPage = IntStream.range(1, totalPages + 1).boxed().toList();
         model.addAttribute("listPage", listPage);
-        model.addAttribute("currentPage", params.getOrDefault("key", "0"));
 
         return "room_type";
     }

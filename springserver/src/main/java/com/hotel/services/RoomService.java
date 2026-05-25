@@ -9,5 +9,5 @@ import java.util.Map;
 
 public interface RoomService extends BaseService<RoomDTO> {
     List<RoomDTO> findAvailableRooms(Map<String, String> params);
-
+    long countAvailableRoom(Map<String, String> params);
 }

@@ -41,11 +41,12 @@ public class RoomTypeRepositoryImpl implements RoomTypeRepository {
 
         if (params != null) {
             int pageSize = this.env.getProperty("room_types.page_size", Integer.class);
-            int page = Integer.parseInt(params.getOrDefault("page", "0"));
-            int start = page * pageSize;
+            int page = Integer.parseInt(params.getOrDefault("page", "1"));
 
-            query.setMaxResults(pageSize);
+            int start = (page - 1) * pageSize;
+
             query.setFirstResult(start);
+            query.setMaxResults(pageSize);
         }
 
         return query.getResultList();
@@ -78,12 +79,12 @@ public class RoomTypeRepositoryImpl implements RoomTypeRepository {
 
             String fromPrice = params.get("fromPrice");
             if (fromPrice != null && !fromPrice.isEmpty()) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get("price"), Double.parseDouble(fromPrice)));
+                predicates.add(builder.greaterThanOrEqualTo(root.get("basePrice"), Double.parseDouble(fromPrice)));
             }
 
             String toPrice = params.get("toPrice");
             if (toPrice != null && !toPrice.isEmpty()) {
-                predicates.add(builder.lessThanOrEqualTo(root.get("price"), Double.parseDouble(toPrice)));
+                predicates.add(builder.lessThanOrEqualTo(root.get("basePrice"), Double.parseDouble(toPrice)));
             }
         }
         return predicates;

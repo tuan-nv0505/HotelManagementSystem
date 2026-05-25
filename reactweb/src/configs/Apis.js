@@ -6,7 +6,9 @@ export const endpoints = {
     'register': '/auth/register',
     'profile': '/secure/profile',
     'google':'/auth/google', 
-    'facebook':'/auth/facebook'
+    'facebook':'/auth/facebook',
+    'roomTypes': '/room-types',
+    'availableRooms': '/rooms/available',
 }
 
 export const authApis = () => {

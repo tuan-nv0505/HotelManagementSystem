@@ -63,6 +63,17 @@
             </tr>
             </tbody>
         </table>
+        <div class="d-flex justify-content-center p-2 border-top bg-light"
+             th:if="${not #lists.isEmpty(listPage)}">
+            <ul class="pagination pagination-sm mb-0">
+                <li class="page-item" th:each="page : ${listPage}">
+                    <a class="page-link py-1 shadow-none"
+                       th:href="@{/admin/available-rooms(page=${page},roomTypeId=${roomTypeId},expectedCheckIn=${expectedCheckIn},expectedCheckOut=${expectedCheckIn})}"
+                       th:text="${page}">
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 

@@ -76,4 +76,9 @@ public class RoomServiceImpl implements RoomService {
     public List<RoomDTO> findAvailableRooms(Map<String, String> params) {
         return this.roomConverter.toRoomDTO(this.roomRepository.findAvailableRooms(params));
     }
+
+    @Override
+    public long countAvailableRoom(Map<String, String> params) {
+        return this.roomRepository.countAvailableRoom(params);
+    }
 }
