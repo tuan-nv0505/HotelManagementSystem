@@ -35,10 +35,9 @@
 
         <nav class="col-md-2 mb-4">
             <div class="list-group rounded-0 border">
-                <a th:href="@{/admin/roominventory}"
+                <a th:href="@{/admin/available-rooms}"
                    class="list-group-item list-group-item-action border-0 border-bottom"
-                   th:classappend="${activeMenu == 'room_inventory' ? 'active bg-dark text-white' : 'text-dark bg-light'}">Kiểm
-                    kê phòng</a>
+                   th:classappend="${activeMenu == 'availabelRoom' ? 'active bg-dark text-white' : 'text-dark bg-light'}">Tìm kiếm phòng trống</a>
             </div>
 
             <div class="list-group rounded-0 border">
