@@ -135,4 +135,13 @@ public class BookingRepositoryImpl implements BookingRepository {
         session.persist(entity);
         return entity;
     }
+
+    @Override
+    public List<Booking> findExpiredBookings(int minutes) {
+        Session s = this.factory.getObject().getCurrentSession();
+        String hql = "SELECT b FROM Booking b WHERE b.status = 'PENDING' AND b.createdAt <= :expiryTime";
+        return s.createQuery(hql, Booking.class)
+                .setParameter("expiryTime", java.time.LocalDateTime.now().minusMinutes(minutes))
+                .getResultList();
+    }
 }

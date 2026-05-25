@@ -26,6 +26,7 @@ public class UserDTO extends BaseDTO {
     private String avatar;
     private String createdAt;
     private MultipartFile file;
+    @Size(min = 3, max = 50, message = "Họ và tên phải từ 3 đến 50 ký tự!")
     private String name;
     private String address;
 }

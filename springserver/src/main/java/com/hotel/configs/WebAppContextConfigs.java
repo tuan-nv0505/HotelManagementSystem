@@ -1,6 +1,8 @@
 package com.hotel.configs;
+
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
@@ -17,7 +19,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
         }
 )
 @EnableWebMvc
+@EnableScheduling
 @EnableTransactionManagement
+@Import(WebSocketConfig.class)
 @PropertySources({
         @PropertySource("classpath:secret/login.properties"),
         @PropertySource("classpath:secret/jwt.properties"),

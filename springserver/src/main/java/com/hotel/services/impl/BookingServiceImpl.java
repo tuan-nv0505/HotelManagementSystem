@@ -6,9 +6,7 @@ import com.hotel.entity.Booking;
 import com.hotel.entity.BookingRoom;
 import com.hotel.entity.Customer;
 import com.hotel.exceptions.NotFoundBookingException;
-import com.hotel.repositories.BookingRepository;
-import com.hotel.repositories.CustomerRepository;
-import com.hotel.repositories.RoomInventoryRepository;
+import com.hotel.repositories.*;
 import com.hotel.services.BookingService;
 import jakarta.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +33,10 @@ public class BookingServiceImpl implements BookingService {
     private CustomerRepository customerRepository;
 
     @Autowired
-    private RoomInventoryRepository roomInventoryRepository;
+    private BookingRoomRepository bookingRoomRepository;
+
+    @Autowired
+    private BookingServiceRepository bookingServiceRepository;
 
     @Override
     public List<BookingDTO> list(Map<String, String> params) {
@@ -137,5 +138,18 @@ public class BookingServiceImpl implements BookingService {
         BigDecimal totalAmount = roomTotal.add(serviceTotal);
         booking.setTotalAmount(totalAmount);
         bookingRepository.addOrUpdate(booking);
+    }
+
+    @Override
+    public void processExpiredBooking(int bookingId) {
+
+        bookingRoomRepository.delete(bookingId);
+        bookingServiceRepository.delete(bookingId);
+
+        Booking booking = bookingRepository.get(bookingId);
+        if (booking != null) {
+            booking.setStatus("CANCEL");
+            bookingRepository.addOrUpdate(booking);
+        }
     }
 }
