@@ -11,22 +11,24 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
 @PropertySource("classpath:secret/jwt.properties")
+@Component
 public class JwtUtils {
-    private static final long EXPIRATION_MS = 86400000;
-    @Value("${jwt}")
-    private static String SECRET;
+    private static String secret;
 
-    static {
-        System.out.println("secret: " + SECRET);
+    @Value("${JWT_SECRET}")
+    public void setSecret(String secret) {
+        JwtUtils.secret = secret;
     }
 
-    public static String generateToken(UserDTO userDTO) throws Exception {
-        JWSSigner signer = new MACSigner(SECRET);
+    private static final long EXPIRATION_MS = 86400000;
 
+    public static String generateToken(UserDTO userDTO) throws Exception {
+        JWSSigner signer = new MACSigner(secret);
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(userDTO.getUsername())
                 .claim("id", userDTO.getId())
@@ -49,7 +51,7 @@ public class JwtUtils {
 
     public static String validateTokenAndGetUsername(String token) throws Exception {
         SignedJWT signedJWT = SignedJWT.parse(token);
-        JWSVerifier verifier = new MACVerifier(SECRET);
+        JWSVerifier verifier = new MACVerifier(secret);
 
         if (signedJWT.verify(verifier)) {
             Date expiration = signedJWT.getJWTClaimsSet().getExpirationTime();
