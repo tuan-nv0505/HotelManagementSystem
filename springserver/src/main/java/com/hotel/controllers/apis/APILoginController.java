@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +28,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-@PropertySource("classpath:secret/login.properties")
 @CrossOrigin
 public class APILoginController {
     @Autowired
     private UserService userService;
+
     @Value("${GOOGLE_CLIENT_ID}")
     private String GOOGLE_CLIENT_ID;
     @Value("${FACEBOOK_APP_ID}")

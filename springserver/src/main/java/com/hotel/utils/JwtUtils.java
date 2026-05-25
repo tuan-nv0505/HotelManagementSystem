@@ -10,17 +10,22 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+@Component
 public class JwtUtils {
+    private static String secret;
+    @Value("${JWT_SECRET}")
+    public void setSecret(String secret) {
+        JwtUtils.secret = secret;
+    }
+
     private static final long EXPIRATION_MS = 86400000;
-    @Value("${jwt.secret}")
-    private static String SECRET;
 
     public static String generateToken(UserDTO userDTO) throws Exception {
-        JWSSigner signer = new MACSigner(SECRET);
-
+        JWSSigner signer = new MACSigner(secret);
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(userDTO.getUsername())
                 .claim("id", userDTO.getId())
@@ -43,7 +48,7 @@ public class JwtUtils {
 
     public static String validateTokenAndGetUsername(String token) throws Exception {
         SignedJWT signedJWT = SignedJWT.parse(token);
-        JWSVerifier verifier = new MACVerifier(SECRET);
+        JWSVerifier verifier = new MACVerifier(secret);
 
         if (signedJWT.verify(verifier)) {
             Date expiration = signedJWT.getJWTClaimsSet().getExpirationTime();
