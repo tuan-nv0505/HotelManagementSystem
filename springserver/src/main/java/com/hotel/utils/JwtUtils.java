@@ -22,10 +22,10 @@ public class JwtUtils {
         JWSSigner signer = new MACSigner(SECRET);
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                .subject(userDTO.getEmail())
+                .subject(userDTO.getUsername())
                 .claim("id", userDTO.getId())
                 .claim("role", userDTO.getRole())
-                .claim("name", userDTO.getUsername())
+                .claim("mail", userDTO.getEmail())
                 .claim("phone", userDTO.getPhone())
                 .expirationTime(new Date(System.currentTimeMillis() + EXPIRATION_MS))
                 .issueTime(new Date())

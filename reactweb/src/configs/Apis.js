@@ -3,7 +3,10 @@ import cookies from 'react-cookies'
 
 export const endpoints = {
     'login': '/auth/login',
-    'register': '/auth/register'
+    'register': '/auth/register',
+    'profile': '/secure/profile',
+    'google':'/auth/google', 
+    'facebook':'/auth/facebook'
 }
 
 export const authApis = () => {

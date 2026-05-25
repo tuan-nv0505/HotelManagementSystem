@@ -4,11 +4,13 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.hotel.converter.UserConverter;
 import com.hotel.dto.UserDTO;
+import com.hotel.entity.Customer;
 import com.hotel.entity.User;
 import com.hotel.entity.User;
 import com.hotel.enums.RoleUser;
 import com.hotel.exceptions.DuplicateUsernameException;
 import com.hotel.exceptions.InvalidPasswordException;
+import com.hotel.repositories.CustomerRepository;
 import com.hotel.repositories.UserRepository;
 import com.hotel.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private Cloudinary cloudinary;
+
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -86,6 +91,7 @@ public class UserServiceImpl implements UserService {
             if (userDTO.getPassword() == null || userDTO.getPassword().trim().isEmpty()) {
                 throw new InvalidPasswordException("Vui lòng nhập mật khẩu!");
             }
+            user.setRole(RoleUser.ROLE_CUSTOMER.name());
             user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         } else {
             if (existingUser != null && !existingUser.getId().equals(userDTO.getId())) {
@@ -110,6 +116,16 @@ public class UserServiceImpl implements UserService {
         }
 
         this.userRepository.addOrUpdate(user);
+
+        if (userDTO.getId() == null) {
+            Customer customer = new Customer();
+            customer.setUser(user);
+            customer.setName(userDTO.getName());
+            customer.setEmail(userDTO.getEmail());
+            customer.setPhone(userDTO.getPhone());
+            customer.setAddress(userDTO.getAddress());
+            this.customerRepository.addOrUpdate(customer);
+        }
     }
 
     @Override
@@ -130,5 +146,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean authenticate(String username, String password) {
         return this.userRepository.authenticate(username, password);
+    }
+
+    @Override
+    public UserDTO getUserByUsername(String username) {
+        User u = this.userRepository.getUserByUsername(username);
+        return this.userConverter.toUserDTO(u);
     }
 }

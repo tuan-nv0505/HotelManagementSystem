@@ -72,7 +72,6 @@ public class APILoginController {
             userService.addOrUpdate(userDTO);
             response.put("status", "SUCCESS");
             response.put("message", "Tạo tài khoản thành công");
-            response.put("user", userDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
             response.put("status", "ERROR");

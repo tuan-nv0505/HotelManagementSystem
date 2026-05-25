@@ -1,9 +1,11 @@
 package com.hotel.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -11,6 +13,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "customer")
 @Getter
 @Setter
+@DynamicInsert
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,10 +36,11 @@ public class Customer {
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @ColumnDefault("1")
     @Column(name = "active")
-    private Boolean active;
+    private Boolean active = true;
 
 }

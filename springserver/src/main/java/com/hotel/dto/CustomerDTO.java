@@ -12,4 +12,5 @@ public class CustomerDTO extends BaseDTO {
     private String address;
     private Integer userId;
     private String userName;
+
 }
