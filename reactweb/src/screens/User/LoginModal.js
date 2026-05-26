@@ -111,18 +111,21 @@ const LoginModal = ({ show, handleClose, showRegister }) => {
                             </div>
 
                             <hr />
-                            <a href="#!" className="fw-bold text-primary text-decoration-none small" onClick={(e) => { e.preventDefault(); setIsEmailMode(true); }}>
+                            <a href="#!" className="fw-bold text-primary text-decoration-none small" onClick={(e) => { e.preventDefault(); setIsEmailMode(true); setErr(""); }}>
                                 Đăng nhập bằng tài khoản Hotel Booking
                             </a>
                         </div>
                     ) : (
                         <div className="p-4 p-md-5 bg-white">
                             <div className="d-flex align-items-center mb-4">
-                                <a href="#!" className="text-muted me-3" onClick={(e) => { e.preventDefault(); setIsEmailMode(false); }}>
+                                <a href="#!" className="text-muted me-3" onClick={(e) => { e.preventDefault(); setIsEmailMode(false); setErr(""); }}>
                                     <i className="bi bi-arrow-left fs-4"></i>
                                 </a>
                                 <h4 className="fw-bold text-primary m-0">Đăng nhập</h4>
                             </div>
+
+                            {err && <Alert variant="danger" className="small py-2">{err}</Alert>}
+                            {loading && <div className="mb-3 text-center"><MySpinner /></div>}
 
                             <Form onSubmit={login}>
                                 <Form.Group className="mb-3">
