@@ -19,7 +19,7 @@ import java.util.Date;
 @Component
 public class JwtUtils {
     private static String secret;
-    @Value("${jwt_secret}")
+    @Value("${JWT_SECRET}")
     public void setSecret(String secret) {
         JwtUtils.secret = secret;
     }
