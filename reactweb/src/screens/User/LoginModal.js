@@ -20,16 +20,25 @@ const LoginModal = ({ show, handleClose, showRegister }) => {
     const [q] = useSearchParams();
     const nav = useNavigate();
 
+    const handleLoginComplete = (userData) => {
+        dispatch({ "type": "LOGIN", "payload": userData });
+        onHide();
+        const phone = String(userData.phone).trim();
+        if (phone === '0000000000' || phone === '0') {
+            nav('/profile', { state: { showUpdateAlert: true } });
+        } else {
+            let next = q.get('next');
+            nav(next ? next : '/');
+        }
+    };
+
     const handleGoogleSuccess = async (credentialResponse) => {
         try {
             setLoading(true); setErr("");
             let res = await Apis.post(endpoints['google'], { idToken: credentialResponse.credential });
             cookies.save('token', res.data.token, { path: '/' });
             cookies.save('user', res.data.user, { path: '/' });
-            dispatch({ "type": "LOGIN", "payload": res.data.user });
-            onHide();
-            let next = q.get('next');
-            if (next) nav(next); else nav('/');
+            handleLoginComplete(res.data.user);
         } catch (ex) { setErr("Xác thực Google thất bại!"); } finally { setLoading(false); }
     };
 
@@ -40,10 +49,7 @@ const LoginModal = ({ show, handleClose, showRegister }) => {
                 let res = await Apis.post(endpoints['facebook'], { accessToken: response.accessToken });
                 cookies.save('token', res.data.token, { path: '/' });
                 cookies.save('user', res.data.user, { path: '/' });
-                dispatch({ "type": "LOGIN", "payload": res.data.user });
-                onHide();
-                let next = q.get('next');
-                if (next) nav(next); else nav('/');
+                handleLoginComplete(res.data.user);
             } catch (ex) { setErr("Xác thực Facebook thất bại!"); } finally { setLoading(false); }
         }
     };
@@ -56,10 +62,7 @@ const LoginModal = ({ show, handleClose, showRegister }) => {
             cookies.save('token', res.data.token, { path: '/' });
             let p = await authApis().get(endpoints['profile']);
             cookies.save('user', p.data, { path: '/' });
-            dispatch({ "type": "LOGIN", "payload": p.data });
-            onHide();
-            let next = q.get('next');
-            if (next) nav(next); else nav('/');
+            handleLoginComplete(p.data);
         } catch (ex) { setErr("Tên đăng nhập hoặc mật khẩu không chính xác!"); } finally { setLoading(false); }
     };
 

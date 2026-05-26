@@ -1,6 +1,7 @@
 package com.hotel.converter;
 
 import com.hotel.dto.UserDTO;
+import com.hotel.dto.UserInfoDTO;
 import com.hotel.entity.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,10 @@ public class UserConverter {
     }
 
     public User toUser(UserDTO userDTO) {
+        return modelMapper.map(userDTO, User.class);
+    }
+
+    public User toUser(UserInfoDTO userDTO) {
         return modelMapper.map(userDTO, User.class);
     }
 }

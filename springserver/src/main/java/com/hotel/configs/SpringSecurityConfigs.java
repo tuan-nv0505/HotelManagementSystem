@@ -40,31 +40,34 @@ public class SpringSecurityConfigs {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(c -> c.disable())
+//        http.csrf(c -> c.disable())
+//                .authorizeHttpRequests((requests) -> requests
+//                        .requestMatchers("/admin").hasRole("ADMIN")
+//                        .requestMatchers("/api/**").permitAll()
+//                        .requestMatchers("/websocket/**").permitAll()
+//                        .anyRequest().authenticated()
+//                )
+//                .formLogin(form -> form.loginPage("/admin/login")
+//                        .loginProcessingUrl("/admin/login")
+//                        .defaultSuccessUrl("/admin/", true)
+//                        .failureUrl("/admin/login?error=true")
+//                        .permitAll()
+//                )
+//                .logout((logout) -> logout.logoutSuccessUrl("/admin/login").permitAll());
+
+        http.securityMatcher("/admin/**", "/", "/login")
+                .csrf(c -> c.disable())
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/websocket/**").permitAll()
                         .anyRequest().authenticated()
-                )
-                .formLogin(form -> form.loginPage("/admin/login")
+                ).formLogin(form -> form.loginPage("/admin/login")
                         .loginProcessingUrl("/admin/login")
                         .defaultSuccessUrl("/admin/", true)
                         .failureUrl("/admin/login?error=true")
                         .permitAll()
-                )
-                .logout((logout) -> logout.logoutSuccessUrl("/admin/login").permitAll());
-
-//        http.securityMatcher("/admin/**", "/").csrf(c -> c.disable()).authorizeHttpRequests((requests) -> requests
-//                .requestMatchers("/admin").hasRole("ADMIN")
-//                .requestMatchers("/api/**").permitAll()
-//                .anyRequest().permitAll()
-//        ).formLogin(form -> form.loginPage("/admin/login")
-//                .loginProcessingUrl("/admin/login")
-//                .defaultSuccessUrl("/admin/", true)
-//                .failureUrl("/admin/login?error=true")
-//                .permitAll()
-//        ).logout((logout) -> logout.logoutSuccessUrl("/admin/login").permitAll());
+                ).logout((logout) -> logout.logoutSuccessUrl("/admin/login").permitAll());
 
         return http.build();
     }

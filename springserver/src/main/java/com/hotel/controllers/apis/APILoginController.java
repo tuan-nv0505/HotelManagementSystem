@@ -100,7 +100,6 @@ public class APILoginController {
                 userDTO.setName((String) payload.get("name"));
                 userDTO.setUsername(payload.getEmail());
                 userDTO.setAvatar(pictureUrl);
-                userDTO.setPhone("0000000000");
                 String randomPassword = java.util.UUID.randomUUID().toString();
                 userDTO.setPassword(randomPassword);
                 userService.addOrUpdateSocial(userDTO);
@@ -195,13 +194,12 @@ public class APILoginController {
                     }
                 }
                 String email = jsonObject.has("email") ? jsonObject.get("email").getAsString() : facebookId + "@facebook.com";
-                String phone = jsonObject.has("phone") ? jsonObject.get("phone").getAsString() : "0000000000";
 
                 UserDTO userDTO = new UserDTO();
                 userDTO.setUsername(name);
                 userDTO.setAvatar(pictureUrl);
                 userDTO.setEmail(email);
-                userDTO.setPhone(phone);
+                userDTO.setPhone(null);
 
                 userService.addOrUpdateSocial(userDTO);
                 String jwtToken = JwtUtils.generateToken(userDTO);

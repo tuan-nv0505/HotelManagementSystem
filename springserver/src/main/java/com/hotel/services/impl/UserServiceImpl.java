@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.hotel.converter.UserConverter;
 import com.hotel.dto.UserDTO;
+import com.hotel.dto.UserInfoDTO;
 import com.hotel.entity.Customer;
 import com.hotel.entity.User;
 import com.hotel.entity.User;
@@ -114,19 +115,13 @@ public class UserServiceImpl implements UserService {
                 Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, "Lỗi upload avatar", ex);
                 throw new RuntimeException("Lỗi hệ thống: Không thể tải lên ảnh đại diện!", ex);
             }
+        } else {
+            if (existingUser != null) {
+                user.setAvatar(existingUser.getAvatar());
+            }
         }
 
         this.userRepository.addOrUpdate(user);
-
-        if (userDTO.getId() == null) {
-            Customer customer = new Customer();
-            customer.setUser(user);
-            customer.setName(userDTO.getName());
-            customer.setEmail(userDTO.getEmail());
-            customer.setPhone(userDTO.getPhone());
-            customer.setAddress(userDTO.getAddress());
-            this.customerRepository.addOrUpdate(customer);
-        }
     }
 
 
@@ -175,25 +170,57 @@ public class UserServiceImpl implements UserService {
         if (user != null) {
             user.setAvatar(userDTO.getAvatar());
             this.userRepository.addOrUpdate(user);
+            userDTO.setId(user.getId());
+            userDTO.setPhone(user.getPhone());
         } else {
             user = userConverter.toUser(userDTO);
             user.setRole(RoleUser.ROLE_CUSTOMER.name());
             user.setPassword(bCryptPasswordEncoder.encode(UUID.randomUUID().toString()));
+            if (user.getPhone() == null || user.getPhone().isEmpty()) {
+                user.setPhone("0000000000");
+            }
             this.userRepository.addOrUpdate(user);
+            userDTO.setId(user.getId());
+            userDTO.setPhone(user.getPhone());
+        }
+    }
 
-            Customer customer = customerRepository.getCustomerByUser(user);
-            if (customer == null) {
-                customer = new Customer();
-                customer.setUser(user);
-                customer.setName(userDTO.getName() != null ? userDTO.getName() : userDTO.getUsername());
-                customer.setEmail(userDTO.getEmail());
-                customer.setPhone(userDTO.getPhone());
-                customer.setAddress("Chưa cập nhật");
-                this.customerRepository.addOrUpdate(customer);
-            } else {
-                customer.setName(userDTO.getName() != null ? userDTO.getName() : customer.getName());
-                this.customerRepository.addOrUpdate(customer);
+    @Override
+    public void updateInfoUser(UserInfoDTO userDTO) {
+        User user;
+
+        if (userDTO.getId() != null) {
+            user = userRepository.getUserById(userDTO.getId());
+            User existingUser = userRepository.getUserByUsername(userDTO.getUsername());
+            if (existingUser != null && !existingUser.getId().equals(userDTO.getId())) {
+                throw new DuplicateUsernameException("Tên đăng nhập đã tồn tại!");
+            }
+            user.setUsername(userDTO.getUsername());
+            if (userDTO.getPassword() != null && !userDTO.getPassword().trim().isEmpty()) {
+                user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
+            }
+        } else {
+            user = userConverter.toUser(userDTO);
+            user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
+            user.setRole(RoleUser.ROLE_CUSTOMER.name());
+        }
+
+        if (userDTO.getEmail() != null && !userDTO.getEmail().isEmpty()) {
+            user.setEmail(userDTO.getEmail());
+        }
+        if (userDTO.getPhone() != null && !userDTO.getPhone().isEmpty()) {
+            user.setPhone(userDTO.getPhone());
+        }
+
+        if (userDTO.getFile() != null && !userDTO.getFile().isEmpty()) {
+            try {
+                Map res = this.cloudinary.uploader().upload(userDTO.getFile().getBytes(),
+                        ObjectUtils.asMap("resource_type", "auto"));
+                user.setAvatar(res.get("secure_url").toString());
+            } catch (IOException ex) {
+                throw new RuntimeException("Lỗi upload avatar!", ex);
             }
         }
+        this.userRepository.addOrUpdate(user);
     }
 }

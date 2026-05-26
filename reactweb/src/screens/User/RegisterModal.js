@@ -7,10 +7,8 @@ import { AuthSwitchFooter, ModalCloseButton, SharedModalStyle } from './UserStyl
 
 const RegisterModal = ({ show, handleClose, showLogin }) => {
     const userInfo = [
-        { field: "name", label: "Họ và tên", type: "text", col: 6 },
         { field: "username", label: "Tên đăng nhập", type: "text", col: 6 },
         { field: "phone", label: "Số điện thoại", type: "tel", col: 6 },
-        { field: "address", label: "Địa chỉ", type: "text", col: 6 },
         { field: "email", label: "Email", type: "email", col: 6 },
         { field: "password", label: "Mật khẩu", type: "password", col: 6 },
         { field: "confirm", label: "Xác nhận mật khẩu", type: "password", col: 6 }

@@ -2,6 +2,7 @@ package com.hotel.configs;
 
 import com.hotel.filters.JwtFilter;
 import jakarta.servlet.Filter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -26,7 +27,7 @@ public class ApiSecurityConfigs {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/secure/**").authenticated()
+                        .requestMatchers("/api/secure/**").permitAll()
                         .anyRequest().permitAll()
                 ).addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
@@ -48,7 +49,6 @@ public class ApiSecurityConfigs {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-
 
 
         return source;
