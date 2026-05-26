@@ -12,7 +12,7 @@ const App = () => {
   const [user, dispatch] = useReducer(myUserReducer, cookies.load("user") || null);
 
   return (
-    <GoogleOAuthProvider clientId="42767697622-20a1cpvaavhp9vrvepq7sdgoi815luo9.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
       <MyUserContext.Provider value={[user, dispatch]}>
         <BrowserRouter>
           <Header />

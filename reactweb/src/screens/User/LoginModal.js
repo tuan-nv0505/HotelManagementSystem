@@ -104,7 +104,7 @@ const LoginModal = ({ show, handleClose, showRegister }) => {
                                     />
                                 </div>
                                 <div style={{ width: '150px', height: '40px' }}>
-                                    <FacebookLogin appId="1325779246184552" onSuccess={handleFacebookSuccess} render={({ onClick }) => (
+                                    <FacebookLogin appId={process.env.REACT_APP_FACEBOOK_APP_ID} onSuccess={handleFacebookSuccess} render={({ onClick }) => (
                                         <SocialButton onClick={onClick} iconSrc="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" label="Facebook" />
                                     )} />
                                 </div>
