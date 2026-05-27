@@ -142,8 +142,8 @@ const Room = () => {
     };
 
     const getURL = () => {
-        const ids = selectedRooms.map(r => r.id).join(',');
-        const nums = selectedRooms.map(r => r.roomNumber).join(',');
+        // const ids = selectedRooms.map(r => r.id).join(',');
+        // const nums = selectedRooms.map(r => r.roomNumber).join(',');
         const roomsParams = selectedRooms.map(r => `${r.id}_${r.roomNumber}_${roomPrice}`).join(',');
 
         return `/room-types/${id}/rooms/services?checkIn=${expectedCheckIn}&checkOut=${expectedCheckOut}&roomTypeName=${encodeURIComponent(roomTypeName)}&roomsParams=${encodeURIComponent(roomsParams)}`;
