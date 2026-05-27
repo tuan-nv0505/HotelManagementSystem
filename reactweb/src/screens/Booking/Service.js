@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, useParams, Outlet } from 'react-router-dom';
 import { Container, Row, Col, Card, Form, Button, Pagination, InputGroup, Badge } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -31,7 +31,7 @@ const Service = () => {
 
     const [showLoginModal, setShowLoginModal] = useState(false);
 
-    const loadServices = async () => {
+    const loadServices = useCallback(async () => {
         try {
             let url = `${endpoints['services']}?page=${currentServicePage}`;
             if (queryKw) url += `&kw=${queryKw}`;
@@ -44,21 +44,22 @@ const Service = () => {
         } catch (error) {
             console.error("Lỗi khi tải danh sách dịch vụ:", error);
         }
-    };
+    }, [currentServicePage, queryKw, queryFromPrice, queryToPrice]);
 
     useEffect(() => {
         if (isFirstLoad) {
             isFirstLoad = false;
+
             const navEntries = window.performance.getEntriesByType("navigation");
             if (navEntries.length > 0 && navEntries[0].type === "reload") {
                 navigate(`/room-types/${roomTypeId}/services`, { replace: true });
             }
         }
-    }, []);
+    }, [navigate, roomTypeId]);
 
     useEffect(() => {
         loadServices();
-    }, [currentServicePage, queryKw, queryFromPrice, queryToPrice]);
+    }, [loadServices]);
 
     const handlePageChange = (newPage) => {
         if (newPage >= 1 && newPage <= totalPages) {

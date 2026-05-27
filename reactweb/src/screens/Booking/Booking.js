@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Container, Row, Col, Card, Form, Button, ListGroup, Badge } from 'react-bootstrap';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -21,7 +21,6 @@ const Booking = () => {
     const rooms = searchParams.get("rooms") || "";
     const roomTypeId = searchParams.get("roomTypeId") || "";
 
-    const [actualRooms, setActualRooms] = useState([]);
     const [selectRooms, setSelectRooms] = useState(() => {
         return rooms ? rooms.split(',').map(r => ({
             'id': r.split('_')[0],
@@ -95,35 +94,35 @@ const Booking = () => {
         return newErrors;
     };
 
-    const loadActualRooms = async () => {
-        if (isSubmittingRef.current) 
-            return;
+    const loadActualRooms = useCallback(async () => {
+        if (isSubmittingRef.current) return;
+
         try {
             let url = `${endpoints['availableRooms']}?roomTypeId=${roomTypeId}&expectedCheckIn=${checkIn}&expectedCheckOut=${checkOut}`;
             const response = await Apis.get(url);
             const fetchedRooms = response.data.data;
-            
-            setActualRooms(fetchedRooms);
-            
+
             if (selectRooms.length > 0) {
                 const currentSelectedRoomIds = selectRooms.map(r => String(r.id));
-                
+
                 const missingRooms = currentSelectedRoomIds.filter(
                     id => !fetchedRooms.some(newRoom => String(newRoom.id) === id)
                 );
 
                 if (missingRooms.length > 0) {
-                    alert("⚠️ Cảnh báo: Một hoặc vài phòng bạn đang chọn vừa được khách khác đặt thành công cách đây vài giây! Hệ thống tự động gỡ phòng đó.");
+                    alert("⚠️ Cảnh báo: Một hoặc vài phòng vừa bị đặt!");
                     const updatedSelectRooms = selectRooms.filter(r => !missingRooms.includes(String(r.id)));
                     setSelectRooms(updatedSelectRooms);
-                    if (updatedSelectRooms.length === 0)
+
+                    if (updatedSelectRooms.length === 0) {
                         navigate(-1, { replace: true });
+                    }
                 }
             }
         } catch (error) {
             console.error("Lỗi đồng bộ danh sách phòng trống:", error);
         }
-    };
+    }, [roomTypeId, checkIn, checkOut, selectRooms, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -171,26 +170,21 @@ const Booking = () => {
 
         const stompClient = new Client({
             webSocketFactory: () => new SockJS('http://localhost:8080/springserver/websocket'),
-            debug: (str) => console.log('STOMP Debug:', str), 
+            debug: (str) => console.log('STOMP Debug:', str),
+
             onConnect: () => {
-                stompClient.subscribe(`/topic/room-type/${roomTypeId}`, (message) => {
-                    if (message.body === "ROOM_UPDATED") {
-                        if (checkIn && checkOut) {
-                            loadActualRooms();
-                        }
+                stompClient.subscribe(`/topic/room-type/${roomTypeId}`, () => {
+                    if (checkIn && checkOut) {
+                        loadActualRooms();
                     }
                 });
-            },
-            onStompError: (frame) => {
-                console.error('Error Broker: ' + frame.headers['message']);
             }
         });
+
         stompClient.activate();
 
         return () => {
-            if (stompClient.active) {
-                stompClient.deactivate();
-            }
+            if (stompClient.active) stompClient.deactivate();
         };
     }, [roomTypeId, checkIn, checkOut, loadActualRooms]);
 

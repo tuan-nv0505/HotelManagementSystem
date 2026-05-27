@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams, Link, Outlet, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Form, Button, Pagination } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -25,7 +25,7 @@ const RoomType = () => {
     const [fromPrice, setFromPrice] = useState(queryFromPrice);
     const [toPrice, setToPrice] = useState(queryToPrice);
 
-    const loadRoomTypes = async () => {
+    const loadRoomTypes = useCallback(async () => {
         try {
             let url = `${endpoints['roomTypes']}?page=${currentRoomTypePage}`;
             if (queryKw) url += `&kw=${queryKw}`;
@@ -38,7 +38,7 @@ const RoomType = () => {
         } catch (error) {
             console.error("Lỗi khi tải danh sách loại phòng:", error);
         }
-    };
+    }, [currentRoomTypePage, queryKw, queryFromPrice, queryToPrice]);
 
     useEffect(() => {
         if (isFirstLoad) {
@@ -49,11 +49,11 @@ const RoomType = () => {
                 navigate('/room-types', { replace: true }); 
             }
         }
-    }, []);
+    }, [navigate]);
 
     useEffect(() => {
         loadRoomTypes();
-    }, [currentRoomTypePage, queryKw, queryFromPrice, queryToPrice]);
+    }, [loadRoomTypes]);
 
     const handleSearch = (e) => {
         e.preventDefault();

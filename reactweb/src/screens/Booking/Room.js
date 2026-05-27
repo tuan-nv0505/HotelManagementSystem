@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Outlet, useParams, useSearchParams, Link, useLocation } from 'react-router-dom';
 import { Container, Row, Col, Card, Form, Button, Badge, Pagination } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -48,23 +48,26 @@ const Room = () => {
         }
     }, [id, queryCheckIn, queryCheckOut]);
 
-    const handleFilterRooms = async (isRealtime = false) => {
+    const handleFilterRooms = useCallback(async (isRealtime = false) => {
         if (!queryCheckIn || !queryCheckOut) return;
+
         try {
             let url = `${endpoints['availableRooms']}?roomTypeId=${id}&expectedCheckIn=${queryCheckIn}&expectedCheckOut=${queryCheckOut}&page=${currentRoomPage}`;
             const response = await Apis.get(url);
             const fetchedRooms = response.data.data;
-            
+
             if (isRealtime) {
                 setRooms(prevRooms => {
                     if (prevRooms.length > 0) {
-                        const missingRoomIds = prevRooms.filter(oldRoom => !fetchedRooms.some(newRoom => newRoom.id === oldRoom.id)).map(r => r.id);
+                        const missingRoomIds = prevRooms
+                            .filter(oldRoom => !fetchedRooms.some(newRoom => newRoom.id === oldRoom.id))
+                            .map(r => r.id);
 
                         if (missingRoomIds.length > 0) {
                             setSelectedRooms(prevSelected => {
                                 const stillAvailable = prevSelected.filter(sr => !missingRoomIds.includes(sr.id));
                                 if (stillAvailable.length < prevSelected.length) {
-                                    alert("Cảnh báo: (Các) phòng bạn đang chọn vừa được khách khác đặt thành công! Hệ thống đã gỡ phòng đó khỏi danh sách lựa chọn của bạn.");
+                                    alert("Cảnh báo: phòng bạn chọn đã bị đặt!");
                                 }
                                 return stillAvailable;
                             });
@@ -81,14 +84,14 @@ const Room = () => {
         } catch (error) {
             console.error("Lỗi khi tải danh sách phòng trống:", error);
         }
-    };
+    }, [id, queryCheckIn, queryCheckOut, currentRoomPage]);
 
     useEffect(() => {
         if (!id) return;
 
         const stompClient = new Client({
             webSocketFactory: () => new SockJS('http://localhost:8080/springserver/websocket'),
-            debug: (str) => console.log('STOMP Debug:', str), 
+            debug: (str) => console.log('STOMP Debug:', str),
             onConnect: () => {
                 stompClient.subscribe(`/topic/room-type/${id}`, (message) => {
                     if (message.body === "ROOM_UPDATED") {
@@ -102,20 +105,19 @@ const Room = () => {
                 console.error('Error Broker: ' + frame.headers['message']);
             }
         });
+
         stompClient.activate();
 
         return () => {
-            if (stompClient.active) {
-                stompClient.deactivate();
-            }
+            if (stompClient.active) stompClient.deactivate();
         };
-    }, [id, searchParams]);
+    }, [id, searchParams, handleFilterRooms]);
 
     useEffect(() => {
         if (id && queryCheckIn && queryCheckOut) {
             handleFilterRooms(false);
         }
-    }, [id, queryCheckIn, queryCheckOut, currentRoomPage]);
+    }, [id, queryCheckIn, queryCheckOut, currentRoomPage, handleFilterRooms]);
 
     const handleSubmit = (e) => {
         e.preventDefault();

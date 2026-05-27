@@ -9,7 +9,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 
 loader = DirectoryLoader(
-    path = "knowledge_base",
+    path ="data/knowledge_base",
     glob="**/*.md",
     loader_cls=TextLoader,
     show_progress=True,
