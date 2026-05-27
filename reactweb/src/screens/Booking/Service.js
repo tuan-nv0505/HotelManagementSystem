@@ -28,7 +28,7 @@ const Service = () => {
     const queryToPrice = searchParams.get("toPrice") || "";
 
     const [selectedServices, setSelectedServices] = useState([]);
-    
+
     const [showLoginModal, setShowLoginModal] = useState(false);
 
     const loadServices = useCallback(async () => {
@@ -85,28 +85,28 @@ const Service = () => {
         });
     };
 
-const handleProceedToPayment = () => {
-    const selectedServiceStrings = selectedServices.map(service => {
-        return `${service.id}_${service.name}_${service.price}_${service.quantity}`;
-    });
-    const servicesParam = selectedServiceStrings.join(',');
-    const bookingUrl = `/booking?checkIn=${queryCheckIn}&checkOut=${queryCheckOut}&roomTypeName=${encodeURIComponent(roomTypeName)}&rooms=${encodeURIComponent(roomParams)}&services=${encodeURIComponent(servicesParam)}&roomTypeId=${roomTypeId}`;
+    const handleProceedToPayment = () => {
+        const selectedServiceStrings = selectedServices.map(service => {
+            return `${service.id}_${service.name}_${service.price}_${service.quantity}`;
+        });
+        const servicesParam = selectedServiceStrings.join(',');
+        const bookingUrl = `/booking?checkIn=${queryCheckIn}&checkOut=${queryCheckOut}&roomTypeName=${encodeURIComponent(roomTypeName)}&rooms=${encodeURIComponent(roomParams)}&services=${encodeURIComponent(servicesParam)}&roomTypeId=${roomTypeId}`;
 
-    if (!user || Object.keys(user).length === 0) {
-        setSearchParams(prev => ({ ...prev, next: bookingUrl }));
-        setShowLoginModal(true);
-        return;
-    }
+        if (!user || Object.keys(user).length === 0) {
+            setSearchParams(prev => ({ ...prev, next: bookingUrl }));
+            setShowLoginModal(true);
+            return;
+        }
 
-    navigate(bookingUrl);
-};
+        navigate(bookingUrl);
+    };
 
     const renderPageItems = () => {
         let items = [];
         for (let number = 1; number <= totalPages; number++) {
             items.push(
-                <Pagination.Item 
-                    key={number} 
+                <Pagination.Item
+                    key={number}
                     active={number === currentServicePage}
                     onClick={() => handlePageChange(number)}
                 >
@@ -132,7 +132,7 @@ const handleProceedToPayment = () => {
 
                                 return (
                                     <Col lg={4} md={6} key={s.id}>
-                                        <Card 
+                                        <Card
                                             className="h-100 border-0 shadow-sm rounded-4 overflow-hidden"
                                             style={{
                                                 backgroundColor: quantity > 0 ? '#f0f8ff' : '#ffffff',
@@ -152,7 +152,7 @@ const handleProceedToPayment = () => {
                                                 <Card.Text className="text-muted flex-grow-1 small">
                                                     {s.description || "Dịch vụ chất lượng cao mang tới sự thoải mái và trải nghiệm tiện nghi tối đa cho khách lưu trú."}
                                                 </Card.Text>
-                                                
+
                                                 <div className="border-top pt-3 mt-3 d-flex justify-content-between align-items-center">
                                                     <span className="text-primary fw-bold fs-5">
                                                         {s.price ? `${Number(s.price).toLocaleString('vi-VN')}đ` : "Miễn phí"}
@@ -162,16 +162,16 @@ const handleProceedToPayment = () => {
                                                     {quantity === 0 ? (
                                                         <Button
                                                             onClick={() => handleQuantityChange(s, 1)}
-                                                            size="sm" 
-                                                            className="fw-bold px-3 rounded-pill" 
+                                                            size="sm"
+                                                            className="fw-bold px-3 rounded-pill"
                                                             variant="outline-primary"
                                                         >
                                                             Thêm dịch vụ
                                                         </Button>
                                                     ) : (
                                                         <InputGroup style={{ width: '110px' }}>
-                                                            <Button 
-                                                                variant="outline-primary" 
+                                                            <Button
+                                                                variant="outline-primary"
                                                                 size="sm"
                                                                 onClick={() => handleQuantityChange(s, -1)}
                                                                 className="rounded-circle p-0 d-flex align-items-center justify-content-center"
@@ -179,14 +179,14 @@ const handleProceedToPayment = () => {
                                                             >
                                                                 <i className="bi bi-dash"></i>
                                                             </Button>
-                                                            <Form.Control 
+                                                            <Form.Control
                                                                 className="text-center border-0 bg-transparent fw-bold text-dark p-0"
                                                                 value={quantity}
-                                                                readOnly 
+                                                                readOnly
                                                                 style={{ fontSize: '14px' }}
                                                             />
-                                                            <Button 
-                                                                variant="primary" 
+                                                            <Button
+                                                                variant="primary"
                                                                 size="sm"
                                                                 onClick={() => handleQuantityChange(s, 1)}
                                                                 className="rounded-circle p-0 d-flex align-items-center justify-content-center"
@@ -222,12 +222,12 @@ const handleProceedToPayment = () => {
                 )}
             </Container>
 
-            <Card 
+            <Card
                 className="position-fixed shadow-lg border-0 rounded-4 p-3 d-flex align-items-center justify-content-center border"
-                style={{ 
-                    bottom: '24px', 
-                    right: '24px', 
-                    zIndex: 1050, 
+                style={{
+                    bottom: '24px',
+                    right: '24px',
+                    zIndex: 1050,
                     backgroundColor: 'rgba(255, 255, 255, 0.95)',
                     backdropFilter: 'blur(6px)',
                     width: 'auto'
@@ -239,10 +239,10 @@ const handleProceedToPayment = () => {
                             Dịch vụ: <Badge bg="warning" className="ms-1 px-2 py-1 fs-6 text-dark">{totalItemsCount}</Badge>
                         </div>
                     )}
-                    <Button 
-                        onClick={handleProceedToPayment} 
+                    <Button
+                        onClick={handleProceedToPayment}
                         size="sm"
-                        className="fw-bold px-4 py-2 rounded-3 text-nowrap text-white" 
+                        className="fw-bold px-4 py-2 rounded-3 text-nowrap text-white"
                         style={{ backgroundColor: '#ff5e1f', border: 'none' }}
                     >
                         {totalItemsCount > 0 ? "Tiếp tục thanh toán" : "Bỏ qua & Tiếp tục"} <i className="bi bi-arrow-right-short ms-1"></i>
@@ -250,9 +250,9 @@ const handleProceedToPayment = () => {
                 </div>
             </Card>
 
-            <LoginModal 
-                show={showLoginModal} 
-                handleClose={() => setShowLoginModal(false)} 
+            <LoginModal
+                show={showLoginModal}
+                handleClose={() => setShowLoginModal(false)}
             />
 
             <div className="service-detail-container mt-4">

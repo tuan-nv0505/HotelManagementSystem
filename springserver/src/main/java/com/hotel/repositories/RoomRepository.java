@@ -8,7 +8,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-public interface RoomRepository extends BaseRepository<Room>{
+public interface RoomRepository extends BaseRepository<Room> {
     List<Room> findAvailableRooms(Map<String, String> params);
+
     long countAvailableRoom(Map<String, String> params);
+
+    long countRentableRooms();
 }

@@ -1,10 +1,142 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout/base :: head}"><title></title></head>
-<body th:replace="~{layout/base :: main('Trang chủ', ~{:: #room-content})}">
+<head th:replace="~{layout/base :: head}">
+    <title>Bảng điều khiển Admin</title>
+</head>
 
-<div id="room-content">
+<body th:replace="~{layout/base :: main('dashboard', ~{:: #dashboard-content})}">
 
+<div id="dashboard-content">
+    <div class="container-fluid py-2">
+        <h3 class="mb-4 text-secondary"><i class="bi bi-graph-up-arrow me-2"></i>Bảng Điều Khiển Tổng Hợp</h3>
+
+        <div class="row mb-4">
+            <div class="col-md-5">
+                <div class="card text-white shadow-sm border-0" style="background-color: #0194f3; border-radius: 10px;">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="card-title mb-0 text-light">Tỷ lệ lấp phòng</h6>
+                            <input type="date" id="filterDate" class="form-control form-control-sm w-auto text-dark"
+                                   style="border-radius: 5px; cursor: pointer;" onchange="loadOccupancy()">
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="bi bi-house-check" style="font-size: 2.5rem;"></i>
+                            </div>
+                            <div>
+                                <h2 id="occupancyRate" class="fw-bold mb-0">Đang tải...</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-3 mb-4 shadow-sm border-0">
+            <div class="row align-items-end">
+                <div class="col-md-3">
+                    <label class="small fw-bold">Chọn Năm</label>
+                    <select id="filterYear" class="form-select">
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="small fw-bold">Loại báo cáo</label>
+                    <select id="filterType" class="form-select">
+                        <option value="month">Theo Tháng</option>
+                        <option value="quarter">Theo Quý</option>
+                        <option value="year">Theo Năm</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100" onclick="loadDashboard()">Xem báo cáo</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <canvas id="revenueChart" style="max-height: 400px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:inline="javascript">
+        let myChart = null;
+        const contextPath = /*[[@{/}]]*/ '/';
+
+        function loadDashboard() {
+            const year = document.getElementById('filterYear').value;
+            const type = document.getElementById('filterType').value;
+
+            fetch(`${contextPath}admin/stats/revenue?type=${type}&year=${year}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (myChart) myChart.destroy();
+
+                    const labelPrefix = type === 'month' ? 'Tháng ' : (type === 'quarter' ? 'Quý ' : 'Năm ');
+                    const labels = data.map(item => labelPrefix + item[0]);
+                    const amounts = data.map(item => item[1]);
+
+                    const ctx = document.getElementById('revenueChart').getContext('2d');
+                    myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Doanh thu (VNĐ)',
+                                data: amounts,
+                                backgroundColor: '#0194f3',
+                                borderRadius: 5
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function (value) {
+                                            return value.toLocaleString('vi-VN') + ' đ';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(err => console.error("Lỗi lấy doanh thu:", err));
+        }
+
+        function loadOccupancy() {
+            const selectedDate = document.getElementById('filterDate').value;
+
+            let url = `${contextPath}admin/stats/occupancy`;
+            if (selectedDate) {
+                url += `?date=${selectedDate}`;
+            }
+
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('occupancyRate').innerText = data.occupancyRate + '%';
+                })
+                .catch(err => {
+                    console.error("Lỗi lấy tỷ lệ lấp phòng:", err);
+                    document.getElementById('occupancyRate').innerText = "Lỗi!";
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('filterDate').value = today;
+
+            loadDashboard();
+            loadOccupancy();
+        });
+    </script>
 </div>
 
 </body>

@@ -61,7 +61,8 @@ public class RoomRepositoryImpl implements RoomRepository {
         Session session = factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
-        Root<Room> root = criteriaQuery.from(Room.class);criteriaQuery.select(builder.count(root));
+        Root<Room> root = criteriaQuery.from(Room.class);
+        criteriaQuery.select(builder.count(root));
 
         List<Predicate> predicates = getPredicates(params, builder, root);
         criteriaQuery.where(predicates.toArray(Predicate[]::new));
@@ -210,12 +211,20 @@ public class RoomRepositoryImpl implements RoomRepository {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Room> roomCriteriaQuery = builder.createQuery(Room.class);
         CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
-        Root<Room> root = criteriaQuery.from(Room.class);criteriaQuery.select(builder.count(root));
+        Root<Room> root = criteriaQuery.from(Room.class);
+        criteriaQuery.select(builder.count(root));
 
         List<Predicate> predicates = this.findAvailableRoomsPredicate(params, builder, roomCriteriaQuery, root);
         criteriaQuery.where(predicates.toArray(Predicate[]::new));
 
         Query query = session.createQuery(criteriaQuery);
         return (Long) query.getSingleResult();
+    }
+
+    @Override
+    public long countRentableRooms() {
+        Session session = this.factory.getObject().getCurrentSession();
+        String hql = "SELECT COUNT(r) FROM Room r WHERE r.status != 'MAINTENANCE'";
+        return session.createQuery(hql, Long.class).getSingleResult();
     }
 }

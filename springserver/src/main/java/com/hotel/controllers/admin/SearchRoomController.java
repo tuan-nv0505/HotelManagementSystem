@@ -3,6 +3,7 @@ package com.hotel.controllers.admin;
 import com.hotel.services.RoomService;
 import com.hotel.services.RoomTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
@@ -28,7 +29,7 @@ public class SearchRoomController {
     private RoomTypeService roomTypeService;
 
     @GetMapping("/")
-    public String HomeView() {
+    public String HomeView(Model model) {
         return "index";
     }
 

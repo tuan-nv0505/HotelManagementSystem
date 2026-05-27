@@ -116,7 +116,7 @@ const Header = () => {
                                                 e.target.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
                                             }}
                                         />
-                                        <span className="fw-bold me-2">{user?.username}</span>
+                                        <span className="fw-bold me-2">{user?.name || user?.username}</span>
                                         <i className={`bi bi-chevron-${isDropdownOpen ? 'up' : 'down'} small`}></i>
                                     </div>
 
