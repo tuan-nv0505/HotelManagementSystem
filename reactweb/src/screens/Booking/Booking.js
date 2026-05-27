@@ -9,6 +9,8 @@ import { Client } from '@stomp/stompjs';
 import cookies from 'react-cookies';
 
 const Booking = () => {
+    const isSubmittingRef = React.useRef(false); 
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
@@ -93,7 +95,9 @@ const Booking = () => {
         return newErrors;
     };
 
-    const loadActualRooms = useCallback(async () => {
+    const loadActualRooms = async () => {
+        if (isSubmittingRef.current) 
+            return;
         try {
             let url = `${endpoints['availableRooms']}?roomTypeId=${roomTypeId}&expectedCheckIn=${checkIn}&expectedCheckOut=${checkOut}`;
             const response = await Apis.get(url);
@@ -119,7 +123,7 @@ const Booking = () => {
         } catch (error) {
             console.error("Lỗi đồng bộ danh sách phòng trống:", error);
         }
-    }, [roomTypeId, checkIn, checkOut, selectRooms]);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -134,6 +138,12 @@ const Booking = () => {
             return;
         }
 
+        if (isSubmittingRef.current) 
+            return; 
+        
+        isSubmittingRef.current = true; 
+        setIsSubmitting(true); 
+
         const finalBookingData = {
             'expectedCheckIn': checkIn,
             'expectedCheckOut': checkOut,
@@ -147,11 +157,12 @@ const Booking = () => {
             const response = await authApis().post(endpoints["bookings"], finalBookingData);
             console.log("Đặt phòng thành công:", response.data);
             alert("Đặt phòng thành công! Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.");
-            navigate('/');
+            navigate('/', { replace: true });
         } catch (error) {
             console.error("Lỗi khi đặt phòng:", error);
-            console.error("Response data:", error.response ? error.response.data : "No response data");
             alert("Đã xảy ra lỗi khi đặt phòng. Vui lòng thử lại.");
+            isSubmittingRef.current = false;
+            setIsSubmitting(false);
         }
     };
 
@@ -325,14 +336,14 @@ const Booking = () => {
                                         </div>
                                     </ListGroup.Item>
                                 </ListGroup>
-
                                 <Button 
                                     type="submit" 
                                     size="lg" 
                                     className="w-100 fw-bold rounded-3 py-3 shadow-sm mt-auto"
                                     style={{ backgroundColor: '#ff5e1f', border: 'none' }}
+                                    disabled={isSubmitting}
                                 >
-                                    HOÀN TẤT ĐẶT PHÒNG
+                                    {isSubmitting ? "ĐANG XỬ LÝ..." : "HOÀN TẤT ĐẶT PHÒNG"} 
                                 </Button>
                             </Card>
                         </Col>
