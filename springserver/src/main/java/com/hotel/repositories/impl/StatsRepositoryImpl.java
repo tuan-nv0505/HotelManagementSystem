@@ -24,68 +24,42 @@ public class StatsRepositoryImpl implements StatsRepository {
     @Override
     public List<Object[]> getRevenueByMonth(int year) {
         Session session = factory.getObject().getCurrentSession();
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<Object[]> query = builder.createQuery(Object[].class);
+        String sql = "SELECT MONTH(created_at) as month, SUM(amount) as total " +
+                "FROM payment " +
+                "WHERE status = 'COMPLETED' AND YEAR(created_at) = :year " +
+                "GROUP BY MONTH(created_at) " +
+                "ORDER BY month";
 
-        Root<Payment> root = query.from(Payment.class);
-
-        Expression<Integer> monthExpr = builder.function("MONTH", Integer.class, root.get("createdAt"));
-        Expression<Integer> yearExpr = builder.function("YEAR", Integer.class, root.get("createdAt"));
-
-        query.multiselect(monthExpr, builder.sum(root.get("amount")));
-
-        Predicate pStatus = builder.equal(root.get("status"), "COMPLETED");
-        Predicate pYear = builder.equal(yearExpr, year);
-        query.where(builder.and(pStatus, pYear));
-
-        query.groupBy(monthExpr);
-        query.orderBy(builder.asc(monthExpr));
-
-        return session.createQuery(query).getResultList();
+        return session.createNativeQuery(sql, Object[].class)
+                .setParameter("year", year)
+                .getResultList();
     }
 
     @Override
     public List<Object[]> getRevenueByQuarter(int year) {
         Session session = factory.getObject().getCurrentSession();
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<Object[]> query = builder.createQuery(Object[].class);
+        String sql = "SELECT QUARTER(created_at) as quarter, SUM(amount) as total " +
+                "FROM payment " +
+                "WHERE status = 'COMPLETED' AND YEAR(created_at) = :year " +
+                "GROUP BY QUARTER(created_at) " +
+                "ORDER BY quarter";
 
-        Root<Payment> root = query.from(Payment.class);
-
-        Expression<Integer> quarterExpr = builder.function("QUARTER", Integer.class, root.get("createdAt"));
-        Expression<Integer> yearExpr = builder.function("YEAR", Integer.class, root.get("createdAt"));
-
-        query.multiselect(quarterExpr, builder.sum(root.get("amount")));
-
-        Predicate pStatus = builder.equal(root.get("status"), "COMPLETED");
-        Predicate pYear = builder.equal(yearExpr, year);
-        query.where(builder.and(pStatus, pYear));
-
-        query.groupBy(quarterExpr);
-        query.orderBy(builder.asc(quarterExpr));
-
-        return session.createQuery(query).getResultList();
+        return session.createNativeQuery(sql, Object[].class)
+                .setParameter("year", year)
+                .getResultList();
     }
 
     @Override
     public List<Object[]> getRevenueByYear() {
         Session session = factory.getObject().getCurrentSession();
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<Object[]> query = builder.createQuery(Object[].class);
+        String sql = "SELECT YEAR(created_at) as year, SUM(amount) as total " +
+                "FROM payment " +
+                "WHERE status = 'COMPLETED' " +
+                "GROUP BY YEAR(created_at) " +
+                "ORDER BY year DESC";
 
-        Root<Payment> root = query.from(Payment.class);
-
-        Expression<Integer> yearExpr = builder.function("YEAR", Integer.class, root.get("createdAt"));
-
-        query.multiselect(yearExpr, builder.sum(root.get("amount")));
-
-        Predicate pStatus = builder.equal(root.get("status"), "COMPLETED");
-        query.where(pStatus);
-
-        query.groupBy(yearExpr);
-        query.orderBy(builder.desc(yearExpr));
-
-        return session.createQuery(query).getResultList();
+        return session.createNativeQuery(sql, Object[].class)
+                .getResultList();
     }
 
     @Override

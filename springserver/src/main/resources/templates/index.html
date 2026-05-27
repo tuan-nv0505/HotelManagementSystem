@@ -8,103 +8,98 @@
 
 <div id="dashboard-content">
     <div class="container-fluid py-2">
-        <h3 class="mb-4 text-secondary"><i class="bi bi-graph-up-arrow me-2"></i>Tổng Quan Hệ Thống</h3>
+        <h3 class="mb-4 text-secondary"><i class="bi bi-graph-up-arrow me-2"></i>Bảng Điều Khiển Tổng Hợp</h3>
 
         <div class="row mb-4">
-            <div class="col-md-4">
+            <div class="col-md-5">
                 <div class="card text-white shadow-sm border-0" style="background-color: #0194f3; border-radius: 10px;">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="me-3">
-                            <i class="bi bi-house-check" style="font-size: 2.5rem;"></i>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="card-title mb-0 text-light">Tỷ lệ lấp phòng</h6>
+                            <input type="date" id="filterDate" class="form-control form-control-sm w-auto text-dark"
+                                   style="border-radius: 5px; cursor: pointer;" onchange="loadOccupancy()">
                         </div>
-                        <div>
-                            <h6 class="card-title mb-1 text-light">Tỷ lệ lấp phòng hôm nay</h6>
-                            <h2 id="occupancyRate" class="fw-bold mb-0">Đang tải...</h2>
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="bi bi-house-check" style="font-size: 2.5rem;"></i>
+                            </div>
+                            <div>
+                                <h2 id="occupancyRate" class="fw-bold mb-0">Đang tải...</h2>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-white border-bottom py-3">
-                        <h5 class="mb-0 text-dark">Doanh thu theo tháng (Năm <span id="currentYear"></span>)</h5>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="revenueChart" style="max-height: 400px;"></canvas>
-                    </div>
+        <div class="card p-3 mb-4 shadow-sm border-0">
+            <div class="row align-items-end">
+                <div class="col-md-3">
+                    <label class="small fw-bold">Chọn Năm</label>
+                    <select id="filterYear" class="form-select">
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                    </select>
                 </div>
+                <div class="col-md-3">
+                    <label class="small fw-bold">Loại báo cáo</label>
+                    <select id="filterType" class="form-select">
+                        <option value="month">Theo Tháng</option>
+                        <option value="quarter">Theo Quý</option>
+                        <option value="year">Theo Năm</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100" onclick="loadDashboard()">Xem báo cáo</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <canvas id="revenueChart" style="max-height: 400px;"></canvas>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <script th:inline="javascript">
-        document.addEventListener('DOMContentLoaded', function() {
-            const year = new Date().getFullYear();
-            document.getElementById('currentYear').innerText = year;
+        let myChart = null;
+        const contextPath = /*[[@{/}]]*/ '/';
 
-            // Lấy Context Path tự động từ Thymeleaf
-            const contextPath = /*[[@{/}]]*/ '/';
+        function loadDashboard() {
+            const year = document.getElementById('filterYear').value;
+            const type = document.getElementById('filterType').value;
 
-            // --- GỌI API 1: TỶ LỆ LẤP PHÒNG ---
-            fetch(`${contextPath}api/admin/stats/occupancy`)
-                .then(response => response.json())
+            fetch(`${contextPath}admin/stats/revenue?type=${type}&year=${year}`)
+                .then(res => res.json())
                 .then(data => {
-                    document.getElementById('occupancyRate').innerText = data.occupancyRate + '%';
-                })
-                .catch(error => {
-                    console.error("Lỗi:", error);
-                    document.getElementById('occupancyRate').innerText = "0%";
-                });
+                    if (myChart) myChart.destroy();
 
-            // --- GỌI API 2: BIỂU ĐỒ DOANH THU ---
-            fetch(`${contextPath}api/admin/stats/revenue-month?year=${year}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Tách dữ liệu
-                    const labels = data.map(item => 'Tháng ' + item[0]);
+                    const labelPrefix = type === 'month' ? 'Tháng ' : (type === 'quarter' ? 'Quý ' : 'Năm ');
+                    const labels = data.map(item => labelPrefix + item[0]);
                     const amounts = data.map(item => item[1]);
 
-                    // Vẽ biểu đồ
                     const ctx = document.getElementById('revenueChart').getContext('2d');
-                    new Chart(ctx, {
+                    myChart = new Chart(ctx, {
                         type: 'bar',
                         data: {
                             labels: labels,
                             datasets: [{
                                 label: 'Doanh thu (VNĐ)',
                                 data: amounts,
-                                backgroundColor: 'rgba(1, 148, 243, 0.7)',
-                                borderColor: 'rgba(1, 148, 243, 1)',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                barPercentage: 0.6
+                                backgroundColor: '#0194f3',
+                                borderRadius: 5
                             }]
                         },
                         options: {
                             responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(context) {
-                                            return context.raw.toLocaleString('vi-VN') + ' VNĐ';
-                                        }
-                                    }
-                                }
-                            },
                             scales: {
                                 y: {
                                     beginAtZero: true,
                                     ticks: {
-                                        callback: function(value) {
-                                            return value.toLocaleString('vi-VN') + ' ₫';
+                                        callback: function (value) {
+                                            return value.toLocaleString('vi-VN') + ' đ';
                                         }
                                     }
                                 }
@@ -112,7 +107,34 @@
                         }
                     });
                 })
-                .catch(error => console.error("Lỗi lấy dữ liệu doanh thu:", error));
+                .catch(err => console.error("Lỗi lấy doanh thu:", err));
+        }
+
+        function loadOccupancy() {
+            const selectedDate = document.getElementById('filterDate').value;
+
+            let url = `${contextPath}admin/stats/occupancy`;
+            if (selectedDate) {
+                url += `?date=${selectedDate}`;
+            }
+
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('occupancyRate').innerText = data.occupancyRate + '%';
+                })
+                .catch(err => {
+                    console.error("Lỗi lấy tỷ lệ lấp phòng:", err);
+                    document.getElementById('occupancyRate').innerText = "Lỗi!";
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('filterDate').value = today;
+
+            loadDashboard();
+            loadOccupancy();
         });
     </script>
 </div>

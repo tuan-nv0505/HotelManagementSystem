@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface StatsService {
-    List<Object[]> getRevenueByMonth(int year);
-//    double getOccupancyRate(LocalDate date);
+    List<Object[]> getRevenue(String type, int year);
+
+    double getOccupancyRate(LocalDate date);
 }
