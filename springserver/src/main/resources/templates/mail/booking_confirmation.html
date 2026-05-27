@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Xác nhận đặt phòng</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333333; background-color: #f6f6f6; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #b58a60; margin: 0; font-size: 24px; }
+        .section { margin-bottom: 25px; }
+        .section h2 { font-size: 16px; border-bottom: 2px solid #b58a60; padding-bottom: 5px; color: #333333; text-transform: uppercase; }
+        .info-text p { margin: 5px 0; font-size: 14px; }
+        .details-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .details-table th, .details-table td { padding: 10px; text-align: left; border-bottom: 1px solid #eeeeee; }
+        .details-table th { background-color: #f9f9f9; }
+        .total-section { font-size: 18px; font-weight: bold; text-align: right; color: #d9534f; margin-top: 20px; padding-top: 10px; border-top: 2px solid #eeeeee; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>XÁC NHẬN ĐẶT PHÒNG</h1>
+    </div>
+
+    <div class="section info-text" th:if="${booking.customer != null}">
+        <h2>Thông tin Khách hàng</h2>
+        <p><strong>Họ và tên:</strong> <span th:text="${booking.customer.fullName}">Nguyễn Văn A</span></p>
+        <p><strong>Email:</strong> <span th:text="${booking.customer.email}">customer@email.com</span></p>
+        <p><strong>Số điện thoại:</strong> <span th:text="${booking.customer.phone}">0901234567</span></p>
+        <p th:if="${booking.customer.address != null}"><strong>Địa chỉ:</strong> <span th:text="${booking.customer.address}">Địa chỉ</span></p>
+    </div>
+
+    <div class="section info-text">
+        <h2>Chi tiết Đặt phòng</h2>
+        <p><strong>Ngày đặt:</strong> <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">2026-05-27</span></p>
+        <p><strong>Ngày Check-in:</strong> <span th:text="${booking.expectedCheckIn}">2026-06-01</span></p>
+        <p><strong>Ngày Check-out:</strong> <span th:text="${booking.expectedCheckOut}">2026-06-05</span></p>
+    </div>
+
+    <div class="section" th:if="${booking.rooms != null and !booking.rooms.isEmpty()}">
+        <h2>Danh sách Phòng</h2>
+        <table class="details-table">
+            <thead>
+            <tr>
+                <th>Loại phòng</th>
+                <th>Số phòng</th>
+                <th>Đơn giá</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="room : ${booking.rooms}">
+                <td th:text="${room.roomTypeName}">Phòng Tiêu Chuẩn</td>
+                <td th:text="${room.roomNumber}">101</td>
+                <td th:text="${#numbers.formatDecimal(room.price, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section" th:if="${booking.services != null and !booking.services.isEmpty()}">
+        <h2>Danh sách Dịch vụ</h2>
+        <table class="details-table">
+            <thead>
+            <tr>
+                <th>Tên dịch vụ</th>
+                <th>Số lượng</th>
+                <th>Đơn giá</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="service : ${booking.services}">
+                <td th:text="${service.name}">Dịch vụ đi kèm</td>
+                <td th:text="${service.quantity}">1</td>
+                <td th:text="${#numbers.formatDecimal(service.price, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="total-section">
+        Tổng tiền: <span th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
+    </div>
+</div>
+</body>
+</html>
