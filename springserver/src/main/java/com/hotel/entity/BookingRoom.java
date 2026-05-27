@@ -27,5 +27,4 @@ public class BookingRoom {
     @Column(name = "price_at_booking", nullable = false, precision = 15, scale = 2)
     private BigDecimal priceAtBooking;
 
-
 }

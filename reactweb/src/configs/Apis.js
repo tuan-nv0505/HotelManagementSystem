@@ -8,6 +8,8 @@ export const endpoints = {
     'google':'/auth/google', 
     'facebook':'/auth/facebook',
     'roomTypes': '/room-types',
+    'services': '/services',
+    'bookings': '/secure/bookings',
     'availableRooms': '/rooms/available',
     'google': '/auth/google',
     'facebook': '/auth/facebook'

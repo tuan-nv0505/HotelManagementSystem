@@ -1,19 +1,25 @@
 package com.hotel.controllers.apis;
 
+import com.hotel.dto.wrapper.WrapperDTO;
 import com.hotel.services.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
+@PropertySource("classpath:configs.properties")
 public class APIServiceController {
+    @Autowired
+    private Environment env;
+
     @Autowired
     private ServiceService serviceService;
 
@@ -35,5 +41,18 @@ public class APIServiceController {
             return;
 
         this.serviceService.delete(ids);
+    }
+
+    @GetMapping("/services")
+    public ResponseEntity<WrapperDTO> getServices(@RequestParam Map<String, String> params) {
+        int pageSize = this.env.getProperty("services.page_size", Integer.class, 5);
+        long totalServices = this.serviceService.count(params);
+        int totalPages = (int) Math.ceil((double) totalServices / pageSize);
+
+        WrapperDTO dto = new WrapperDTO();
+        dto.setTotalPages(String.valueOf(totalPages));
+        dto.setData(this.serviceService.list(params));
+
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 }

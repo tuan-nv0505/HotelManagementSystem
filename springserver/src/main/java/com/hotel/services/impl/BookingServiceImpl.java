@@ -2,18 +2,25 @@ package com.hotel.services.impl;
 
 import com.hotel.converter.BookingConverter;
 import com.hotel.dto.BookingDTO;
+import com.hotel.dto.requestbooking.RequestBookingDTO;
 import com.hotel.entity.Booking;
 import com.hotel.entity.BookingRoom;
 import com.hotel.entity.Customer;
+import com.hotel.entity.User;
+import com.hotel.enums.StatusBooking;
 import com.hotel.exceptions.NotFoundBookingException;
+import com.hotel.exceptions.NotFoundUser;
 import com.hotel.repositories.*;
 import com.hotel.services.BookingService;
 import jakarta.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -24,19 +31,25 @@ import java.util.Map;
 @Transactional
 public class BookingServiceImpl implements BookingService {
     @Autowired
-    private BookingRepository bookingRepository;
+    SimpMessagingTemplate simpMessagingTemplate;
 
+    @Autowired
+    private BookingRepository bookingRepository;
     @Autowired
     private BookingConverter bookingConverter;
-
     @Autowired
     private CustomerRepository customerRepository;
-
     @Autowired
     private BookingRoomRepository bookingRoomRepository;
-
     @Autowired
     private BookingServiceRepository bookingServiceRepository;
+    @Autowired
+    private RoomRepository roomRepository;
+    @Autowired
+    private ServiceRepository serviceRepository;
+    @Autowired
+    private UserRepository userRepository;
+
 
     @Override
     public List<BookingDTO> list(Map<String, String> params) {
@@ -151,5 +164,51 @@ public class BookingServiceImpl implements BookingService {
             booking.setStatus("CANCEL");
             bookingRepository.addOrUpdate(booking);
         }
+    }
+
+    @Override
+    public void processAddBooking(RequestBookingDTO dto) {
+        Booking booking = new Booking();
+        booking.setStatus(StatusBooking.PENDING.toString());
+        booking.setExpectedCheckIn(dto.getExpectedCheckIn());
+        booking.setExpectedCheckOut(dto.getExpectedCheckOut());
+        booking.setTotalAmount(dto.getTotalPrice());
+        booking.setCreatedAt(Instant.now());
+        booking.setUpdatedAt(Instant.now());
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.getUserByUsername(username);
+        if (user == null) {
+            throw new NotFoundUser(String.format("Can not found User by Username: '%s'", username));
+        }
+        Customer customer = this.customerRepository.getOrAdd(
+                dto.getCustomer().getFullName(),
+                dto.getCustomer().getEmail(),
+                dto.getCustomer().getPhone(),
+                user
+        );
+        booking.setCustomer(customer);
+        Booking b = this.bookingRepository.addOrUpdateGetObject(booking);
+
+        dto.getServices().forEach(item -> {
+            com.hotel.entity.BookingService bookingService = new com.hotel.entity.BookingService();
+            bookingService.setService(serviceRepository.get(Math.toIntExact(item.getId())));
+            bookingService.setPriceAtUsage(BigDecimal.valueOf(item.getPrice()));
+            bookingService.setBooking(b);
+            bookingService.setCreatedAt(Instant.now());
+            bookingService.setQuantity(item.getQuantity());
+            this.bookingServiceRepository.addOrUpdate(bookingService);
+        });
+
+        dto.getRooms().forEach(item -> {
+            BookingRoom bookingRoom = new BookingRoom();
+            bookingRoom.setBooking(b);
+            bookingRoom.setPriceAtBooking(BigDecimal.valueOf(item.getPrice()));
+            bookingRoom.setRoom(roomRepository.get(Math.toIntExact(item.getId())));
+            this.bookingRoomRepository.addOrUpdate((bookingRoom));
+        });
+
+        this.simpMessagingTemplate.convertAndSend("/topic/room-type/" + dto.getRooms().get(0).getRoomTypeId(), "ROOM_UPDATED");
+        System.out.printf("Send Message to RoomType ID: %d\n", dto.getRooms().get(0).getRoomTypeId());
     }
 }

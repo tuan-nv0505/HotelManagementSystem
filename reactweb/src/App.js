@@ -9,6 +9,8 @@ import myUserReducer from "./reducers/MyUserReducer";
 import RoomType from "./screens/Booking/RoomType";
 import Room from "./screens/Booking/Room";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import Service from "./screens/Booking/Service";
+import Booking from "./screens/Booking/Booking";
 
 
 const App = () => {
@@ -23,9 +25,10 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/room-types" element={<RoomType />} >
             <Route path=":id/rooms" element={<Room />} >
-              <Route path=":roomId/services" />
+              <Route path="services" element={<Service />} />
             </Route>
           </Route>
+          <Route path="/booking" element={<Booking />} />
         </Routes>
         <Footer />
       </BrowserRouter>

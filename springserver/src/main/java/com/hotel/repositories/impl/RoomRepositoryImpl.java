@@ -191,13 +191,15 @@ public class RoomRepositoryImpl implements RoomRepository {
 
         Query q = session.createQuery(query);
 
-        int pageSize = this.env.getProperty("rooms.page_size", Integer.class);
-        int page = Integer.parseInt(params.getOrDefault("page", "1"));
+        if (params.get("page") != null && !params.get("page").isEmpty()) {
+            int pageSize = this.env.getProperty("rooms.page_size", Integer.class);
+            int page = Integer.parseInt(params.getOrDefault("page", "1"));
 
-        int start = (page - 1) * pageSize;
+            int start = (page - 1) * pageSize;
 
-        q.setFirstResult(start);
-        q.setMaxResults(pageSize);
+            q.setFirstResult(start);
+            q.setMaxResults(pageSize);
+        }
 
         return q.getResultList();
     }

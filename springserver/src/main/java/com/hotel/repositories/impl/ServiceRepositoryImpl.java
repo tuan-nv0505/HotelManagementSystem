@@ -42,11 +42,12 @@ public class ServiceRepositoryImpl implements ServiceRepository {
 
         if (params != null) {
             int pageSize = this.env.getProperty("services.page_size", Integer.class);
-            int page = Integer.parseInt(params.getOrDefault("page", "0"));
-            int start = page * pageSize;
+            int page = Integer.parseInt(params.getOrDefault("page", "1"));
 
-            query.setMaxResults(pageSize);
+            int start = (page - 1) * pageSize;
+
             query.setFirstResult(start);
+            query.setMaxResults(pageSize);
         }
 
         return query.getResultList();

@@ -1,9 +1,13 @@
 package com.hotel.repositories.impl;
 
+import com.hotel.dto.requestbooking.RequestBookingDTO;
 import com.hotel.entity.Booking;
 import com.hotel.entity.Customer;
 import com.hotel.entity.RoomInventory;
 import com.hotel.repositories.BookingRepository;
+import com.hotel.repositories.BookingRoomRepository;
+import com.hotel.repositories.BookingServiceRepository;
+import com.hotel.repositories.CustomerRepository;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.*;
 import org.hibernate.Session;
@@ -152,5 +156,16 @@ public class BookingRepositoryImpl implements BookingRepository {
         cq.where(cb.and(statusPredicate, expiryPredicate));
 
         return s.createQuery(cq).getResultList();
+    }
+
+    @Override
+    public Booking addOrUpdateGetObject(Booking booking) {
+        Session session = this.factory.getObject().getCurrentSession();
+        if (booking.getId() == null) {
+            session.persist(booking);
+        } else {
+            session.merge(booking);
+        }
+        return booking;
     }
 }

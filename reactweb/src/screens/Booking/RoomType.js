@@ -4,10 +4,12 @@ import { Container, Row, Col, Card, Form, Button, Pagination } from 'react-boots
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Apis, { endpoints } from '../../configs/Apis';
 import HeroBanner from '../../components/HeroBanner';
+import cookies from 'react-cookies';
 
 let isFirstLoad = true;
 
 const RoomType = () => {
+    console.log(cookies.load('user'))
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
 
@@ -156,7 +158,7 @@ const RoomType = () => {
                                                     {r.basePrice ? `${Number(r.basePrice).toLocaleString('vi-VN')}đ` : "Liên hệ"}
                                                     <span className="text-muted fw-normal" style={{ fontSize: '13px' }}> / đêm</span>
                                                 </span>
-                                                <Button as={Link} to={`/room-types/${r.id}/rooms?${getFilteredQueryString()}&roomTypeName=${encodeURIComponent(r.name)}`} variant="outline-primary" className="fw-bold px-3">
+                                                <Button as={Link} to={`/room-types/${r.id}/rooms?${getFilteredQueryString()}&roomTypeName=${encodeURIComponent(r.name)}&roomPrice=${r.basePrice}`} variant="outline-primary" className="fw-bold px-3">
                                                     Chọn loại phòng
                                                 </Button>
                                             </div>

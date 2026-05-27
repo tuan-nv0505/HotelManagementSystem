@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ErrorServiceDTO {
+public class ErrorDTO {
     private String error;
     private List<String> details;
 }

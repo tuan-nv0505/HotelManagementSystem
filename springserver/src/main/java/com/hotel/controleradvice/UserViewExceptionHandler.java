@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @ControllerAdvice(assignableTypes = com.hotel.controllers.admin.UserController.class)
-public class UserExceptionHandler {
+public class UserViewExceptionHandler {
     @ExceptionHandler(DuplicateUsernameException.class)
     public String handleDuplicateUsername(DuplicateUsernameException ex, RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());

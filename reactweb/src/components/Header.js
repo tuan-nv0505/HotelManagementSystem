@@ -92,7 +92,7 @@ const Header = () => {
                                             e.target.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
                                         }}
                                     />
-                                    <span className="fw-bold me-3">{user.username}</span>
+                                    <span className="fw-bold me-3">{user.name}</span>
                                     <Button
                                         variant="outline-light"
                                         onClick={logout}

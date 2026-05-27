@@ -1,10 +1,8 @@
 package com.hotel.repositories.impl;
 
 import com.hotel.entity.Customer;
-import com.hotel.entity.RoomInventory;
-import com.hotel.entity.Service;
 import com.hotel.entity.User;
-import com.hotel.enums.RoleUser;
+import com.hotel.exceptions.NotFoundUser;
 import com.hotel.repositories.CustomerRepository;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.*;
@@ -134,6 +132,32 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         List<Customer> list = session.createQuery(
                 "SELECT c FROM Customer c WHERE c.user = :user", Customer.class).setParameter("user", user).getResultList();
         return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
+    public Customer getOrAdd(String name, String email, String phone, User user) {
+        Session session = this.factory.getObject().getCurrentSession();;
+        String hql = "FROM Customer c WHERE c.email = :email AND c.phone = :phone AND c.user.id = :userId";
+
+        Customer customer = session.createQuery(hql, Customer.class)
+                .setParameter("email", email)
+                .setParameter("phone", phone)
+                .setParameter("userId", user.getId())
+                .uniqueResult();
+
+        if (customer != null) {
+            return customer;
+        }
+
+        customer = new Customer();
+
+        customer.setName(name);
+        customer.setEmail(email);
+        customer.setPhone(phone);
+        customer.setUser(user);
+        session.persist(customer);
+
+        return customer;
     }
 
     @Override

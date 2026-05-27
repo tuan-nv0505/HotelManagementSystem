@@ -1,5 +1,6 @@
 package com.hotel.controllers.apis;
 
+import com.hotel.dto.requestbooking.RequestBookingDTO;
 import com.hotel.services.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,5 +34,11 @@ public class APIBookingController {
             return;
 
         this.bookingService.delete(ids);
+    }
+
+    @PostMapping("/secure/bookings")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addBooking(@RequestBody RequestBookingDTO dto) {
+        this.bookingService.processAddBooking(dto);
     }
 }

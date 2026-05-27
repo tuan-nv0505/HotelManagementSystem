@@ -4,6 +4,7 @@ import com.hotel.converter.CustomerConverter;
 import com.hotel.dto.CustomerDTO;
 import com.hotel.entity.Customer;
 import com.hotel.entity.User;
+import com.hotel.exceptions.NotFoundUser;
 import com.hotel.repositories.CustomerRepository;
 import com.hotel.repositories.UserRepository;
 import com.hotel.services.CustomerService;
@@ -87,4 +88,12 @@ public class CustomerServiceImpl implements CustomerService {
         return null;
     }
 
+    @Override
+    public Customer getOrAdd(String name, String email, String phone, Integer userId) {
+        User user = this.userRepository.get(userId);
+        if (user == null) {
+            throw new NotFoundUser(String.format("Can not found User Id: %d", userId));
+        }
+        return this.customerRepository.getOrAdd(name, email, phone, user);
+    }
 }

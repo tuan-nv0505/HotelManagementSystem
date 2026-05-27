@@ -28,7 +28,6 @@ const Home = () => {
                                     <Card.Text className="text-muted">Trải nghiệm không gian thoáng đãng với ban công nhìn ra toàn cảnh đại dương.</Card.Text>
                                     <div className="d-flex justify-content-between align-items-center">
                                         <span className="text-primary fw-bold fs-5">1.200.000đ / đêm</span>
-                                        <Button as={Link} to="/booking" variant="outline-primary">Chọn phòng</Button>
                                     </div>
                                 </Card.Body>
                             </Card>
