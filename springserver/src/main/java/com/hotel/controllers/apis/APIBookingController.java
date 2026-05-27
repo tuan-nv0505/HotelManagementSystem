@@ -2,6 +2,7 @@ package com.hotel.controllers.apis;
 
 import com.hotel.dto.requestbooking.RequestBookingDTO;
 import com.hotel.services.BookingService;
+import com.hotel.services.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,8 @@ import java.util.Map;
 public class APIBookingController {
     @Autowired
     private BookingService bookingService;
+    @Autowired
+    private MailService mailService;
 
     @DeleteMapping("/bookings/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -40,5 +43,6 @@ public class APIBookingController {
     @ResponseStatus(HttpStatus.CREATED)
     public void addBooking(@RequestBody RequestBookingDTO dto) {
         this.bookingService.processAddBooking(dto);
+        this.mailService.sendBookingConfirmation(dto);
     }
 }
