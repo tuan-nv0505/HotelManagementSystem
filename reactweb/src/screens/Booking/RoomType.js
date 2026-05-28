@@ -1,11 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { useSearchParams, Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useSearchParams, Link, Outlet, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Form, Button, Pagination } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Apis, { endpoints } from '../../configs/Apis';
 import HeroBanner from '../../components/HeroBanner';
 import cookies from 'react-cookies';
-import { MyUserContext } from '../../configs/Contexts';
 
 let isFirstLoad = true;
 
@@ -25,8 +24,6 @@ const RoomType = () => {
     const [kw, setKw] = useState(queryKw);
     const [fromPrice, setFromPrice] = useState(queryFromPrice);
     const [toPrice, setToPrice] = useState(queryToPrice);
-    const [user] = useContext(MyUserContext);
-    const location = useLocation();
 
     const loadRoomTypes = useCallback(async () => {
         try {
@@ -44,16 +41,6 @@ const RoomType = () => {
     }, [currentRoomTypePage, queryKw, queryFromPrice, queryToPrice]);
 
     useEffect(() => {
-        if (user === null) {
-            const currentPath = encodeURIComponent(location.pathname + location.search);
-
-            navigate(`/?login=true&next=${currentPath}`, { replace: true });
-        }
-    }, [user, navigate, location]);
-
-    useEffect(() => {
-        if (user === null) return;
-
         if (isFirstLoad) {
             isFirstLoad = false;
 
@@ -62,13 +49,11 @@ const RoomType = () => {
                 navigate('/room-types', { replace: true });
             }
         }
-    }, [navigate,user]);
+    }, [navigate]);
 
     useEffect(() => {
-        if (user !== null) {
-            loadRoomTypes();
-        }
-    }, [loadRoomTypes, user]);
+        loadRoomTypes();
+    }, [loadRoomTypes]);
     const handleSearch = (e) => {
         e.preventDefault();
         const currentParams = Object.fromEntries([...searchParams]);
@@ -105,10 +90,6 @@ const RoomType = () => {
         tempParams.delete("checkOut");
         return tempParams.toString();
     };
-
-    if (user === null) {
-        return null; 
-    }
 
     return (
         <div className="room-type-page">
