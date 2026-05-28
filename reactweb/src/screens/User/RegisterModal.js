@@ -36,15 +36,20 @@ const RegisterModal = ({ show, handleClose, showLogin }) => {
     const handleRegister = async (e) => {
         e.preventDefault();
 
-        if (user.password !== user.confirm) {
+        const cleanedUser = {};
+        Object.keys(user).forEach(key => {
+            cleanedUser[key] = typeof user[key] === 'string' ? user[key].trim() : user[key];
+        });
+
+        if (cleanedUser.password !== cleanedUser.confirm) {
             setErrors({ confirm: "Mật khẩu không khớp!" });
             return;
         }
 
         let form = new FormData();
-        for (let key of Object.keys(user)) {
+        for (let key of Object.keys(cleanedUser)) {
             if (key !== 'confirm') {
-                form.append(key, user[key]);
+                form.append(key, cleanedUser[key]);
             }
         }
 
@@ -64,11 +69,21 @@ const RegisterModal = ({ show, handleClose, showLogin }) => {
                 if (showLogin) showLogin();
             }
         } catch (ex) {
-            console.error(ex);
-            if (ex.response && ex.response.status === 400) {
-                setErrors(ex.response.data.errors || { general: "Dữ liệu không hợp lệ!" });
-            } else {
-                setErrors({ general: "Đã có lỗi xảy ra từ máy chủ." });
+           console.error(ex);
+            if (ex.response && ex.response.data) {
+                const responseData = ex.response.data;
+                if (ex.response.status === 400 && responseData.errors) {
+                    setErrors(responseData.errors); 
+                } 
+                else if (responseData.message) {
+                    setErrors({ general: responseData.message });
+                } 
+                else {
+                    setErrors({ general: "Dữ liệu không hợp lệ!" });
+                }
+            } 
+            else {
+                setErrors({ general: "Không thể kết nối đến máy chủ. Vui lòng thử lại sau!" });
             }
         } finally {
             setLoading(false);

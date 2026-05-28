@@ -136,19 +136,26 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Override
     public Customer getOrAdd(String name, String email, String phone, User user) {
-        Session session = this.factory.getObject().getCurrentSession();;
-        String hql = "FROM Customer c WHERE c.email = :email AND c.phone = :phone AND c.user.id = :userId";
+        Session session = this.factory.getObject().getCurrentSession();
+        String hql = "FROM Customer c WHERE c.email = :email AND c.phone = :phone ";
+        if (user != null) {
+            hql += "AND c.user.id = :userId";
+        } else {
+            hql += "AND c.user IS NULL";
+        }
 
-        Customer customer = session.createQuery(hql, Customer.class)
+        var query = session.createQuery(hql, Customer.class)
                 .setParameter("email", email)
-                .setParameter("phone", phone)
-                .setParameter("userId", user.getId())
-                .uniqueResult();
+                .setParameter("phone", phone);
+        if (user != null) {
+            query.setParameter("userId", user.getId());
+        }
+
+        Customer customer = query.getResultList().stream().findFirst().orElse(null);
 
         if (customer != null) {
             return customer;
         }
-
         customer = new Customer();
 
         customer.setName(name);

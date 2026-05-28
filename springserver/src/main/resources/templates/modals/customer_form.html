@@ -1,5 +1,6 @@
 <div th:fragment="customerForm(type)">
-    <form method="POST" th:action="@{/admin/customers}" th:object="${customerDTO}">
+    <form method="POST" th:action="${type == 'add' ? @{/admin/customers/add} : @{/admin/customers/update}}"
+          th:object="${customerDTO}"> th:object="${customerDTO}">
         <div class="modal-body p-4">
             <input type="hidden" name="id" th:id="${type + 'CustomerId'}">
 

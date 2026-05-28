@@ -90,10 +90,15 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer getOrAdd(String name, String email, String phone, Integer userId) {
-        User user = this.userRepository.get(userId);
-        if (user == null) {
-            throw new NotFoundUser(String.format("Can not found User Id: %d", userId));
+        User user = null;
+
+        if (userId != null) {
+            user = this.userRepository.get(userId);
+            if (user == null) {
+                throw new NotFoundUser(String.format("Không tìm thấy tài khoản User ID: %d", userId));
+            }
         }
+
         return this.customerRepository.getOrAdd(name, email, phone, user);
     }
 }

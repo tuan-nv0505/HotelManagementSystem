@@ -30,7 +30,7 @@ const Header = () => {
     };
 
     const location = useLocation();
-    const isHomePage = location.pathname === '/';
+    const isHomePage = location.pathname === '/' || location.pathname.startsWith('/room-types');
 
     useEffect(() => {
         if (q.get('login') === 'true') {
@@ -57,12 +57,12 @@ const Header = () => {
                 expand="lg"
                 className="py-3"
                 style={{
-                    position: 'absolute',
+                   position: isHomePage ? 'absolute' : 'relative',
                     top: 0,
                     left: 0,
                     right: 0,
                     zIndex: 100,
-                    backgroundColor: isHomePage ? 'transparent' : '#2c3e50',
+                    backgroundColor: isHomePage ? 'transparent' : 'rgb(40, 60, 80)',
                     transition: 'background-color 0.4s ease',
                     boxShadow: isHomePage ? 'none' : '0 2px 10px rgba(0,0,0,0.1)'
                 }}
