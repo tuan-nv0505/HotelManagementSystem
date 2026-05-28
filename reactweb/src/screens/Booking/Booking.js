@@ -1,18 +1,28 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useContext } from 'react';
 import { Container, Row, Col, Card, Form, Button, ListGroup, Badge } from 'react-bootstrap';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import HeroBanner from '../../components/HeroBanner';
 import Apis, { authApis, endpoints } from '../../configs/Apis';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import cookies from 'react-cookies';
+import { MyUserContext } from '../../configs/Contexts';
 
 const Booking = () => {
-    const isSubmittingRef = React.useRef(false); 
+    const [user] = useContext(MyUserContext);
+    const isSubmittingRef = React.useRef(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        if (user === null) {
+            const currentPath = encodeURIComponent(location.pathname + location.search);
+            navigate(`/?login=true&next=${currentPath}`, { replace: true });
+        }
+    }, [user, navigate, location]);
 
     const checkIn = searchParams.get("checkIn") || "";
     const checkOut = searchParams.get("checkOut") || "";
@@ -64,7 +74,7 @@ const Booking = () => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setCustomer(prev => ({ ...prev, [name]: value }));
-        
+
         if (!!errors[name]) {
             setErrors({ ...errors, [name]: null });
         }
@@ -126,6 +136,12 @@ const Booking = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setCustomer(prev => ({
+            fullName: prev.fullName.trim(),
+            email: prev.email.trim(),
+            phone: prev.phone.trim()
+        }));
+
         const formErrors = validateForm();
         if (Object.keys(formErrors).length > 0) {
             setErrors(formErrors);
@@ -137,11 +153,11 @@ const Booking = () => {
             return;
         }
 
-        if (isSubmittingRef.current) 
-            return; 
-        
-        isSubmittingRef.current = true; 
-        setIsSubmitting(true); 
+        if (isSubmittingRef.current)
+            return;
+
+        isSubmittingRef.current = true;
+        setIsSubmitting(true);
 
         const finalBookingData = {
             'expectedCheckIn': checkIn,
@@ -200,9 +216,13 @@ const Booking = () => {
         }
     }, []);
 
+    if (user === null) {
+        return null;
+    }
+
     return (
         <div className="booking-page bg-light pb-5">
-            <HeroBanner 
+            <HeroBanner
                 title="Hoàn tất đặt phòng"
                 subtitle="Vui lòng điền thông tin chi tiết để chúng tôi chuẩn bị tốt nhất cho kỳ nghỉ của bạn"
                 height="450px"
@@ -217,14 +237,14 @@ const Booking = () => {
                                     <i className="bi bi-person-lines-fill me-2 text-primary"></i>
                                     Thông tin khách hàng
                                 </h4>
-                                
+
                                 <Row className="g-3">
                                     <Col md={12}>
                                         <Form.Group>
                                             <Form.Label className="fw-semibold">Họ và tên <span className="text-danger">*</span></Form.Label>
-                                            <Form.Control 
-                                                type="text" 
-                                                placeholder="Nhập đầy đủ họ tên" 
+                                            <Form.Control
+                                                type="text"
+                                                placeholder="Nhập đầy đủ họ tên"
                                                 name="fullName"
                                                 value={customer.fullName}
                                                 onChange={handleInputChange}
@@ -238,9 +258,9 @@ const Booking = () => {
                                     <Col md={6}>
                                         <Form.Group>
                                             <Form.Label className="fw-semibold">Số điện thoại <span className="text-danger">*</span></Form.Label>
-                                            <Form.Control 
-                                                type="tel" 
-                                                placeholder="Nhập số điện thoại liên hệ" 
+                                            <Form.Control
+                                                type="tel"
+                                                placeholder="Nhập số điện thoại liên hệ"
                                                 name="phone"
                                                 value={customer.phone}
                                                 onChange={handleInputChange}
@@ -254,9 +274,9 @@ const Booking = () => {
                                     <Col md={6}>
                                         <Form.Group>
                                             <Form.Label className="fw-semibold">Email <span className="text-danger">*</span></Form.Label>
-                                            <Form.Control 
-                                                type="email" 
-                                                placeholder="Nhập địa chỉ email" 
+                                            <Form.Control
+                                                type="email"
+                                                placeholder="Nhập địa chỉ email"
                                                 name="email"
                                                 value={customer.email}
                                                 onChange={handleInputChange}
@@ -330,14 +350,14 @@ const Booking = () => {
                                         </div>
                                     </ListGroup.Item>
                                 </ListGroup>
-                                <Button 
-                                    type="submit" 
-                                    size="lg" 
+                                <Button
+                                    type="submit"
+                                    size="lg"
                                     className="w-100 fw-bold rounded-3 py-3 shadow-sm mt-auto"
                                     style={{ backgroundColor: '#ff5e1f', border: 'none' }}
                                     disabled={isSubmitting}
                                 >
-                                    {isSubmitting ? "ĐANG XỬ LÝ..." : "HOÀN TẤT ĐẶT PHÒNG"} 
+                                    {isSubmitting ? "ĐANG XỬ LÝ..." : "HOÀN TẤT ĐẶT PHÒNG"}
                                 </Button>
                             </Card>
                         </Col>

@@ -30,7 +30,7 @@ const Header = () => {
     };
 
     const location = useLocation();
-    const isHomePage = location.pathname === '/' || location.pathname.startsWith('/room-types');
+    const isHomePage = location.pathname === '/' || location.pathname.startsWith('/room-types') || location.pathname.startsWith('/booking');
 
     useEffect(() => {
         if (q.get('login') === 'true') {
@@ -57,7 +57,7 @@ const Header = () => {
                 expand="lg"
                 className="py-3"
                 style={{
-                   position: isHomePage ? 'absolute' : 'relative',
+                    position: isHomePage ? 'absolute' : 'relative',
                     top: 0,
                     left: 0,
                     right: 0,
@@ -106,7 +106,7 @@ const Header = () => {
                                         style={{ cursor: 'pointer' }}
                                     >
 
-                                        
+
                                         <img
                                             src={user?.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
                                             width="38"

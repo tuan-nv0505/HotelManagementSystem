@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useSearchParams, Link, Outlet, useNavigate } from 'react-router-dom';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { useSearchParams, Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Container, Row, Col, Card, Form, Button, Pagination } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Apis, { endpoints } from '../../configs/Apis';
 import HeroBanner from '../../components/HeroBanner';
 import cookies from 'react-cookies';
+import { MyUserContext } from '../../configs/Contexts';
 
 let isFirstLoad = true;
 
@@ -24,6 +25,8 @@ const RoomType = () => {
     const [kw, setKw] = useState(queryKw);
     const [fromPrice, setFromPrice] = useState(queryFromPrice);
     const [toPrice, setToPrice] = useState(queryToPrice);
+    const [user] = useContext(MyUserContext);
+    const location = useLocation();
 
     const loadRoomTypes = useCallback(async () => {
         try {
@@ -41,20 +44,31 @@ const RoomType = () => {
     }, [currentRoomTypePage, queryKw, queryFromPrice, queryToPrice]);
 
     useEffect(() => {
-        if (isFirstLoad) {
-            isFirstLoad = false;
-            
-            const navEntries = window.performance.getEntriesByType("navigation");
-            if (navEntries.length > 0 && navEntries[0].type === "reload") {
-                navigate('/room-types', { replace: true }); 
-            }
+        if (user === null) {
+            const currentPath = encodeURIComponent(location.pathname + location.search);
+
+            navigate(`/?login=true&next=${currentPath}`, { replace: true });
         }
-    }, [navigate]);
+    }, [user, navigate, location]);
 
     useEffect(() => {
-        loadRoomTypes();
-    }, [loadRoomTypes]);
+        if (user === null) return;
 
+        if (isFirstLoad) {
+            isFirstLoad = false;
+
+            const navEntries = window.performance.getEntriesByType("navigation");
+            if (navEntries.length > 0 && navEntries[0].type === "reload") {
+                navigate('/room-types', { replace: true });
+            }
+        }
+    }, [navigate,user]);
+
+    useEffect(() => {
+        if (user !== null) {
+            loadRoomTypes();
+        }
+    }, [loadRoomTypes, user]);
     const handleSearch = (e) => {
         e.preventDefault();
         const currentParams = Object.fromEntries([...searchParams]);
@@ -72,8 +86,8 @@ const RoomType = () => {
         let items = [];
         for (let number = 1; number <= totalPages; number++) {
             items.push(
-                <Pagination.Item 
-                    key={number} 
+                <Pagination.Item
+                    key={number}
                     active={number === currentRoomTypePage}
                     onClick={() => handlePageChange(number)}
                 >
@@ -92,9 +106,13 @@ const RoomType = () => {
         return tempParams.toString();
     };
 
+    if (user === null) {
+        return null; 
+    }
+
     return (
         <div className="room-type-page">
-            <HeroBanner 
+            <HeroBanner
                 title="Tìm kiếm loại phòng"
                 subtitle="Lựa chọn không gian nghỉ dưỡng hoàn hảo phù hợp với nhu cầu của bạn"
                 height="450px"
@@ -171,14 +189,14 @@ const RoomType = () => {
                         {totalPages > 1 && (
                             <div className="d-flex justify-content-center mt-5">
                                 <Pagination>
-                                    <Pagination.Prev 
-                                        disabled={currentRoomTypePage === 1} 
-                                        onClick={() => handlePageChange(currentRoomTypePage - 1)} 
+                                    <Pagination.Prev
+                                        disabled={currentRoomTypePage === 1}
+                                        onClick={() => handlePageChange(currentRoomTypePage - 1)}
                                     />
                                     {renderPageItems()}
-                                    <Pagination.Next 
-                                        disabled={currentRoomTypePage === totalPages} 
-                                        onClick={() => handlePageChange(currentRoomTypePage + 1)} 
+                                    <Pagination.Next
+                                        disabled={currentRoomTypePage === totalPages}
+                                        onClick={() => handlePageChange(currentRoomTypePage + 1)}
                                     />
                                 </Pagination>
                             </div>
