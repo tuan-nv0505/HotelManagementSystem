@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from starlette.middleware.cors import CORSMiddleware
@@ -13,16 +13,9 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-app = FastAPI()
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=['http://localhost:3000', 'https://hotel-system-pi-brown.vercel.app/'],
-    allow_credentials=True,
-    allow_methods=['*'],
-    allow_headers=['*'],
-)
+router = APIRouter()
 
-@app.post('/chat')
+@router.post('/chat')
 async def chat(request: ChatRequest, session: Session = Depends(get_db)):
     logging.info(f'Question: {request.question}')
     return StreamingResponse(

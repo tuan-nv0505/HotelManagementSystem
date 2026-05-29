@@ -1,7 +1,6 @@
 import os
 
 from app.rag.embedding import embed_batch
-from app.db.session import SessionLocal
 from app.db.models.chunk import Chunk
 from app.db.models.document import Document
 
@@ -12,7 +11,14 @@ from datetime import datetime
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import DirectoryLoader, TextLoader, PyMuPDFLoader, Docx2txtLoader
 
-def ingest_document(directory: str, session, index_path: str, embedder = embed_batch):
+import logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+def load_document(directory: str, session, index_path: str, embedder = embed_batch):
+    logging.info(f'Start loading documents from {directory}')
     docs = []
     docs += DirectoryLoader(directory, "**/*.md", loader_cls=TextLoader).load()
     docs += DirectoryLoader(directory, "**/*.txt", loader_cls=TextLoader).load()
@@ -92,7 +98,4 @@ def ingest_document(directory: str, session, index_path: str, embedder = embed_b
     os.makedirs(os.path.dirname(index_path), exist_ok=True)
     faiss.write_index(faiss_index, index_path)
     session.commit()
-
-if __name__ == '__main__':
-    session = SessionLocal()
-    ingest_document('../../data/documents', session, '../../vector_databases/faiss.index')
+    logging.info(f'Load documents success')
