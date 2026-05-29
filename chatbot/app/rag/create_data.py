@@ -73,7 +73,7 @@ def create_chunk(directory: str, session):
             created_at=datetime.now()
         )
 
-        session.add(chunk)
+        session.add(db_chunk)
         session.flush()
         chunk_ids.append(db_chunk.id)
         chunk_contents.append(chunk.page_content)
