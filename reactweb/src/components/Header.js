@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Navbar, Nav, Container, Button } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import LoginModal from '../screens/User/LoginModal';
 import RegisterModal from '../screens/User/RegisterModal';
@@ -29,8 +29,8 @@ const Header = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
 
-    // const location = useLocation();
-    // const isHomePage = location.pathname === '/';
+    const location = useLocation();
+    const isHomePage = location.pathname === '/' ||location.pathname.startsWith('/booking') ||location.pathname.startsWith('/room-types');
 
     useEffect(() => {
         if (q.get('login') === 'true') {
@@ -57,14 +57,14 @@ const Header = () => {
                 expand="lg"
                 className="py-3"
                 style={{
-                    // position: isHomePage ? 'absolute' : 'relative',
+                    position: isHomePage ? 'absolute' : 'relative',
                     top: 0,
                     left: 0,
                     right: 0,
                     zIndex: 100,
-                    // backgroundColor: isHomePage ? 'transparent' : '#2c3e50',
+                    backgroundColor: isHomePage ? 'transparent' : '#2c3e50',
                     transition: 'background-color 0.4s ease',
-                    // boxShadow: isHomePage ? 'none' : '0 2px 10px rgba(0,0,0,0.1)'
+                    boxShadow: isHomePage ? 'none' : '0 2px 10px rgba(0,0,0,0.1)'
                 }}
             >
                 <Container>
