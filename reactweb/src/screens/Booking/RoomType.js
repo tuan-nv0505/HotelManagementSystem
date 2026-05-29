@@ -43,10 +43,10 @@ const RoomType = () => {
     useEffect(() => {
         if (isFirstLoad) {
             isFirstLoad = false;
-            
+
             const navEntries = window.performance.getEntriesByType("navigation");
             if (navEntries.length > 0 && navEntries[0].type === "reload") {
-                navigate('/room-types', { replace: true }); 
+                navigate('/room-types', { replace: true });
             }
         }
     }, [navigate]);
@@ -54,7 +54,6 @@ const RoomType = () => {
     useEffect(() => {
         loadRoomTypes();
     }, [loadRoomTypes]);
-
     const handleSearch = (e) => {
         e.preventDefault();
         const currentParams = Object.fromEntries([...searchParams]);
@@ -72,8 +71,8 @@ const RoomType = () => {
         let items = [];
         for (let number = 1; number <= totalPages; number++) {
             items.push(
-                <Pagination.Item 
-                    key={number} 
+                <Pagination.Item
+                    key={number}
                     active={number === currentRoomTypePage}
                     onClick={() => handlePageChange(number)}
                 >
@@ -94,7 +93,7 @@ const RoomType = () => {
 
     return (
         <div className="room-type-page">
-            <HeroBanner 
+            <HeroBanner
                 title="Tìm kiếm loại phòng"
                 subtitle="Lựa chọn không gian nghỉ dưỡng hoàn hảo phù hợp với nhu cầu của bạn"
                 height="450px"
@@ -171,14 +170,14 @@ const RoomType = () => {
                         {totalPages > 1 && (
                             <div className="d-flex justify-content-center mt-5">
                                 <Pagination>
-                                    <Pagination.Prev 
-                                        disabled={currentRoomTypePage === 1} 
-                                        onClick={() => handlePageChange(currentRoomTypePage - 1)} 
+                                    <Pagination.Prev
+                                        disabled={currentRoomTypePage === 1}
+                                        onClick={() => handlePageChange(currentRoomTypePage - 1)}
                                     />
                                     {renderPageItems()}
-                                    <Pagination.Next 
-                                        disabled={currentRoomTypePage === totalPages} 
-                                        onClick={() => handlePageChange(currentRoomTypePage + 1)} 
+                                    <Pagination.Next
+                                        disabled={currentRoomTypePage === totalPages}
+                                        onClick={() => handlePageChange(currentRoomTypePage + 1)}
                                     />
                                 </Pagination>
                             </div>

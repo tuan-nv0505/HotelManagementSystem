@@ -75,7 +75,7 @@ public class APILoginController {
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
             response.put("status", "ERROR");
-            response.put("message", "Lỗi server: " + e.getMessage());
+            response.put("message", "Lỗi: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

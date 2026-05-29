@@ -50,7 +50,7 @@ public class BookingController {
     }
 
     @PostMapping("/bookings")
-    public String processService(@ModelAttribute(name = "bookingDTO") BookingDTO bookingDTO, RedirectAttributes redirectAttributes) {
+    public String processBooking(@ModelAttribute(name = "bookingDTO") BookingDTO bookingDTO, RedirectAttributes redirectAttributes) {
         try {
             this.bookingService.addOrUpdate(bookingDTO);
             redirectAttributes.addFlashAttribute("successMessage", "Lưu đơn đặt phòng thành công!");

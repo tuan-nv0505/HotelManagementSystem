@@ -58,7 +58,13 @@ const LoginModal = ({ show, handleClose, showRegister }) => {
         e.preventDefault(); setErr("");
         try {
             setLoading(true);
-            let res = await Apis.post(endpoints['login'], { ...user });
+            const cleanInforUser = {
+                ...user,
+                username: user.username ? user.username.trim() : "",
+                password: user.password ? user.password.trim() : ""
+            };
+
+            let res = await Apis.post(endpoints['login'], cleanInforUser);
             cookies.save('token', res.data.token, { path: '/' });
             let p = await authApis().get(endpoints['profile']);
             cookies.save('user', p.data, { path: '/' });

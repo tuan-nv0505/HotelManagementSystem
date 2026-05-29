@@ -9,6 +9,7 @@ import com.hotel.entity.Customer;
 import com.hotel.entity.User;
 import com.hotel.entity.User;
 import com.hotel.enums.RoleUser;
+import com.hotel.exceptions.DuplicateEmailException;
 import com.hotel.exceptions.DuplicateUsernameException;
 import com.hotel.exceptions.InvalidPasswordException;
 import com.hotel.repositories.CustomerRepository;
@@ -85,10 +86,17 @@ public class UserServiceImpl implements UserService {
     public void addOrUpdate(UserDTO userDTO) {
         User user = userConverter.toUser(userDTO);
         User existingUser = userRepository.getUserByUsername(userDTO.getUsername());
+        User existingEmailUser = null;
 
+        if (userDTO.getEmail() != null && !userDTO.getEmail().trim().isEmpty()) {
+            existingEmailUser = userRepository.getUserByEmail(userDTO.getEmail().trim());
+        }
         if (userDTO.getId() == null) {
             if (existingUser != null) {
                 throw new DuplicateUsernameException("Tên đăng nhập đã tồn tại!");
+            }
+            if (existingEmailUser != null) {
+                throw new DuplicateEmailException("Email này đã được sử dụng!");
             }
             if (userDTO.getPassword() == null || userDTO.getPassword().trim().isEmpty()) {
                 throw new InvalidPasswordException("Vui lòng nhập mật khẩu!");
@@ -98,6 +106,9 @@ public class UserServiceImpl implements UserService {
         } else {
             if (existingUser != null && !existingUser.getId().equals(userDTO.getId())) {
                 throw new DuplicateUsernameException("Tên đăng nhập đã tồn tại!");
+            }
+            if (existingEmailUser != null && !existingEmailUser.getId().equals(userDTO.getId())) {
+                throw new DuplicateEmailException("Email này đã được sử dụng bởi người khác!");
             }
             if (userDTO.getPassword() != null && !userDTO.getPassword().trim().isEmpty()) {
                 user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
@@ -116,8 +127,9 @@ public class UserServiceImpl implements UserService {
                 throw new RuntimeException("Lỗi hệ thống: Không thể tải lên ảnh đại diện!", ex);
             }
         } else {
-            if (existingUser != null) {
-                user.setAvatar(existingUser.getAvatar());
+            if (userDTO.getId() != null) {
+                User oldUser = userRepository.getUserById(userDTO.getId());
+                user.setAvatar(oldUser.getAvatar());
             }
         }
 

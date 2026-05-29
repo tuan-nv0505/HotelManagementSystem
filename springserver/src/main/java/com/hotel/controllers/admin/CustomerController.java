@@ -1,6 +1,7 @@
 package com.hotel.controllers.admin;
 
 import com.hotel.dto.CustomerDTO;
+import com.hotel.dto.UserDTO;
 import com.hotel.services.CustomerService;
 import com.hotel.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +46,30 @@ public class CustomerController {
         return "customer";
     }
 
-    @PostMapping("/customers")
-    public String processService(@ModelAttribute(name = "serviceDTO") CustomerDTO customerDTO, RedirectAttributes redirectAttributes) {
+    @PostMapping("/customers/add")
+    public String addCustomer(@ModelAttribute(name = "customerDTO") CustomerDTO customerDTO, RedirectAttributes redirectAttributes) {
+        try {
+            Integer userId = null;
+            if (customerDTO.getUserName() != null && !customerDTO.getUserName().trim().isEmpty()) {
+                UserDTO user = userService.getUserByUsername(customerDTO.getUserName().trim());
+                if (user == null) {
+                    throw new RuntimeException("Tài khoản User nhập vào không tồn tại!");
+                }
+                userId = user.getId();
+            }
+            customerService.getOrAdd(customerDTO.getName(), customerDTO.getEmail(), customerDTO.getPhone(), userId
+            );
+
+            redirectAttributes.addFlashAttribute("successMessage", "Thêm khách hàng thành công!");
+        } catch (RuntimeException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        }
+
+        return "redirect:/admin/customers";
+    }
+
+    @PostMapping("/customers/update")
+    public String updateCustomer(@ModelAttribute(name = "serviceDTO") CustomerDTO customerDTO, RedirectAttributes redirectAttributes) {
         try {
             customerService.addOrUpdate(customerDTO);
             redirectAttributes.addFlashAttribute("successMessage", "Lưu khách hàng thành công!");

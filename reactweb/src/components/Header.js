@@ -57,7 +57,7 @@ const Header = () => {
                 expand="lg"
                 className="py-3"
                 style={{
-                    position: 'absolute',
+                    // position: isHomePage ? 'absolute' : 'relative',
                     top: 0,
                     left: 0,
                     right: 0,
@@ -105,6 +105,8 @@ const Header = () => {
                                         onClick={toggleMenu}
                                         style={{ cursor: 'pointer' }}
                                     >
+
+
                                         <img
                                             src={user?.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
                                             width="38"
