@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Navbar, Nav, Container, Button } from 'react-bootstrap';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import LoginModal from '../screens/User/LoginModal';
 import RegisterModal from '../screens/User/RegisterModal';
@@ -29,8 +29,8 @@ const Header = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
 
-    const location = useLocation();
-    const isHomePage = location.pathname === '/' || location.pathname.startsWith('/room-types') || location.pathname.startsWith('/booking');
+    // const location = useLocation();
+    // const isHomePage = location.pathname === '/';
 
     useEffect(() => {
         if (q.get('login') === 'true') {
@@ -57,14 +57,14 @@ const Header = () => {
                 expand="lg"
                 className="py-3"
                 style={{
-                    position: isHomePage ? 'absolute' : 'relative',
+                    // position: isHomePage ? 'absolute' : 'relative',
                     top: 0,
                     left: 0,
                     right: 0,
                     zIndex: 100,
-                    backgroundColor: isHomePage ? 'transparent' : 'rgb(40, 60, 80)',
+                    // backgroundColor: isHomePage ? 'transparent' : '#2c3e50',
                     transition: 'background-color 0.4s ease',
-                    boxShadow: isHomePage ? 'none' : '0 2px 10px rgba(0,0,0,0.1)'
+                    // boxShadow: isHomePage ? 'none' : '0 2px 10px rgba(0,0,0,0.1)'
                 }}
             >
                 <Container>
@@ -118,7 +118,7 @@ const Header = () => {
                                                 e.target.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
                                             }}
                                         />
-                                        <span className="fw-bold me-2">{user?.name || user?.username}</span>
+                                        <span className="fw-bold me-2">{user?.username}</span>
                                         <i className={`bi bi-chevron-${isDropdownOpen ? 'up' : 'down'} small`}></i>
                                     </div>
 
