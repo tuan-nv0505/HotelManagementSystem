@@ -141,52 +141,52 @@ const Booking = () => {
         }
     }, [roomTypeId, checkIn, checkOut, selectRooms, navigate]);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setCustomer(prev => ({
-            fullName: prev.fullName.trim(),
-            email: prev.email.trim(),
-            phone: prev.phone.trim()
-        }));
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     setCustomer(prev => ({
+    //         fullName: prev.fullName.trim(),
+    //         email: prev.email.trim(),
+    //         phone: prev.phone.trim()
+    //     }));
 
-        const formErrors = validateForm();
-        if (Object.keys(formErrors).length > 0) {
-            setErrors(formErrors);
-            return;
-        }
+    //     const formErrors = validateForm();
+    //     if (Object.keys(formErrors).length > 0) {
+    //         setErrors(formErrors);
+    //         return;
+    //     }
 
-        if (selectRooms.length === 0) {
-            alert("Bạn không còn phòng nào trong danh sách lựa chọn để đặt!");
-            return;
-        }
+    //     if (selectRooms.length === 0) {
+    //         alert("Bạn không còn phòng nào trong danh sách lựa chọn để đặt!");
+    //         return;
+    //     }
 
-        if (isSubmittingRef.current)
-            return;
+    //     if (isSubmittingRef.current)
+    //         return;
 
-        isSubmittingRef.current = true;
-        setIsSubmitting(true);
+    //     isSubmittingRef.current = true;
+    //     setIsSubmitting(true);
 
-        const finalBookingData = {
-            'expectedCheckIn': checkIn,
-            'expectedCheckOut': checkOut,
-            'rooms': selectRooms,
-            'services': parsedServices,
-            'customer': customer,
-            'totalPrice': totalPrice
-        };
+    //     const finalBookingData = {
+    //         'expectedCheckIn': checkIn,
+    //         'expectedCheckOut': checkOut,
+    //         'rooms': selectRooms,
+    //         'services': parsedServices,
+    //         'customer': customer,
+    //         'totalPrice': totalPrice
+    //     };
 
-        try {
-            const response = await authApis().post(endpoints["bookings"], finalBookingData);
-            console.log("Đặt phòng thành công:", response.data);
-            alert("Đặt phòng thành công! Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.");
-            navigate('/', { replace: true });
-        } catch (error) {
-            console.error("Lỗi khi đặt phòng:", error);
-            alert("Đã xảy ra lỗi khi đặt phòng. Vui lòng thử lại.");
-            isSubmittingRef.current = false;
-            setIsSubmitting(false);
-        }
-    };
+    //     try {
+    //         const response = await authApis().post(endpoints["bookings"], finalBookingData);
+    //         console.log("Đặt phòng thành công:", response.data);
+    //         alert("Đặt phòng thành công! Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.");
+    //         navigate('/', { replace: true });
+    //     } catch (error) {
+    //         console.error("Lỗi khi đặt phòng:", error);
+    //         alert("Đã xảy ra lỗi khi đặt phòng. Vui lòng thử lại.");
+    //         isSubmittingRef.current = false;
+    //         setIsSubmitting(false);
+    //     }
+    // };
 
     const handleCreateBooking = async (e) => {
         e.preventDefault();
