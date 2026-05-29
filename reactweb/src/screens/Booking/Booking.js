@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback, useContext } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useContext, useRef } from 'react';
 import { Container, Row, Col, Card, Form, Button, ListGroup, Badge } from 'react-bootstrap';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -16,6 +16,13 @@ const Booking = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const location = useLocation();
+
+    //
+    const paymentSectionRef = useRef(null);
+    const [step, setStep] = useState(1);
+    const [createdBookingId, setCreatedBookingId] = useState(null);
+    const [paymentMethod, setPaymentMethod] = useState('VNPAY');
+    //
 
     useEffect(() => {
         if (user === null) {
@@ -181,6 +188,80 @@ const Booking = () => {
         }
     };
 
+    const handleCreateBooking = async (e) => {
+        e.preventDefault();
+        setCustomer(prev => ({
+            fullName: prev.fullName.trim(),
+            email: prev.email.trim(),
+            phone: prev.phone.trim()
+        }));
+
+        const formErrors = validateForm();
+        if (Object.keys(formErrors).length > 0) {
+            setErrors(formErrors);
+            return;
+        }
+
+        if (selectRooms.length === 0) {
+            alert("Bạn không còn phòng nào trong danh sách lựa chọn để đặt!");
+            return;
+        }
+
+        if (isSubmittingRef.current) return;
+
+        isSubmittingRef.current = true;
+        setIsSubmitting(true);
+
+        const finalBookingData = {
+            'expectedCheckIn': checkIn,
+            'expectedCheckOut': checkOut,
+            'rooms': selectRooms,
+            'services': parsedServices,
+            'customer': customer,
+            'totalPrice': totalPrice
+        };
+
+        try {
+            const response = await authApis().post(endpoints["bookings"], finalBookingData);
+
+            setCreatedBookingId(response.data.bookingId || "TMP_999");
+            setStep(2);
+            setTimeout(() => {
+                paymentSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 150);
+
+        } catch (error) {
+            console.error("Lỗi khi tạo đơn:", error);
+            alert("Đã xảy ra lỗi khi tạo đơn đặt phòng. Vui lòng thử lại.");
+        } finally {
+            isSubmittingRef.current = false;
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleProcessPayment = async () => {
+        setIsSubmitting(true);
+        try {
+            if (paymentMethod === 'CASH') {
+                alert("Hoàn tất đặt phòng! Vui lòng thanh toán bằng tiền mặt khi đến nhận phòng.");
+                navigate('/', { replace: true });
+            } else {
+                const payResponse = await authApis().post(`${endpoints["payment"]}?bookingId=${createdBookingId}&method=${paymentMethod}`);
+
+                if (payResponse.data && payResponse.data.paymentUrl) {
+                    window.location.href = payResponse.data.paymentUrl;
+                } else {
+                    alert("Tính năng thanh toán online đang được bảo trì.");
+                }
+            }
+        } catch (error) {
+            console.error("Lỗi thanh toán:", error);
+            alert("Lỗi kết nối cổng thanh toán.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     useEffect(() => {
         if (!roomTypeId) return;
 
@@ -229,7 +310,7 @@ const Booking = () => {
             />
 
             <Container style={{ marginTop: '-40px', position: 'relative', zIndex: 10 }}>
-                <Form onSubmit={handleSubmit} noValidate>
+                <Form onSubmit={handleCreateBooking} noValidate>
                     <Row className="g-4">
                         <Col lg={7}>
                             <Card className="border-0 shadow-lg rounded-4 p-4 h-100">
@@ -350,18 +431,81 @@ const Booking = () => {
                                         </div>
                                     </ListGroup.Item>
                                 </ListGroup>
-                                <Button
-                                    type="submit"
-                                    size="lg"
-                                    className="w-100 fw-bold rounded-3 py-3 shadow-sm mt-auto"
-                                    style={{ backgroundColor: '#ff5e1f', border: 'none' }}
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? "ĐANG XỬ LÝ..." : "HOÀN TẤT ĐẶT PHÒNG"}
-                                </Button>
+
+                                {step === 1 ? (
+                                    <Button
+                                        type="submit"
+                                        size="lg"
+                                        className="w-100 fw-bold rounded-3 py-3 shadow-sm mt-auto"
+                                        style={{ backgroundColor: '#ff5e1f', border: 'none' }}
+                                        disabled={isSubmitting}
+                                    >
+                                        {isSubmitting ? "ĐANG XỬ LÝ..." : "HOÀN TẤT ĐẶT PHÒNG"}
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        size="lg"
+                                        className="w-100 fw-bold rounded-3 py-3 mt-auto border-0"
+                                        style={{ backgroundColor: '#28a745', cursor: 'default' }}
+                                    >
+                                        <i className="bi bi-check-circle-fill me-2"></i> ĐÃ TẠO ĐƠN HÀNG
+                                    </Button>
+                                )}
                             </Card>
                         </Col>
                     </Row>
+
+                    {step === 2 && (
+                        <Row className="mt-4 justify-content-center" ref={paymentSectionRef}>
+                            <Col lg={8}>
+                                <Card className="border-0 shadow-lg rounded-4 p-4 p-md-5" style={{ backgroundColor: '#f8fbff' }}>
+                                    <h4 className="fw-bold mb-3 text-dark text-center">
+                                        <i className="bi bi-wallet2 me-2 text-primary"></i>
+                                        Phương thức thanh toán
+                                    </h4>
+                                    <p className="text-center text-muted small mb-4">
+                                        Vui lòng chọn hình thức thanh toán để hoàn tất hóa đơn <b>#{createdBookingId || ''}</b>
+                                    </p>
+
+                                    <Row className="g-3">
+                                        <Col md={4}>
+                                            <label className={`w-100 h-100 border rounded-3 p-3 d-flex flex-column align-items-center justify-content-center text-center ${paymentMethod === 'VNPAY' ? 'border-primary bg-white shadow-sm' : 'bg-transparent'}`} style={{ cursor: 'pointer', transition: 'all 0.2s' }}>
+                                                <Form.Check type="radio" name="payMethod" checked={paymentMethod === 'VNPAY'} onChange={() => setPaymentMethod('VNPAY')} className="mb-2" />
+                                                <img src="https://vinadesign.vn/uploads/images/2023/05/vnpay-logo-vinadesign-25-12-57-55.jpg" width="60" className="rounded mb-2" alt="VNPay" />
+                                                <div className="fw-bold text-dark small">Qua VNPAY</div>
+                                            </label>
+                                        </Col>
+                                        <Col md={4}>
+                                            <label className={`w-100 h-100 border rounded-3 p-3 d-flex flex-column align-items-center justify-content-center text-center ${paymentMethod === 'MOMO' ? 'border-primary bg-white shadow-sm' : 'bg-transparent'}`} style={{ cursor: 'pointer', transition: 'all 0.2s' }}>
+                                                <Form.Check type="radio" name="payMethod" checked={paymentMethod === 'MOMO'} onChange={() => setPaymentMethod('MOMO')} className="mb-2" />
+                                                <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" width="60" className="rounded mb-2" alt="MoMo" />
+                                                <div className="fw-bold text-dark small">Ví MoMo</div>
+                                            </label>
+                                        </Col>
+                                        <Col md={4}>
+                                            <label className={`w-100 h-100 border rounded-3 p-3 d-flex flex-column align-items-center justify-content-center text-center ${paymentMethod === 'CASH' ? 'border-primary bg-white shadow-sm' : 'bg-transparent'}`} style={{ cursor: 'pointer', transition: 'all 0.2s' }}>
+                                                <Form.Check type="radio" name="payMethod" checked={paymentMethod === 'CASH'} onChange={() => setPaymentMethod('CASH')} className="mb-2" />
+                                                <img src="https://cdn-icons-png.flaticon.com/512/2489/2489756.png" width="60" className="mb-2 opacity-75" alt="Cash" />
+                                                <div className="fw-bold text-dark small">Tại quầy lễ tân</div>
+                                            </label>
+                                        </Col>
+                                    </Row>
+
+                                    <div className="text-center mt-4 pt-2">
+                                        <Button
+                                            onClick={handleProcessPayment}
+                                            disabled={isSubmitting}
+                                            size="lg"
+                                            className="fw-bold px-5 py-3 rounded-pill shadow-sm"
+                                            style={{ backgroundColor: '#ff5e1f', border: 'none', minWidth: '250px' }}
+                                        >
+                                            {isSubmitting ? "ĐANG XỬ LÝ..." : (paymentMethod === 'CASH' ? "XÁC NHẬN THANH TOÁN SAU" : "TIẾN HÀNH THANH TOÁN")}
+                                        </Button>
+                                    </div>
+                                </Card>
+                            </Col>
+                        </Row>
+                    )}
                 </Form>
             </Container>
         </div>
