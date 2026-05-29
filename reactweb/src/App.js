@@ -12,11 +12,11 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import Service from "./screens/Booking/Service";
 import Booking from "./screens/Booking/Booking";
 import Profile from "./screens/User/Profile";
+import Chatbot from "./components/Chatbot";
 
 
 const App = () => {
   const [user, dispatch] = useReducer(myUserReducer, cookies.load("user") || null);
-
   return (
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
     <MyUserContext.Provider value={[user, dispatch]}>
@@ -32,6 +32,7 @@ const App = () => {
           <Route path="/booking" element={<Booking />} />
           <Route path="/profile" element={<Profile />}></Route>
         </Routes>
+        <Chatbot />
         <Footer />
       </BrowserRouter>
     </MyUserContext.Provider>

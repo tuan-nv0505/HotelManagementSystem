@@ -9,7 +9,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 
 loader = DirectoryLoader(
-    path ="data/knowledge_base",
+    path ="/Users/tuan-nv0505/Projects/School/Hotel-Management-System/chatbot/data/documents",
     glob="**/*.md",
     loader_cls=TextLoader,
     show_progress=True,
@@ -18,6 +18,8 @@ loader = DirectoryLoader(
 
 docs = loader.load()
 
+
+
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=1200,
     chunk_overlap=200,
@@ -25,6 +27,9 @@ text_splitter = RecursiveCharacterTextSplitter(
 )
 
 splits = text_splitter.split_documents(docs)
+
+for split in splits:
+    print(split.metadata)
 
 embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
@@ -108,3 +113,68 @@ rag_chain = (
 while True:
     answer = rag_chain.invoke(input("Question: "))
     print(answer)
+
+import faiss
+import numpy as np
+
+# giả sử vector 3 chiều
+d = 3
+index = faiss.IndexFlatL2(d)
+
+# data vector
+vectors = np.array([
+    [1.0, 0.1, 0.3],
+    [0.9, 0.2, 0.25],
+    [10.0, 10.0, 10.0]
+]).astype('float32')
+
+index.add(vectors)
+
+# query vector
+query = np.array([[1.0, 0.1, 0.3]]).astype('float32')
+
+k = 2
+distances, indices = index.search(query, k)
+
+print(indices)
+print(distances)
+
+# import asyncio
+#
+# class FakeOpenAIStream:
+#     def __init__(self, text):
+#         self.tokens = text.split()
+#         self.index = 0
+#
+#     def __aiter__(self):
+#         return self
+#
+#     async def __anext__(self):
+#         if self.index >= len(self.tokens):
+#             raise StopAsyncIteration
+#
+#         await asyncio.sleep(1)
+#
+#         token = self.tokens[self.index]
+#         self.index += 1
+#         return token
+#
+# async def generate_token(stream):
+#     async for token in stream:
+#         yield token
+#
+# async def client():
+#     stream = FakeOpenAIStream("Hello I am AI chatbot")
+#     async for token in generate_token(stream):
+#         print(token)
+#
+# async def client2():
+#     print("xin chao")
+#     await asyncio.sleep(1)
+#     print('toi la AI')
+#
+# async def main():
+#     await asyncio.gather(client(), client2())
+#
+# asyncio.run(main())
+
