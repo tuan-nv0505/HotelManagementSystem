@@ -17,7 +17,7 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-def load_document(directory: str, session, index_path: str, embedder = embed_batch):
+def create_chunk(directory: str, session):
     logging.info(f'Start loading documents from {directory}')
     docs = []
     docs += DirectoryLoader(directory, "**/*.md", loader_cls=TextLoader).load()
@@ -61,18 +61,8 @@ def load_document(directory: str, session, index_path: str, embedder = embed_bat
     )
     chunks = splitter.split_documents(valid_docs)
 
-    if not chunks:
-        return
-
-    dimension = 1536
-    if os.path.exists(index_path):
-        faiss_index = faiss.read_index(index_path)
-    else:
-        base_index = faiss.IndexFlatIP(dimension)
-        faiss_index = faiss.IndexIDMap(base_index)
-
-    texts = []
     chunk_ids = []
+    chunk_contents = []
     for chunk in chunks:
         document_id = chunk.metadata["document_id"]
 
@@ -83,19 +73,29 @@ def load_document(directory: str, session, index_path: str, embedder = embed_bat
             created_at=datetime.now()
         )
 
-        session.add(db_chunk)
+        session.add(chunk)
         session.flush()
-
         chunk_ids.append(db_chunk.id)
-        texts.append(chunk.page_content)
+        chunk_contents.append(chunk.page_content)
+
+    session.commit()
+    logging.info(f'Load documents success')
+    return chunk_contents, chunk_ids
+
+def create_vector_database(chunk_contents, chunk_ids, index_path: str, dimension: int = 1536, embedder=embed_batch):
+    logging.info(f'Start creating vector database')
+    if os.path.exists(index_path):
+        faiss_index = faiss.read_index(index_path)
+    else:
+        base_index = faiss.IndexFlatIP(dimension)
+        faiss_index = faiss.IndexIDMap(base_index)
 
 
-    vectors = embedder(texts)
+    vectors = embedder(chunk_contents)
     faiss.normalize_L2(vectors)
     faiss_index.add_with_ids(vectors, np.array(chunk_ids))
 
-
     os.makedirs(os.path.dirname(index_path), exist_ok=True)
     faiss.write_index(faiss_index, index_path)
-    session.commit()
-    logging.info(f'Load documents success')
+    logging.info(f'Create vector database success')
+
