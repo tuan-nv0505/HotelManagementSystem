@@ -1,13 +1,12 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-import os
 
 from app.apis.apis import router
 from app.db.session import SessionLocal
 from app.rag.create_data import load_document
 
 session = SessionLocal()
-load_document('data/documents', session, 'data/vector_databases/faiss.index')
+load_document('./data/documents', session, './data/vector_databases/faiss.index')
 
 app = FastAPI()
 
