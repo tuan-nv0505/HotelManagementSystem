@@ -5,9 +5,9 @@ from app.apis.apis import router
 from app.db.session import SessionLocal
 from app.rag.create_data import create_chunk, create_vector_database
 
-# session = SessionLocal()
-# chunk_contents, chunk_ids = create_chunk('./data/documents', session)
-# create_vector_database(chunk_contents, chunk_ids, './data/vector_databases/faiss.index')
+session = SessionLocal()
+chunk_contents, chunk_ids = create_chunk('./data/documents', session)
+create_vector_database(chunk_contents, chunk_ids, './data/vector_databases/faiss.index')
 
 app = FastAPI()
 
