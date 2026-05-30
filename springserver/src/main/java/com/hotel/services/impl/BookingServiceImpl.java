@@ -167,7 +167,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void processAddBooking(RequestBookingDTO dto) {
+    public Integer processAddBooking(RequestBookingDTO dto) {
         Booking booking = new Booking();
         booking.setStatus(StatusBooking.PENDING.toString());
         booking.setExpectedCheckIn(dto.getExpectedCheckIn());
@@ -210,5 +210,7 @@ public class BookingServiceImpl implements BookingService {
 
         this.simpMessagingTemplate.convertAndSend("/topic/room-type/" + dto.getRooms().get(0).getRoomTypeId(), "ROOM_UPDATED");
         System.out.printf("Send Message to RoomType ID: %d\n", dto.getRooms().get(0).getRoomTypeId());
+
+        return b.getId();
     }
 }

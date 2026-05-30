@@ -11,7 +11,9 @@ export const endpoints = {
     'availableRooms': '/rooms/available',
     'google': '/auth/google',
     'facebook': '/auth/facebook',
-    'update-profile': '/secure/update/profile'
+    'update-profile': '/secure/update/profile', 
+    "paymentCreate": "/secure/payment/create",
+    "paymentVerify": "/payment/vnpay-ipn",
 }
 
 export const authApis = () => {

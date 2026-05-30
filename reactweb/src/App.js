@@ -13,29 +13,35 @@ import Service from "./screens/Booking/Service";
 import Booking from "./screens/Booking/Booking";
 import Profile from "./screens/User/Profile";
 import Chatbot from "./components/Chatbot";
+import Payment from "./screens/Payment/Payment";
+import PaymentReturn from "./screens/Payment/PaymentReturn";
+
 
 
 const App = () => {
   const [user, dispatch] = useReducer(myUserReducer, cookies.load("user") || null);
   return (
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-    <MyUserContext.Provider value={[user, dispatch]}>
-      <BrowserRouter>
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/room-types" element={<RoomType />} >
-            <Route path=":id/rooms" element={<Room />} >
-              <Route path="services" element={<Service />} />
+      <MyUserContext.Provider value={[user, dispatch]}>
+        <BrowserRouter>
+          <Header />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/room-types" element={<RoomType />} >
+              <Route path=":id/rooms" element={<Room />} >
+                <Route path="services" element={<Service />} />
+              </Route>
             </Route>
-          </Route>
-          <Route path="/booking" element={<Booking />} />
-          <Route path="/profile" element={<Profile />}></Route>
-        </Routes>
-        <Chatbot />
-        <Footer />
-      </BrowserRouter>
-    </MyUserContext.Provider>
+            <Route path="/booking" element={<Booking />}>
+              <Route path="payment" element={<Payment />} />
+            </Route>
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/payment-return" element={<PaymentReturn />} />
+          </Routes>
+          <Chatbot />
+          <Footer />
+        </BrowserRouter>
+      </MyUserContext.Provider>
 
     </GoogleOAuthProvider>
   );

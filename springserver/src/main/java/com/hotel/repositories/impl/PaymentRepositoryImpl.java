@@ -91,7 +91,8 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 
     @Override
     public void addOrUpdate(Payment dto) {
-
+        Session session = this.factory.getObject().getCurrentSession();
+        session.merge(dto);
     }
 
     @Override
@@ -106,7 +107,8 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 
     @Override
     public Payment get(int id) {
-        return null;
+        Session session = factory.getObject().getCurrentSession();
+        return session.get(Payment.class, id);
     }
 
     @Override

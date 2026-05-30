@@ -8,5 +8,5 @@ import java.util.List;
 public interface BookingService extends BaseService<BookingDTO> {
     void recalculateTotalAmount(int bookingId);
     void processExpiredBooking(int bookingId);
-    void processAddBooking(RequestBookingDTO dto);
+    Integer processAddBooking(RequestBookingDTO dto);
 }

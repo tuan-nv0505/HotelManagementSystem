@@ -2,7 +2,10 @@ package com.hotel.services.impl;
 
 import com.hotel.entity.Booking;
 import com.hotel.entity.Payment;
+import com.hotel.enums.PaymentContext;
+import com.hotel.enums.PaymentMethod;
 import com.hotel.enums.StatusBooking;
+import com.hotel.enums.StatusPayment;
 import com.hotel.repositories.BookingRepository;
 import com.hotel.repositories.PaymentRepository;
 import com.hotel.services.VnPayService;
@@ -50,6 +53,16 @@ public class VnPayServiceImpl implements VnPayService {
         Booking booking = bookingRepository.get(bookingId);
         if (booking == null) throw new RuntimeException("Đơn đặt phòng không tồn tại!");
 
+        Payment pendingPayment = new Payment();
+        pendingPayment.setBooking(booking);
+        pendingPayment.setAmount(booking.getTotalAmount());
+        pendingPayment.setPaymentMethod(PaymentMethod.VNPAY.name());
+        pendingPayment.setStatus(StatusPayment.PENDING.name());
+        pendingPayment.setPaymentContext(PaymentContext.PAYMENT.name());
+        pendingPayment.setNote("Đang chờ thanh toán qua VNPAY");
+
+        pendingPayment = paymentRepository.save(pendingPayment);
+
         long amount = booking.getTotalAmount().longValue();
 
         Map<String, String> vnp_Params = new TreeMap<>();
@@ -58,7 +71,7 @@ public class VnPayServiceImpl implements VnPayService {
         vnp_Params.put("vnp_TmnCode", vnpTmnCode);
         vnp_Params.put("vnp_Amount", String.valueOf(amount * 100));
         vnp_Params.put("vnp_CurrCode", "VND");
-        vnp_Params.put("vnp_TxnRef", String.valueOf(bookingId));
+        vnp_Params.put("vnp_TxnRef", String.valueOf(pendingPayment.getId()));
         vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + bookingId);
         vnp_Params.put("vnp_OrderType", "other");
         vnp_Params.put("vnp_Locale", "vn");
@@ -79,19 +92,16 @@ public class VnPayServiceImpl implements VnPayService {
             String fieldName = entry.getKey();
             String fieldValue = entry.getValue();
 
-            if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                hashData.append(fieldName);
-                hashData.append('=');
-                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
-
-                query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
-                query.append('=');
-                query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
-
-                if (itr.hasNext()) {
-                    query.append('&');
+            if ((fieldValue != null) && (!fieldValue.isEmpty())) {
+                if (!hashData.isEmpty()) {
                     hashData.append('&');
+                    query.append('&');
                 }
+
+                String encodedValue = URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString());
+
+                hashData.append(fieldName).append('=').append(encodedValue);
+                query.append(fieldName).append('=').append(encodedValue);
             }
         }
 
@@ -110,42 +120,55 @@ public class VnPayServiceImpl implements VnPayService {
             vnp_Params.remove("vnp_SecureHashType");
 
             StringBuilder hashData = new StringBuilder();
-            Iterator<Map.Entry<String, String>> itr = vnp_Params.entrySet().iterator();
-            while (itr.hasNext()) {
-                Map.Entry<String, String> entry = itr.next();
-                if ((entry.getValue() != null) && (entry.getValue().length() > 0)) {
-                    hashData.append(entry.getKey()).append("=").append(entry.getValue());
-                    if (itr.hasNext()) {
+            for (Map.Entry<String, String> entry : vnp_Params.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+
+                if (value != null && !value.isEmpty()) {
+                    if (hashData.length() > 0) {
                         hashData.append("&");
                     }
+
+                    hashData.append(key).append("=").append(URLEncoder.encode(value, StandardCharsets.US_ASCII.toString()));
                 }
             }
 
             String signValue = VnpaySecurityUtil.hashRawString(hashData.toString(), vnpHashSecret);
 
             if (signValue.equals(vnp_SecureHash)) {
-                int bookingId = Integer.parseInt(vnp_Params.get("vnp_TxnRef"));
-                Booking booking = bookingRepository.get(bookingId);
+                int paymentId = Integer.parseInt(vnp_Params.get("vnp_TxnRef"));
+                Payment payment = paymentRepository.get(paymentId);
 
-                if (booking != null) {
-                    if ("PENDING".equals(booking.getStatus().toString())) {
-                        if ("00".equals(vnp_Params.get("vnp_ResponseCode"))) {
-                            booking.setStatus(StatusBooking.CONFIRMED.name());
-                            Payment payment = new Payment();
-                            payment.setBooking(booking);
-                            payment.setAmount(booking.getTotalAmount());
-                            payment.setTransactionCode(vnp_Params.get("vnp_TransactionNo"));
-                            payment.setNote("Thành công qua VNPAY");
-                            paymentRepository.save(payment);
+                if (payment != null) {
+                    Booking booking = payment.getBooking();
+                    long vnp_Amount = Long.parseLong(vnp_Params.get("vnp_Amount"));
+                    long db_Amount = payment.getAmount().longValue() * 100;
+
+                    if (vnp_Amount == db_Amount) {
+                        if (StatusPayment.PENDING.name().equals(payment.getStatus())) {
+                            if ("00".equals(vnp_Params.get("vnp_ResponseCode"))) {
+                                payment.setStatus(StatusPayment.COMPLETED.name());
+                                payment.setTransactionCode(vnp_Params.get("vnp_TransactionNo"));
+                                payment.setNote("Thanh toán thành công qua VNPAY");
+                                booking.setStatus(StatusBooking.CONFIRMED.name());
+                            } else {
+                                payment.setStatus(StatusPayment.FAILED.name());
+                                payment.setNote("Giao dịch bị hủy hoặc thất bại");
+
+                                booking.setStatus(StatusBooking.CANCELLED.name());
+                            }
+                            paymentRepository.addOrUpdate(payment);
+                            bookingRepository.addOrUpdate(booking);
+
+                            response.put("RspCode", "00");
+                            response.put("Message", "Confirm Success");
                         } else {
-                            booking.setStatus(StatusBooking.CANCELLED.name());
+                            response.put("RspCode", "02");
+                            response.put("Message", "Order already confirmed");
                         }
-                        bookingRepository.addOrUpdate(booking);
-                        response.put("RspCode", "00");
-                        response.put("Message", "Confirm Success");
                     } else {
-                        response.put("RspCode", "02");
-                        response.put("Message", "Order already confirmed");
+                        response.put("RspCode", "04");
+                        response.put("Message", "Invalid Amount");
                     }
                 } else {
                     response.put("RspCode", "01");
@@ -156,6 +179,7 @@ public class VnPayServiceImpl implements VnPayService {
                 response.put("Message", "Invalid Checksum");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             response.put("RspCode", "99");
             response.put("Message", "Unknown Error");
         }

@@ -5,9 +5,11 @@ import com.hotel.services.BookingService;
 import com.hotel.services.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,8 +43,15 @@ public class APIBookingController {
 
     @PostMapping("/secure/bookings")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addBooking(@RequestBody RequestBookingDTO dto) {
-        this.bookingService.processAddBooking(dto);
+    public ResponseEntity<Map<String, Object>> addBooking(@RequestBody RequestBookingDTO dto) {
+        Integer newBookingId = this.bookingService.processAddBooking(dto);
         this.mailService.sendBookingConfirmation(dto);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "SUCCESS");
+        response.put("message", "Tạo đơn đặt phòng thành công");
+        response.put("bookingId", newBookingId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
