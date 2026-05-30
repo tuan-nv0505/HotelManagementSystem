@@ -154,19 +154,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void processExpiredBooking(int bookingId) {
-
-        bookingRoomRepository.delete(bookingId);
-        bookingServiceRepository.delete(bookingId);
-
-        Booking booking = bookingRepository.get(bookingId);
-        if (booking != null) {
-            booking.setStatus("CANCEL");
-            bookingRepository.addOrUpdate(booking);
-        }
-    }
-
-    @Override
     public Integer processAddBooking(RequestBookingDTO dto) {
         Booking booking = new Booking();
         booking.setStatus(StatusBooking.PENDING.toString());

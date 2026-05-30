@@ -4,6 +4,7 @@ import com.hotel.dto.requestbooking.RequestBookingDTO;
 import com.hotel.entity.Booking;
 import com.hotel.entity.Customer;
 import com.hotel.entity.RoomInventory;
+import com.hotel.enums.StatusBooking;
 import com.hotel.repositories.BookingRepository;
 import com.hotel.repositories.BookingRoomRepository;
 import com.hotel.repositories.BookingServiceRepository;
@@ -158,6 +159,30 @@ public class BookingRepositoryImpl implements BookingRepository {
         return s.createQuery(cq).getResultList();
     }
 
+
+    @Override
+    public void processExpiredBooking(Integer bookingId) {
+        Session session = this.factory.getObject().getCurrentSession();
+        Booking booking = session.get(Booking.class, bookingId);
+
+        if (booking != null && StatusBooking.PENDING.name().equals(booking.getStatus())) {
+            Query deleteRoomsQuery = session.createQuery("DELETE FROM BookingRoom br WHERE br.booking.id = :bId");
+            deleteRoomsQuery.setParameter("bId", bookingId);
+            deleteRoomsQuery.executeUpdate();
+
+            Query deleteServicesQuery = session.createQuery("DELETE FROM BookingService bs WHERE bs.booking.id = :bId");
+            deleteServicesQuery.setParameter("bId", bookingId);
+            deleteServicesQuery.executeUpdate();
+
+            jakarta.persistence.Query deletePaymentQuery = session.createQuery("DELETE FROM Payment p WHERE p.booking.id = :bId AND p.status = 'PENDING'");
+            deletePaymentQuery.setParameter("bId", bookingId);
+            deletePaymentQuery.executeUpdate();
+
+            booking.setStatus(StatusBooking.CANCELLED.name());
+            session.merge(booking);
+        }
+    }
+
     @Override
     public Booking addOrUpdateGetObject(Booking booking) {
         Session session = this.factory.getObject().getCurrentSession();
@@ -168,4 +193,5 @@ public class BookingRepositoryImpl implements BookingRepository {
         }
         return booking;
     }
+
 }

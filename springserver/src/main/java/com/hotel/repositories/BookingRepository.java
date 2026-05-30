@@ -7,6 +7,10 @@ import java.util.List;
 
 public interface BookingRepository extends BaseRepository<Booking> {
     void flush();
+
     List<Booking> findExpiredBookings(int minutes);
+
     Booking addOrUpdateGetObject(Booking booking);
+
+    void processExpiredBooking(Integer bookingId);
 }

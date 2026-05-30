@@ -1,5 +1,7 @@
 package com.hotel.services.impl;
 
+import com.hotel.dto.requestbooking.BookingCancelDTO;
+import com.hotel.entity.Booking;
 import com.hotel.services.MailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -55,7 +57,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     @Async
-    public void sendBookingCancellationDueToTimeout(RequestBookingDTO booking) {
+    public void sendBookingCancellationDueToTimeout(BookingCancelDTO booking) {
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(
@@ -68,7 +70,7 @@ public class MailServiceImpl implements MailService {
             context.setVariable("booking", booking);
             String htmlContent = emailTemplateEngine.process("booking_cancellation", context);
 
-            helper.setTo(booking.getCustomer().getEmail());
+            helper.setTo(booking.getCustomerEmail());
             helper.setSubject("Thông Báo: Đơn Đặt Phòng Của Bạn Đã Bị Huỷ Do Quá Hạn Thanh Toán");
             helper.setText(htmlContent, true);
             helper.setFrom(this.mailUserName);
