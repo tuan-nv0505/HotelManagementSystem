@@ -1,5 +1,7 @@
 import os
 
+from sqlalchemy.orm import Session
+
 from app.rag.embedding import embed_batch
 from app.db.models.chunk import Chunk
 from app.db.models.document import Document
@@ -17,8 +19,7 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-def create_chunk(directory: str, session):
-    logging.info(f'Start loading documents from {directory}')
+def create_chunk(directory: str, session: Session):
     docs = []
     docs += DirectoryLoader(directory, "**/*.md", loader_cls=TextLoader).load()
     docs += DirectoryLoader(directory, "**/*.txt", loader_cls=TextLoader).load()
@@ -26,7 +27,9 @@ def create_chunk(directory: str, session):
     docs += DirectoryLoader(directory, "**/*.docx", loader_cls=Docx2txtLoader).load()
 
     if not docs:
-        return
+        logging.info("Not found any documents")
+        chunks = session.query(Chunk.content, Chunk.id).all()
+        return zip(*chunks)
 
     res = session.query(Document.file_path).all()
     db_document_paths = {r[0] for r in res}
@@ -39,8 +42,11 @@ def create_chunk(directory: str, session):
         valid_docs.append(doc)
 
     if not valid_docs:
-        return
+        logging.info("No new documents to update chunk")
+        chunks = session.query(Chunk.content, Chunk.id).all()
+        return zip(*chunks)
 
+    logging.info(f'Start updating chunks from {directory}')
     for doc in valid_docs:
         file = Path(doc.metadata["source"])
 
@@ -79,23 +85,31 @@ def create_chunk(directory: str, session):
         chunk_contents.append(chunk.page_content)
 
     session.commit()
-    logging.info(f'Load documents success')
+    logging.info(f'Update chunks success')
     return chunk_contents, chunk_ids
 
 def create_vector_database(chunk_contents, chunk_ids, index_path: str, dimension: int = 1536, embedder=embed_batch):
-    logging.info(f'Start creating vector database')
+    os.makedirs('./app/data/vector_databases', exist_ok=True)
+
     if os.path.exists(index_path):
         faiss_index = faiss.read_index(index_path)
     else:
         base_index = faiss.IndexFlatIP(dimension)
         faiss_index = faiss.IndexIDMap(base_index)
 
+    chunk_ids = np.array(chunk_ids)
+    existing_ids = faiss.vector_to_array(faiss_index.id_map)
+    chunk_ids = chunk_ids[~np.isin(chunk_ids, existing_ids)]
+    if chunk_ids.shape[0] < 1:
+        logging.info("No new chunks to update FAISS index")
+        return
 
+    logging.info(f'Start updating vector database')
     vectors = embedder(chunk_contents)
     faiss.normalize_L2(vectors)
-    faiss_index.add_with_ids(vectors, np.array(chunk_ids))
+    faiss_index.add_with_ids(vectors, chunk_ids)
 
     os.makedirs(os.path.dirname(index_path), exist_ok=True)
     faiss.write_index(faiss_index, index_path)
-    logging.info(f'Create vector database success')
+    logging.info(f'Update vector database success')
 

@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
-from starlette.middleware.cors import CORSMiddleware
 import logging
 
 from app.rag.rag import ask_llm
@@ -22,7 +21,7 @@ async def chat(request: ChatRequest, session: Session = Depends(get_db)):
         ask_llm(
             question=request.question,
             session=session,
-            faiss_index_path='/Users/tuan-nv0505/Projects/School/Hotel-Management-System/chatbot/data/vector_databases/faiss.index'
+            faiss_index_path='./data/vector_databases/faiss.index'
         ),
         media_type='text/plain',
         headers={
