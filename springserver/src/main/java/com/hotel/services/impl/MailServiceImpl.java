@@ -52,4 +52,30 @@ public class MailServiceImpl implements MailService {
         }
 
     }
+
+    @Override
+    @Async
+    public void sendBookingCancellationDueToTimeout(RequestBookingDTO booking) {
+        MimeMessage message = mailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(
+                    message,
+                    MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                    StandardCharsets.UTF_8.name()
+            );
+
+            Context context = new Context();
+            context.setVariable("booking", booking);
+            String htmlContent = emailTemplateEngine.process("booking_cancellation", context);
+
+            helper.setTo(booking.getCustomer().getEmail());
+            helper.setSubject("Thông Báo: Đơn Đặt Phòng Của Bạn Đã Bị Huỷ Do Quá Hạn Thanh Toán");
+            helper.setText(htmlContent, true);
+            helper.setFrom(this.mailUserName);
+
+            mailSender.send(message);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

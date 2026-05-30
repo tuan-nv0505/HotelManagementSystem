@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông báo huỷ đặt phòng</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333333; background-color: #f6f6f6; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 25px; }
+        /* Sử dụng màu đỏ để biểu thị việc huỷ bỏ */
+        .header h1 { color: #d9534f; margin: 0; font-size: 24px; }
+        .section { margin-bottom: 25px; }
+        .section h2 { font-size: 16px; border-bottom: 2px solid #d9534f; padding-bottom: 5px; color: #333333; text-transform: uppercase; }
+        .info-text p { margin: 5px 0; font-size: 14px; }
+        .alert-box { background-color: #fff3f3; border-left: 4px solid #d9534f; padding: 15px; margin-bottom: 25px; font-size: 14px; }
+        .footer { text-align: center; margin-top: 30px; font-size: 13px; color: #777; border-top: 1px solid #eeeeee; padding-top: 15px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>THÔNG BÁO HUỶ ĐẶT PHÒNG</h1>
+    </div>
+
+    <div class="alert-box">
+        <p>Kính gửi <strong th:text="${booking.customer != null ? booking.customer.fullName : 'Quý khách'}"></strong>,</p>
+        <p>Chúng tôi rất tiếc phải thông báo rằng yêu cầu đặt phòng của Quý khách đã bị <strong>tự động huỷ</strong> do hệ thống không ghi nhận khoản thanh toán nào được thực hiện trong vòng 15 phút kể từ lúc tạo giao dịch.</p>
+        <p>Nếu Quý khách vẫn có nhu cầu lưu trú, vui lòng truy cập website của chúng tôi để thực hiện lại quá trình đặt phòng. Giá phòng và tình trạng phòng có thể thay đổi so với lần đặt trước.</p>
+    </div>
+
+    <div class="section info-text" th:if="${booking.customer != null}">
+        <h2>Thông tin Khách hàng</h2>
+        <p><strong>Họ và tên:</strong> <span th:text="${booking.customer.fullName}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${booking.customer.email}"></span></p>
+        <p><strong>Số điện thoại:</strong> <span th:text="${booking.customer.phone}"></span></p>
+    </div>
+
+    <div class="section info-text">
+        <h2>Chi tiết Đặt phòng (Đã Huỷ)</h2>
+        <p><strong>Ngày Check-in dự kiến:</strong> <span th:text="${booking.expectedCheckIn}">2026-06-01</span></p>
+        <p><strong>Ngày Check-out dự kiến:</strong> <span th:text="${booking.expectedCheckOut}">2026-06-05</span></p>
+        <p><strong>Tổng tiền:</strong> <span th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span></p>
+    </div>
+
+    <div class="footer">
+        <p>Nếu Quý khách có bất kỳ thắc mắc nào hoặc cần hỗ trợ thêm, vui lòng liên hệ với bộ phận CSKH của chúng tôi.</p>
+        <p>Trân trọng,<br><strong>Đội ngũ Spring Hotel</strong></p>
+    </div>
+</div>
+</body>
+</html>
